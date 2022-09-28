@@ -1,0 +1,7 @@
+{
+  "name": "funadf-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
