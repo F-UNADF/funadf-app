@@ -29,11 +29,13 @@ const actions = {
         };
 
         axios(config).then((res) => {
-            sessionStorage.setItem('token', res.data.token);
-            commit('setToken', res.data);
+            sessionStorage.setItem('token', res.data.token)
+            commit('setToken', res.data.token);
         })
         .catch((error) => {
             console.log(error, 2000);
+        }).finally(() => {
+            return state.token;
         });
     },
     getConnectedUser({commit}){
@@ -44,7 +46,6 @@ const actions = {
         };
 
         axios(config).then((res) => {
-            console.log(res.data);
             commit('setUser', res.data.user);
             commit('setChurch', res.data.church);
         })

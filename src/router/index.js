@@ -15,10 +15,21 @@ const routes = [
     path: '/user',
     name: 'UserShow',
     component: () => import("../components/Users/show"),
+  },
+  {
+    path: '/votes',
+    name: 'VotesShow',
+    component: () => import("../components/Votes/show"),
+  },
+  {
+    path: '/carte',
+    name: 'UserCard',
+    component: () => import("../components/Users/card"),
   }
 ]
 
 const router = createRouter({
+  mode: 'history',
   history: createWebHistory(process.env.BASE_URL),
   routes
 });

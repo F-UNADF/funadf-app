@@ -28,16 +28,26 @@
 </template>
 
 <script>
+
+import {mapGetters} from "vuex";
 import { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
-import SessionStore from '../store/modules/sessionStore'
+import sessionStore from '../store/modules/sessionStore'
 
 export default {
     name: "loginComponent",
     components: { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
+    computed: {
+        ...mapGetters('sessionStore', {
+            user: 'getUser',
+            church: 'getChurch',
+            token: 'getToken',
+        }),
+    },
 
     methods: {
         login: function () {
-            this.$store.dispatch('SessionStore/login', this.credential).then(() => {
+            console.log(this.credential);
+            this.$store.dispatch('sessionStore/login', this.credential).then(() => {
                 this.$root.presentToast("Féliciations ! Vous êtes connectés.");
                 window.location.href = '/user';
             });
@@ -54,8 +64,8 @@ export default {
         }
     },
     mounted: function () {
-        if (!this.$store.hasModule('SessionStore')) {
-            this.$store.registerModule('SessionStore', SessionStore);
+        if (!this.$store.hasModule('sessionStore')) {
+            this.$store.registerModule('sessionStore', sessionStore);
         }
     }
 };
