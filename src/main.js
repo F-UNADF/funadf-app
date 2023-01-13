@@ -4,7 +4,7 @@ import router from './router';
 import store from './store/index';
 
 import { IonicVue } from '@ionic/vue';
-import { IonIcon} from "@ionic/vue";
+import { IonicStorage } from '@ionic/storage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -31,7 +31,7 @@ const app = createApp(App);
 app
   .use(store)
   .use(IonicVue)
-  .use(IonIcon)
+  .use(IonicStorage)
   .use(router);
 
 router.isReady().then(() => {

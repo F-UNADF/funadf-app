@@ -17,8 +17,9 @@
     "@capacitor/ios": "4.6.1",
     "@capacitor/keyboard": "4.1.0",
     "@capacitor/status-bar": "4.1.1",
+    "@ionic/core": "^6.4.2",
     "@ionic/storage": "^3.0.6",
-    "@ionic/vue": "^6.0.0",
+    "@ionic/vue": "^6.4.2",
     "@ionic/vue-router": "^6.0.0",
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
@@ -26,6 +27,7 @@
     "loader-utils": "^3.2.1",
     "vue": "^3.2.21",
     "vue-router": "^4.0.12",
+    "vue-session": "^1.0.0",
     "vuex-module-decorators": "^2.0.0"
   },
   "devDependencies": {
