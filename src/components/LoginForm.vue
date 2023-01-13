@@ -29,7 +29,7 @@
 
 <script>
 
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
 import sessionStore from '../store/modules/sessionStore'
 
@@ -46,14 +46,16 @@ export default {
 
     methods: {
         login: function () {
-            console.log(this.credential);
             this.$store.dispatch('sessionStore/login', this.credential).then(() => {
-                this.$root.presentToast("Féliciations ! Vous êtes connectés.");
-                window.location.href = '/user';
+                if (this.token) {
+                    sessionStorage.setItem('token', this.token);
+                    window.location.href = "/user";
+                }
             });
+
         },
     },
-    data: function() {
+    data: function () {
         var credential = {
             email: 'mon@email.com',
             password: 'MonMotDePassSecurisé',
@@ -66,6 +68,9 @@ export default {
     mounted: function () {
         if (!this.$store.hasModule('sessionStore')) {
             this.$store.registerModule('sessionStore', sessionStore);
+        }
+        if (sessionStorage.getItem('token')) {
+            this.$router.push({ name: 'UserShow', replace: true });
         }
     }
 };
