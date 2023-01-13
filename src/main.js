@@ -1,8 +1,10 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import App from './components/App.vue'
 import router from './router';
+import store from './store/index';
 
 import { IonicVue } from '@ionic/vue';
+import { IonIcon} from "@ionic/vue";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -23,10 +25,15 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-const app = createApp(App)
+// Create a new store instance.
+const app = createApp(App);
+
+app
+  .use(store)
   .use(IonicVue)
+  .use(IonIcon)
   .use(router);
-  
+
 router.isReady().then(() => {
   app.mount('#app');
 });

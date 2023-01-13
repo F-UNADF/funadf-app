@@ -1,5 +1,5 @@
 {
-  "name": "funadf-app",
+  "name": "funadf.app",
   "integrations": {
     "capacitor": {}
   },

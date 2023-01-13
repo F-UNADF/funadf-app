@@ -1,10 +1,10 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'funadf-app',
+  appId: 'funadf.app',
   appName: 'funadf-app',
   webDir: 'dist',
-  bundledWebRuntime: false
+  bundledWebRuntime: true
 };
 
 export default config;
