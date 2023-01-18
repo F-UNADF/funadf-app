@@ -24,6 +24,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import 'material-design-icons/iconfont/material-icons.css'
 
 // Create a new store instance.
 const app = createApp(App);
