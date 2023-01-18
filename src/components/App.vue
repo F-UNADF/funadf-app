@@ -12,19 +12,19 @@
 
         <!-- Tab bar -->
         <ion-tabs>
-            <ion-tab-bar slot="bottom">
+            <ion-tab-bar>
                 <ion-tab-button ref="profil" tab="profil" href="/user">
-                    <ion-icon name="person" aria-hidden="true"></ion-icon>
+                    <i class="material-icons">face</i>
                     <ion-label>Mon profil</ion-label>
                 </ion-tab-button>
 
                 <ion-tab-button tab="contact" ref="contact" href="/carte">
-                    <ion-icon name="contact" aria-hidden="true"></ion-icon>
+                    <i class="material-icons">account_box</i>
                     <ion-label>Ma carte pastorale</ion-label>
                 </ion-tab-button>
 
                 <ion-tab-button tab="votes" ref="votes" href="/votes">
-                    <ion-icon name="checkbox" aria-hidden="true"></ion-icon>
+                    <i class="material-icons">thumb_up</i>
                     <ion-label>Mes votes</ion-label>
                 </ion-tab-button>
             </ion-tab-bar>

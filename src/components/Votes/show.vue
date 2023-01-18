@@ -1,10 +1,16 @@
 <template>
-    <h1>Développement en cours</h1>
+    <ion-content>
+        <ion-card>
+            <ion-card-content style="text-align: center;">
+                <h1>Développement en cours</h1>
+            </ion-card-content>
+        </ion-card>
+    </ion-content>
 </template>
 
 <script>
 
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import sessionStore from "@/store/modules/sessionStore";
 
 export default {
