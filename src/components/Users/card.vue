@@ -20,7 +20,6 @@
 <script>
 
 import { mapGetters } from "vuex";
-import sessionStore from "@/store/modules/sessionStore";
 import { IonCard } from '@ionic/vue';
 import QrcodeVue from 'qrcode.vue'
 
@@ -28,15 +27,12 @@ export default {
     name: "UserCardComponent",
     components: { IonCard, QrcodeVue },
     computed: {
-        ...mapGetters('sessionStore', {
+        ...mapGetters({
             user: 'getUser',
         }),
     },
     beforeCreate: function () {
-        if (!this.$store.hasModule('sessionStore')) {
-            this.$store.registerModule('sessionStore', sessionStore);
-            this.$store.dispatch('sessionStore/getConnectedUser');
-        }
+        this.$store.dispatch('getConnectedUser');
     },
 };
 </script>

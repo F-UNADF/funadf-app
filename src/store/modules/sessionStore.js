@@ -1,10 +1,13 @@
 import axios from "axios";
 
+const base_url = 'http://myloc.me:3000';
+
 // initial state
 const state = () => ({
     user: {},
     church: {},
     token: null,
+    loggedIn: false,
 });
 
 // getters
@@ -12,6 +15,7 @@ const getters = {
     getUser: (state) => state.user,
     getChurch: (state) => state.church,
     getToken: (state) => state.token,
+    getLoggedIn: (state) => state.loggedIn,
 };
 
 // actions
@@ -21,35 +25,42 @@ const actions = {
         var data = new FormData();
         data.append('user[email]', credential.email);
         data.append('user[password]', credential.password);
-
         var config = {
             method: 'post',
-            url: 'https://add-fnadf.fr/v1/users/sign_in',
+            url: base_url + '/v1/users/sign_in',
             data: data,
-        };
+        }
         return new Promise((resolve, reject) => {
             axios(config).then((res) => {
                 commit('setToken', res.data.token);
+                commit('setLoggedIn', true);
                 resolve(res);
             }).catch((error) => {
+                commit('setLoggedIn', false);
                 reject(error, 2000);
             });
         });
     },
     getConnectedUser({ commit }) {
         let token = sessionStorage.getItem('token');
+        commit('setToken', token);
+
         var config = {
             method: 'get',
-            url: 'https://add-fnadf.fr/v1/users/' + token
+            url: base_url + '/v1/users/' + token,
         };
-
-        axios(config).then((res) => {
-            commit('setUser', res.data.user);
-            commit('setChurch', res.data.church);
-        })
-            .catch((error) => {
-                console.log(error, 2000);
+        return new Promise((resolve, reject) => {
+            axios(config).then((res) => {
+                commit('setUser', res.data.user);
+                commit('setChurch', res.data.church);
+                commit('setLoggedIn', true);
+                resolve(res);
+            }).catch((error) => {
+                sessionStorage.removeItem('token');
+                commit('setLoggedIn', false);
+                reject(error, 2000);
             });
+        });
     }
 
 };
@@ -65,10 +76,13 @@ const mutations = {
     setToken(state, token) {
         state.token = token;
     },
+    setLoggedIn(state, payload) {
+        state.loggedIn = payload;
+    }
 };
 
 export default {
-    namespaced: true,
+    namespace: true,
     state,
     getters,
     actions,

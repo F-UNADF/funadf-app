@@ -70,22 +70,22 @@
 <script>
 
 import { mapGetters } from "vuex";
-import sessionStore from "@/store/modules/sessionStore";
 import { IonCardHeader, IonCardSubtitle, IonLabel, IonItem, IonCard } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
     components: { IonCardSubtitle, IonCardHeader, IonLabel, IonItem, IonCard },
     computed: {
-        ...mapGetters('sessionStore', {
+        ...mapGetters({
             user: 'getUser',
             church: 'getChurch',
         }),
     },
     beforeCreate: function () {
-        if (!this.$store.hasModule('sessionStore')) {
-            this.$store.registerModule('sessionStore', sessionStore);
-            this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('getConnectedUser');
+
+        if (null === sessionStorage.getItem('token') || null === this.user) {
+            this.$router.push({ name: 'Login', replace: true });
         }
     },
 };
