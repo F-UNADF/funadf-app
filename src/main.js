@@ -27,12 +27,10 @@ import './theme/variables.css';
 import 'material-design-icons/iconfont/material-icons.css'
 
 // Create a new store instance.
-const app = createApp(App);
-
-app
-  .use(store)
+const app = createApp(App)
   .use(IonicVue)
   .use(IonicStorage)
+  .use(store)
   .use(router);
 
 router.isReady().then(() => {

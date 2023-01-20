@@ -6,6 +6,7 @@
             </ion-toolbar>
         </ion-card-header>
         <ion-card-content>
+
             <ion-item>
                 <ion-label position="stacked" color="primary">Email</ion-label>
                 <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false"
@@ -30,14 +31,14 @@
 <script>
 
 import { mapGetters } from "vuex";
+import { sessionStore } from '../store/modules/sessionStore';
 import { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
-import sessionStore from '../store/modules/sessionStore'
 
 export default {
     name: "loginComponent",
     components: { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
     computed: {
-        ...mapGetters('sessionStore', {
+        ...mapGetters({
             user: 'getUser',
             church: 'getChurch',
             token: 'getToken',
@@ -46,19 +47,18 @@ export default {
 
     methods: {
         login: function () {
-            this.$store.dispatch('sessionStore/login', this.credential).then(() => {
-                if (this.token) {
+            this.$store.dispatch('login', this.credential).then(() => {
+                if (null !== this.token) {
                     sessionStorage.setItem('token', this.token);
                     window.location.href = "/user";
                 }
             });
-
         },
     },
     data: function () {
         var credential = {
-            email: 'mon@email.com',
-            password: 'MonMotDePassSecurisé',
+            email: '',
+            password: '',
         };
 
         return {
@@ -68,10 +68,11 @@ export default {
     mounted: function () {
         if (!this.$store.hasModule('sessionStore')) {
             this.$store.registerModule('sessionStore', sessionStore);
+            this.$store.dispatch('sessionStore/getConnectedUser');
         }
-        if (sessionStorage.getItem('token')) {
+        if (null === this.user) {
             this.$router.push({ name: 'UserShow', replace: true });
         }
-    }
+    },
 };
 </script>

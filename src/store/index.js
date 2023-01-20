@@ -1,13 +1,13 @@
-import {createStore} from 'vuex';
-import session from './modules/sessionStore'
+import { createStore } from 'vuex';
+import sessionStore from './modules/sessionStore';
 
 const debug = process.env.NODE_ENV !== 'production';
 
 const store = createStore({
     modules: {
-        session,
+        sessionStore,
     },
-    strict : debug,
+    strict: debug,
 });
 
 export default store;
