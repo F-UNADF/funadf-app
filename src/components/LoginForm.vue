@@ -50,7 +50,7 @@ export default {
             this.$store.dispatch('login', this.credential).then(() => {
                 if (null !== this.token) {
                     sessionStorage.setItem('token', this.token);
-                    window.location.href = "/user";
+                    this.$router.push({ name: 'UserShow', replace: true });
                 }
             });
         },
