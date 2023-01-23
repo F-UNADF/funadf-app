@@ -17,6 +17,58 @@
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DA1CB039297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 44D6062E8C618EC2B8F1D7229E8AD501;
+			remoteInfo = Capacitor;
+		};
+		DA1CB03B297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CDFF4A7EE78A2AC8170A2DC20868DF1F;
+			remoteInfo = CapacitorApp;
+		};
+		DA1CB03D297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1ABFDA3391AEBA42EFB0FEBF824A6E34;
+			remoteInfo = CapacitorCordova;
+		};
+		DA1CB03F297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4830CABC2D58B5C50BE6EFECA34B2895;
+			remoteInfo = CapacitorHaptics;
+		};
+		DA1CB041297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 43F80CDA05D5624A6B812123E023B138;
+			remoteInfo = CapacitorKeyboard;
+		};
+		DA1CB043297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 37915BEC3E9EB6CD453C07348A49B51A;
+			remoteInfo = CapacitorStatusBar;
+		};
+		DA1CB045297F18260070383B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5BEF4602752E47C46E8C10FB8B4B57F2;
+			remoteInfo = "Pods-App";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
@@ -29,6 +81,7 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		DA1CB02F297F18250070383B /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -47,6 +100,7 @@
 		27E2DDA53C4D2A4D1A88CE4A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DA1CB02F297F18250070383B /* Pods.xcodeproj */,
 				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
 			);
 			name = Frameworks;
@@ -92,6 +146,20 @@
 				AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		DA1CB030297F18250070383B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DA1CB03A297F18260070383B /* Capacitor */,
+				DA1CB03C297F18260070383B /* CapacitorApp */,
+				DA1CB03E297F18260070383B /* CapacitorCordova */,
+				DA1CB040297F18260070383B /* CapacitorHaptics */,
+				DA1CB042297F18260070383B /* CapacitorKeyboard */,
+				DA1CB044297F18260070383B /* CapacitorStatusBar */,
+				DA1CB046297F18260070383B /* Pods-App */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,12 +211,77 @@
 			mainGroup = 504EC2FB1FED79650016851F;
 			productRefGroup = 504EC3051FED79650016851F /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DA1CB030297F18250070383B /* Products */;
+					ProjectRef = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		DA1CB03A297F18260070383B /* Capacitor */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = Capacitor;
+			path = Capacitor.framework;
+			remoteRef = DA1CB039297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA1CB03C297F18260070383B /* CapacitorApp */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = CapacitorApp;
+			path = CapacitorApp.framework;
+			remoteRef = DA1CB03B297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA1CB03E297F18260070383B /* CapacitorCordova */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = CapacitorCordova;
+			path = Cordova.framework;
+			remoteRef = DA1CB03D297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA1CB040297F18260070383B /* CapacitorHaptics */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = CapacitorHaptics;
+			path = CapacitorHaptics.framework;
+			remoteRef = DA1CB03F297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA1CB042297F18260070383B /* CapacitorKeyboard */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = CapacitorKeyboard;
+			path = CapacitorKeyboard.framework;
+			remoteRef = DA1CB041297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA1CB044297F18260070383B /* CapacitorStatusBar */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = CapacitorStatusBar;
+			path = CapacitorStatusBar.framework;
+			remoteRef = DA1CB043297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA1CB046297F18260070383B /* Pods-App */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = "Pods-App";
+			path = Pods_App.framework;
+			remoteRef = DA1CB045297F18260070383B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		504EC3021FED79650016851F /* Resources */ = {
