@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const base_url = 'https://add-fnadf.fr';
+// const base_url = 'https://add-fnadf.fr';
+const base_url = 'http://myloc.me:3000';
 
 // initial state
 const state = () => ({
@@ -21,7 +22,6 @@ const getters = {
 // actions
 const actions = {
     login({ commit }, credential) {
-
         var data = new FormData();
         data.append('user[email]', credential.email);
         data.append('user[password]', credential.password);
@@ -40,6 +40,10 @@ const actions = {
                 reject(error, 2000);
             });
         });
+    },
+    logout({ commit }) {
+        commit('setToken', null);
+        commit('setLoggedIn', false);
     },
     getConnectedUser({ commit }) {
         let token = sessionStorage.getItem('token');

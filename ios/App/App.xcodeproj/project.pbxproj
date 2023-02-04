@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -151,13 +151,13 @@
 		DA1CB030297F18250070383B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DA1CB03A297F18260070383B /* Capacitor */,
-				DA1CB03C297F18260070383B /* CapacitorApp */,
-				DA1CB03E297F18260070383B /* CapacitorCordova */,
-				DA1CB040297F18260070383B /* CapacitorHaptics */,
-				DA1CB042297F18260070383B /* CapacitorKeyboard */,
-				DA1CB044297F18260070383B /* CapacitorStatusBar */,
-				DA1CB046297F18260070383B /* Pods-App */,
+				DA1CB03A297F18260070383B /* Capacitor.framework */,
+				DA1CB03C297F18260070383B /* CapacitorApp.framework */,
+				DA1CB03E297F18260070383B /* Cordova.framework */,
+				DA1CB040297F18260070383B /* CapacitorHaptics.framework */,
+				DA1CB042297F18260070383B /* CapacitorKeyboard.framework */,
+				DA1CB044297F18260070383B /* CapacitorStatusBar.framework */,
+				DA1CB046297F18260070383B /* Pods_App.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -201,7 +201,7 @@
 				};
 			};
 			buildConfigurationList = 504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -225,58 +225,51 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		DA1CB03A297F18260070383B /* Capacitor */ = {
+		DA1CB03A297F18260070383B /* Capacitor.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = Capacitor;
 			path = Capacitor.framework;
 			remoteRef = DA1CB039297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB03C297F18260070383B /* CapacitorApp */ = {
+		DA1CB03C297F18260070383B /* CapacitorApp.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = CapacitorApp;
 			path = CapacitorApp.framework;
 			remoteRef = DA1CB03B297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB03E297F18260070383B /* CapacitorCordova */ = {
+		DA1CB03E297F18260070383B /* Cordova.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = CapacitorCordova;
 			path = Cordova.framework;
 			remoteRef = DA1CB03D297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB040297F18260070383B /* CapacitorHaptics */ = {
+		DA1CB040297F18260070383B /* CapacitorHaptics.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = CapacitorHaptics;
 			path = CapacitorHaptics.framework;
 			remoteRef = DA1CB03F297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB042297F18260070383B /* CapacitorKeyboard */ = {
+		DA1CB042297F18260070383B /* CapacitorKeyboard.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = CapacitorKeyboard;
 			path = CapacitorKeyboard.framework;
 			remoteRef = DA1CB041297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB044297F18260070383B /* CapacitorStatusBar */ = {
+		DA1CB044297F18260070383B /* CapacitorStatusBar.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = CapacitorStatusBar;
 			path = CapacitorStatusBar.framework;
 			remoteRef = DA1CB043297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB046297F18260070383B /* Pods-App */ = {
+		DA1CB046297F18260070383B /* Pods_App.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			name = "Pods-App";
 			path = Pods_App.framework;
 			remoteRef = DA1CB045297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -323,10 +316,10 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
+			inputFileListPaths = (
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
+			outputFileListPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -468,7 +461,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -482,7 +476,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = funadf.app;
@@ -503,9 +500,12 @@
 				DEVELOPMENT_TEAM = AX3357MNTR;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = funadf.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.funadf.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
