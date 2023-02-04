@@ -1,8 +1,19 @@
 <template>
-    <ion-app>
-        <ion-header :translucent="true">
-            <ion-toolbar>
-                <ion-title>UNADF</ion-title>
+    <ion-app class="light">
+        <ion-header>
+            <ion-toolbar color="primary">
+                <ion-title class="title">
+                    <div class="logo">
+                        <img class="add-logo" src="/assets/logo-add.png" alt="Logo UNADF">
+                        <span>UNADF</span>
+                        <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF">
+                    </div>
+                </ion-title>
+                <ion-buttons slot="end">
+                    <ion-button v-if="userIsLoggedIn" @click="logout()">
+                        <i class="material-icons">cancel</i>
+                    </ion-button>
+                </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
@@ -12,7 +23,7 @@
 
         <!-- Tab bar -->
         <ion-tabs v-if="userIsLoggedIn">
-            <ion-tab-bar>
+            <ion-tab-bar color="primary">
                 <ion-tab-button ref="profil" tab="profil" href="/user">
                     <i class="material-icons">face</i>
                     <ion-label>Profil</ion-label>
@@ -57,7 +68,7 @@ export default ({
                 message: message,
                 duration: 3000,
                 cssClass: 'custom-toast',
-                color: 'danger',
+                color: 'success',
                 buttons: [
                     {
                         text: 'x',
@@ -68,6 +79,12 @@ export default ({
 
             await toast.present();
         },
+
+        logout() {
+            this.$store.dispatch('logout');
+            this.presentToast('Vous êtes déconnectés');
+            this.$router.push('/login');
+        }
     },
 
     data: function () {
@@ -78,3 +95,23 @@ export default ({
     },
 });
 </script>
+
+<style>
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+
+.unadf-logo {
+    height: 40px;
+    display: inline-block;
+}
+
+.add-logo {
+    max-width: 50px;
+    display: inline-block;
+}
+</style>
