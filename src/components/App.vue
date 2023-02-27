@@ -9,7 +9,7 @@
                         <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF">
                     </div>
                 </ion-title>
-                <ion-buttons slot="end">
+                <ion-buttons>
                     <ion-button v-if="userIsLoggedIn" @click="logout()">
                         <i class="material-icons">cancel</i>
                     </ion-button>
