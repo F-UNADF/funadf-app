@@ -66,7 +66,7 @@ export default {
             credential: credential,
         }
     },
-    mounted: function () {
+    beforeCreate: function () {
         if (!this.$store.hasModule('sessionStore')) {
             this.$store.registerModule('sessionStore', sessionStore);
             this.$store.dispatch('sessionStore/getConnectedUser');

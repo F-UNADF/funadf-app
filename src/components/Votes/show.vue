@@ -1,26 +1,23 @@
 <template>
-    <ion-content>
-        <ion-card>
-            <ion-card-content style="text-align: center;">
-                <h1>Développement en cours</h1>
-            </ion-card-content>
-        </ion-card>
-    </ion-content>
+  <h1>Comming</h1>
 </template>
+
 
 <script>
 
 import { mapGetters } from "vuex";
 
 export default {
-    name: "UserShowComponent",
-    computed: {
-        ...mapGetters({
-            user: 'getUser',
-        }),
-    },
-    beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
-    },
+  name: "VoteShow",
+  computed: {
+    ...mapGetters({
+      items: 'getItems',
+      user: 'getUser',
+    }),
+  },
+  beforeCreate: function () {
+    this.$store.dispatch('getConnectedUser');
+    this.$store.dispatch('items');
+  },
 };
 </script>

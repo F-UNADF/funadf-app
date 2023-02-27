@@ -151,13 +151,13 @@
 		DA1CB030297F18250070383B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DA1CB03A297F18260070383B /* Capacitor.framework */,
-				DA1CB03C297F18260070383B /* CapacitorApp.framework */,
-				DA1CB03E297F18260070383B /* Cordova.framework */,
-				DA1CB040297F18260070383B /* CapacitorHaptics.framework */,
-				DA1CB042297F18260070383B /* CapacitorKeyboard.framework */,
-				DA1CB044297F18260070383B /* CapacitorStatusBar.framework */,
-				DA1CB046297F18260070383B /* Pods_App.framework */,
+				DA1CB03A297F18260070383B /* Capacitor */,
+				DA1CB03C297F18260070383B /* CapacitorApp */,
+				DA1CB03E297F18260070383B /* CapacitorCordova */,
+				DA1CB040297F18260070383B /* CapacitorHaptics */,
+				DA1CB042297F18260070383B /* CapacitorKeyboard */,
+				DA1CB044297F18260070383B /* CapacitorStatusBar */,
+				DA1CB046297F18260070383B /* Pods-App */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -191,7 +191,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 1340;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
@@ -225,51 +225,58 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		DA1CB03A297F18260070383B /* Capacitor.framework */ = {
+		DA1CB03A297F18260070383B /* Capacitor */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = Capacitor;
 			path = Capacitor.framework;
 			remoteRef = DA1CB039297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB03C297F18260070383B /* CapacitorApp.framework */ = {
+		DA1CB03C297F18260070383B /* CapacitorApp */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = CapacitorApp;
 			path = CapacitorApp.framework;
 			remoteRef = DA1CB03B297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB03E297F18260070383B /* Cordova.framework */ = {
+		DA1CB03E297F18260070383B /* CapacitorCordova */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = CapacitorCordova;
 			path = Cordova.framework;
 			remoteRef = DA1CB03D297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB040297F18260070383B /* CapacitorHaptics.framework */ = {
+		DA1CB040297F18260070383B /* CapacitorHaptics */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = CapacitorHaptics;
 			path = CapacitorHaptics.framework;
 			remoteRef = DA1CB03F297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB042297F18260070383B /* CapacitorKeyboard.framework */ = {
+		DA1CB042297F18260070383B /* CapacitorKeyboard */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = CapacitorKeyboard;
 			path = CapacitorKeyboard.framework;
 			remoteRef = DA1CB041297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB044297F18260070383B /* CapacitorStatusBar.framework */ = {
+		DA1CB044297F18260070383B /* CapacitorStatusBar */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = CapacitorStatusBar;
 			path = CapacitorStatusBar.framework;
 			remoteRef = DA1CB043297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DA1CB046297F18260070383B /* Pods_App.framework */ = {
+		DA1CB046297F18260070383B /* Pods-App */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
+			name = "Pods-App";
 			path = Pods_App.framework;
 			remoteRef = DA1CB045297F18260070383B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -373,6 +380,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -380,8 +388,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -430,6 +440,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -437,8 +448,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -497,7 +510,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AX3357MNTR;
+				DEVELOPMENT_TEAM = XLP64PBSY4;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (

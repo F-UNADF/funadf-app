@@ -1,7 +1,9 @@
 import axios from "axios";
 
-// const base_url = 'https://add-fnadf.fr';
-const base_url = 'http://myloc.me:3000';
+let base_url = 'https://add-fnadf.fr';
+if (process.env.NODE_ENV === 'development') {
+    base_url = 'http://myloc.me:3000';
+}
 
 // initial state
 const state = () => ({

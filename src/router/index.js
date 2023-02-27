@@ -18,7 +18,12 @@ const routes = [
   },
   {
     path: '/votes',
-    name: 'VotesShow',
+    name: 'VotesIndex',
+    component: () => import("../components/Votes/index"),
+  },
+  {
+    path: '/vote/:campaign_id',
+    name: 'VoteShow',
     component: () => import("../components/Votes/show"),
   },
   {
