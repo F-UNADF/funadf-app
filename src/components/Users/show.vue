@@ -57,11 +57,11 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonCardHeader, IonLabel, IonItem, IonCard } from '@ionic/vue';
+import { IonCard, IonCardTitle, IonList, IonCardContent, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
-    components: { IonCardHeader, IonLabel, IonItem, IonCard },
+    components: { IonCard, IonCardTitle, IonList, IonCardContent, IonChip, IonCardHeader, IonLabel, IonItem },
     computed: {
         ...mapGetters({
             user: 'getUser',

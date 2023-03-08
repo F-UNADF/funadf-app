@@ -1,5 +1,5 @@
 <template>
-    <ion-app class="light">
+    <ion-app>
         <ion-header>
             <ion-toolbar color="primary">
                 <ion-title class="title">
@@ -9,9 +9,14 @@
                         <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF">
                     </div>
                 </ion-title>
-                <ion-buttons>
-                    <ion-button v-if="userIsLoggedIn" @click="logout()">
+                <ion-buttons slot="end">
+                    <ion-button v-if="this.loggedIn" @click="logout()">
                         <i class="material-icons">cancel</i>
+                    </ion-button>
+                </ion-buttons>
+                <ion-buttons slot="start">
+                    <ion-button v-if="hasHistory" @click="goBack()">
+                        <i class="material-icons">arrow_back</i>
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
@@ -22,35 +27,33 @@
         </ion-content>
 
         <!-- Tab bar -->
-        <ion-tabs v-if="userIsLoggedIn">
-            <ion-tab-bar color="primary">
-                <ion-tab-button ref="profil" tab="profil" href="/user">
-                    <i class="material-icons">face</i>
-                    <ion-label>Profil</ion-label>
-                </ion-tab-button>
+        <ion-tab-bar color="primary" v-if="this.loggedIn">
+            <ion-tab-button ref="profil" tab="profil" href="/user">
+                <i class="material-icons">face</i>
+                <ion-label>Profil</ion-label>
+            </ion-tab-button>
 
-                <ion-tab-button tab="contact" ref="contact" href="/carte">
-                    <i class="material-icons">account_box</i>
-                    <ion-label>Carte</ion-label>
-                </ion-tab-button>
+            <ion-tab-button tab="contact" ref="contact" href="/carte">
+                <i class="material-icons">account_box</i>
+                <ion-label>Carte</ion-label>
+            </ion-tab-button>
 
-                <ion-tab-button tab="votes" ref="votes" href="/votes">
-                    <i class="material-icons">thumb_up</i>
-                    <ion-label>Votes</ion-label>
-                </ion-tab-button>
-            </ion-tab-bar>
-        </ion-tabs>
+            <ion-tab-button tab="votes" ref="votes" href="/votes">
+                <i class="material-icons">thumb_up</i>
+                <ion-label>Votes</ion-label>
+            </ion-tab-button>
+        </ion-tab-bar>
     </ion-app>
 </template>
 
 <script>
 
-import { IonTabBar, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, toastController } from '@ionic/vue';
+import { IonContent, IonTabBar, IonButtons, IonButton, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, toastController, IonLabel } from '@ionic/vue';
 import { mapGetters } from "vuex";
 
 export default ({
     name: 'App',
-    components: { IonTabBar, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle },
+    components: { IonContent, IonTabBar, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonLabel },
     computed: {
         ...mapGetters({
             user: 'getUser',
@@ -58,17 +61,17 @@ export default ({
         }),
         userIsLoggedIn: function () {
             return true === this.loggedIn;
-        }
-
+        },
+        hasHistory() { return window.history.length > 2 },
     },
 
     methods: {
-        async presentToast(message) {
+        async presentToast(message, color = 'success') {
             const toast = await toastController.create({
                 message: message,
                 duration: 3000,
                 cssClass: 'custom-toast',
-                color: 'success',
+                color: color,
                 buttons: [
                     {
                         text: 'x',
@@ -79,12 +82,14 @@ export default ({
 
             await toast.present();
         },
-
         logout() {
             this.$store.dispatch('logout');
             this.presentToast('Vous êtes déconnectés');
             this.$router.push('/login');
-        }
+        },
+        goBack() {
+            this.$router.go(-1);
+        },
     },
 
     data: function () {
