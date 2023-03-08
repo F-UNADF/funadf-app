@@ -9,8 +9,8 @@
 
             <ion-item>
                 <ion-label position="stacked" color="primary">Email</ion-label>
-                <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false"
-                    autocapitalize="off" required></ion-input>
+                <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false" autocapitalize="off"
+                    required></ion-input>
             </ion-item>
 
             <ion-item>
@@ -53,6 +53,9 @@ export default {
                     this.$root.presentToast('Vous êtes connecté !');
                     this.$router.push({ name: 'UserShow', replace: true });
                 }
+            }, (error) => {
+                console.log(error);
+                this.$root.presentToast('Merci de vérifier vos informations !', "danger");
             });
         },
     },
