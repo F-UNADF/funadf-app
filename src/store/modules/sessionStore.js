@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 const state = () => ({
     user: {},
     church: {},
+    fees: [],
     token: null,
     loggedIn: false,
 });
@@ -18,6 +19,7 @@ const getters = {
     getUser: (state) => state.user,
     getChurch: (state) => state.church,
     getToken: (state) => state.token,
+    getFees: (state) => state.fees,
     getLoggedIn: (state) => state.loggedIn,
 };
 
@@ -59,6 +61,7 @@ const actions = {
             axios(config).then((res) => {
                 commit('setUser', res.data.user);
                 commit('setChurch', res.data.church);
+                commit('setFees', res.data.fees);
                 commit('setLoggedIn', true);
                 resolve(res);
             }).catch((error) => {
@@ -78,6 +81,9 @@ const mutations = {
     },
     setChurch(state, church) {
         state.church = church;
+    },
+    setFees(state, fees) {
+        state.fees = fees;
     },
     setToken(state, token) {
         state.token = token;
