@@ -1,17 +1,34 @@
 <template>
     <ion-content>
-        <ion-item v-for="item in items" :key="item.id" href="#" @click="goVote(item)">
-            <ion-label>{{ item.structure_name }} - {{ item.campaign_name }}</ion-label>
-        </ion-item>
+        <ion-refresher slot="fixed" @ionRefresh="doRefresh">
+            <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirer pour actualiser" refreshingSpinner="crescent"
+                refreshingText="Actualisation...">
+            </ion-refresher-content>
+        </ion-refresher>
+
+        <ion-card v-for="item in items" :key="item.id">
+            <ion-card-header>
+                <ion-card-title>{{ item.campaign_name }}</ion-card-title>
+                <ion-card-subtitle>{{ item.structure_name }}</ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+                <ion-button v-if="item.campaign_state === 'opened'" expand="block" @click="goVote(item)">Voter
+                    !</ion-button>
+                <ion-button v-else expand="block" disabled>Vote indisponible</ion-button>
+            </ion-card-content>
+        </ion-card>
     </ion-content>
 </template>
 
 <script>
 
 import { mapGetters } from "vuex";
+import { IonContent, IonRefresher, IonRefresherContent, IonList, IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent } from '@ionic/vue';
 
 export default {
     name: "VotesIndex",
+    components: { IonContent, IonRefresher, IonRefresherContent, IonList, IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent },
     computed: {
         ...mapGetters({
             items: 'getItems',
@@ -23,6 +40,10 @@ export default {
             this.$store.commit('setItem', item);
             this.$store.dispatch('getCampaign', item.campaign_id);
             this.$router.push({ name: 'VoteShow', params: { campaign_id: item.campaign_id } });
+        },
+        doRefresh: function (event) {
+            this.$store.dispatch('items');
+            event.detail.complete();
         },
     },
     beforeCreate: function () {
