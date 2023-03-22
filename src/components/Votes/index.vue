@@ -33,6 +33,7 @@ export default {
         ...mapGetters({
             items: 'getItems',
             user: 'getUser',
+            token: 'getToken',
         }),
     },
     methods: {
@@ -49,6 +50,10 @@ export default {
     beforeCreate: function () {
         this.$store.dispatch('getConnectedUser');
         this.$store.dispatch('items');
+
+        if (null === token || null === this.user) {
+            this.$router.push({ name: 'Login', replace: true });
+        }
     },
 };
 </script>

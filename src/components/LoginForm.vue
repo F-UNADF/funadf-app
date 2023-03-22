@@ -10,18 +10,25 @@
             <ion-item>
                 <ion-label position="stacked" color="primary">Email</ion-label>
                 <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false" autocapitalize="off"
-                    required></ion-input>
+                    required autocomplete="email"></ion-input>
             </ion-item>
 
             <ion-item>
                 <ion-label position="stacked" color="primary">Mot de passe</ion-label>
-                <ion-input v-model="credential['password']" name="password" type="password" required></ion-input>
+                <ion-input v-model="credential['password']" name="password" :type="showPassword ? 'text' : 'password'"
+                    required :show-password="showPassword" autocomplete="current-password">
+                </ion-input>
+                <i class="material-icons visibilityIcon" @click="togglePassword()">
+                    {{ showPassword ? 'visibility_off' :
+                        'visibility' }}
+                </i>
             </ion-item>
 
+            <ion-item-divider></ion-item-divider>
 
             <ion-row responsive-sm>
                 <ion-col>
-                    <ion-button expand="block" @click="login()">Login</ion-button>
+                    <ion-button expand="block" @click="login()">Connexion</ion-button>
                 </ion-col>
             </ion-row>
         </ion-card-content>
@@ -31,7 +38,6 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { sessionStore } from '../store/modules/sessionStore';
 import { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
 
 export default {
@@ -58,6 +64,9 @@ export default {
                 this.$root.presentToast('Merci de vérifier vos informations !', "danger");
             });
         },
+        togglePassword: function () {
+            this.showPassword = !this.showPassword;
+        },
     },
     data: function () {
         var credential = {
@@ -67,16 +76,23 @@ export default {
 
         return {
             credential: credential,
+            showPassword: false,
         }
     },
     beforeCreate: function () {
-        if (!this.$store.hasModule('sessionStore')) {
-            this.$store.registerModule('sessionStore', sessionStore);
-            this.$store.dispatch('sessionStore/getConnectedUser');
-        }
-        if (null === this.user) {
+        this.$store.dispatch('getConnectedUser');
+        if (null !== localStorage.getItem('token')) {
             this.$router.push({ name: 'UserShow', replace: true });
         }
     },
 };
 </script>
+
+<style>
+.visibilityIcon {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+
+}
+</style>

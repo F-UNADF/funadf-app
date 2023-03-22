@@ -1,6 +1,10 @@
 <template>
-    <ion-card color="primary">
+    <ion-card color="light">
         <ion-card-content>
+            <ion-text>
+                <h3 class="display-3">Carte Pastorale<br>des Assemblées de Dieu</h3>
+            </ion-text>
+
             <qrcode-vue :value="user.passphrase" size="300" render-as="svg" class="qrcode"></qrcode-vue>
 
             <ion-row class="ion-justify-content-center">
@@ -14,6 +18,8 @@
 
         </ion-card-content>
         <ion-card-header style="text-align: center;">
+            <img :src=user.avatar alt="Avatar User"
+                style="max-width: 100px; border-radius: 50%; margin: 10px auto; display: block;">
             <ion-card-title>{{ user.fullname }}</ion-card-title>
             <hr />
             <ion-chip>
@@ -40,12 +46,11 @@ export default {
         ...mapGetters({
             user: 'getUser',
             fees: 'getFees',
+            token: 'getToken',
         }),
     },
     methods: {
         hasFeeForYear(year) {
-            console.log(year);
-
             return this.fees.filter(fee => fee.what === year.toString()).length > 0;
         },
         getChipColor(year) {
@@ -57,6 +62,10 @@ export default {
     },
     beforeCreate: function () {
         this.$store.dispatch('getConnectedUser');
+
+        if (null === token || null === this.user) {
+            this.$router.push({ name: 'Login', replace: true });
+        }
     },
     data() {
         let years = [];
@@ -76,5 +85,11 @@ export default {
     max-width: 100%;
     margin: 10px auto;
     display: block;
+}
+
+h3 {
+    text-align: center;
+    font-size: x-large;
+    margin-bottom: 30px;
 }
 </style>

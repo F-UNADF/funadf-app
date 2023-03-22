@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 
+const isAuthenticated = (sessionStorage.getItem('token') !== null);
+
 const routes = [
   {
     path: '/',
-    redirect: '/login',
+    redirect: (isAuthenticated) ? '/user' : '/login',
   },
   {
     path: '/login',
