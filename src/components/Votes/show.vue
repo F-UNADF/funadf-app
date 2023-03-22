@@ -99,6 +99,7 @@ export default {
       motions: 'getMotions',
       results: 'getResults',
       voters: 'getVoters',
+      token: 'getToken',
     }),
 
   },
@@ -156,6 +157,10 @@ export default {
   beforeCreate: function () {
     this.$store.dispatch('getConnectedUser');
     this.$store.dispatch('getCampaign', this.$route.params.campaign_id);
+
+    if (null === token || null === this.user) {
+      this.$router.push({ name: 'Login', replace: true });
+    }
   },
 };
 </script>

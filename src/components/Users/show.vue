@@ -66,12 +66,13 @@ export default {
         ...mapGetters({
             user: 'getUser',
             church: 'getChurch',
+            token: 'getToken',
         }),
     },
     beforeCreate: function () {
         this.$store.dispatch('getConnectedUser');
 
-        if (null === sessionStorage.getItem('token') || null === this.user) {
+        if (null === token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });
         }
     },

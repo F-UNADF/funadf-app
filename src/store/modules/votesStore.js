@@ -28,7 +28,7 @@ const getters = {
 // actions
 const actions = {
   items: function ({ commit }) {
-    let token = sessionStorage.getItem('token');
+    let token = localStorage.getItem('token');
     let params = new URLSearchParams([['token', token]]);
 
     return new Promise((resolve, reject) => {
@@ -41,7 +41,7 @@ const actions = {
     });
   },
   getCampaign: function ({ commit }, id) {
-    let token = sessionStorage.getItem('token');
+    let token = localStorage.getItem('token');
     let params = new URLSearchParams([['token', token]]);
 
     return new Promise((resolve, reject) => {
@@ -57,7 +57,7 @@ const actions = {
     });
   },
   vote: function ({ commit }, payload) {
-    let token = sessionStorage.getItem('token');
+    let token = localStorage.getItem('token');
     let params = new URLSearchParams([['token', token]]);
 
     console.log(payload);

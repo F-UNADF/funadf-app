@@ -37,6 +37,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             axios(config).then((res) => {
                 commit('setToken', res.data.token);
+                localStorage.setItem('token', res.data.token);
                 commit('setLoggedIn', true);
                 resolve(res);
             }).catch((error) => {
@@ -48,10 +49,16 @@ const actions = {
     logout({ commit }) {
         commit('setToken', null);
         commit('setLoggedIn', false);
+        localStorage.removeItem('token');
     },
     getConnectedUser({ commit }) {
-        let token = sessionStorage.getItem('token');
+        let token = localStorage.getItem('token');
         commit('setToken', token);
+
+        if (!token) {
+            commit('setLoggedIn', false);
+            return;
+        }
 
         var config = {
             method: 'get',
@@ -65,7 +72,7 @@ const actions = {
                 commit('setLoggedIn', true);
                 resolve(res);
             }).catch((error) => {
-                sessionStorage.removeItem('token');
+                localStorage.removeItem('token');
                 commit('setLoggedIn', false);
                 reject(error, 2000);
             });
