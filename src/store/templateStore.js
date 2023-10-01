@@ -42,7 +42,7 @@ const actions = {
     });
   },
   getConnectedUser({ commit }) {
-    let token = sessionStorage.getItem('token');
+    let token = localStorage.getItem('token');
     commit('setToken', token);
 
     var config = {
@@ -56,7 +56,7 @@ const actions = {
         commit('setLoggedIn', true);
         resolve(res);
       }).catch((error) => {
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('token');
         commit('setLoggedIn', false);
         reject(error, 2000);
       });

@@ -48,6 +48,15 @@
                 <ion-input v-model="result.vote" placeholder="Reponse libre"></ion-input>
               </ion-item>
             </div>
+
+            <ion-list v-if="getMotionKind(result.motion_id) === 'choices'">
+              <ion-radio-group v-model="result.vote">
+                <ion-item v-for="choice in result.choices.split(',')" v-bind:key="choice" :value="choice">
+                  <ion-label>{{ choice }}</ion-label>
+                  <ion-radio :value="choice"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
           </div>
         </form>
 
@@ -156,11 +165,14 @@ export default {
   },
   beforeCreate: function () {
     this.$store.dispatch('getConnectedUser');
-    this.$store.dispatch('getCampaign', this.$route.params.campaign_id);
 
-    if (null === token || null === this.user) {
-      this.$router.push({ name: 'Login', replace: true });
+    console.log(this.user);
+
+    if (this.user === null) {
+      this.$router.push({ name: 'Login' });
     }
+
+    this.$store.dispatch('getCampaign', this.$route.params.campaign_id);
   },
 };
 </script>

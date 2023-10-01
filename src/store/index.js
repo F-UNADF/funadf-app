@@ -9,6 +9,7 @@ const store = createStore({
         sessionStore,
         votesStore,
     },
+    namespaced: true,
     strict: debug,
 });
 
