@@ -1,9 +1,6 @@
 import axios from "axios";
 
 let base_url = 'https://add-fnadf.fr';
-if (process.env.NODE_ENV === 'development') {
-  base_url = 'http://myloc.me:3000';
-}
 
 // initial state
 const state = () => ({
@@ -29,6 +26,7 @@ const getters = {
 const actions = {
   items: function ({ commit }) {
     let token = localStorage.getItem('token');
+    console.log(token);
     let params = new URLSearchParams([['token', token]]);
 
     return new Promise((resolve, reject) => {
@@ -60,8 +58,6 @@ const actions = {
     let token = localStorage.getItem('token');
     let params = new URLSearchParams([['token', token]]);
 
-    console.log(payload);
-
     return new Promise((resolve, reject) => {
       axios.post(base_url + '/v1/votes', payload, { params }).then((res) => {
         resolve(res);
@@ -85,6 +81,7 @@ const mutations = {
     state.motions.forEach(element => {
       state.results.push({
         motion_id: element.id,
+        choices: element.choices,
         vote: null,
       });
     });

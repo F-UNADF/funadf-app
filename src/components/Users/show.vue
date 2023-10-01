@@ -2,7 +2,7 @@
     <ion-card color="primary">
         <ion-card-header>
             <div class="avatar">
-                <img :src=user.avatar alt="Avatar User">
+                <img :src=getAvatar alt="Avatar User">
             </div>
             <ion-card-title>{{ user.fullname }}</ion-card-title>
             <ion-chip>
@@ -13,22 +13,20 @@
                 <ion-label>{{ user.level }}</ion-label>
             </ion-chip>
         </ion-card-header>
-        <ion-card-content>
-            <ion-list lines="full">
-                <ion-item color="primary" v-if="!!user.email">
-                    <i class="material-icons mr-3">mail</i>
-                    <a href="mailto: {{ user.email }}" color="light">{{ user.email }}</a>
-                </ion-item>
-                <ion-item color="primary" v-if="!!user.phone">
-                    <i class="material-icons mr-3">phone</i>
-                    <a href="tel: {{ user.phone }}">{{ user.phone }}</a>
-                </ion-item>
-                <ion-item color="primary" v-if="!!user.town">
-                    <i class="material-icons mr-3">location_on</i>
-                    {{ user.town }}
-                </ion-item>
-            </ion-list>
-        </ion-card-content>
+        <ion-list lines="full">
+            <ion-item color="primary" v-if="!!user.email">
+                <i class="material-icons mr-3">mail</i>
+                <a href="mailto: {{ user.email }}" color="light">{{ user.email }}</a>
+            </ion-item>
+            <ion-item color="primary" v-if="!!user.phone">
+                <i class="material-icons mr-3">phone</i>
+                <a href="tel: {{ user.phone }}">{{ user.phone }}</a>
+            </ion-item>
+            <ion-item color="primary" v-if="!!user.town">
+                <i class="material-icons mr-3">location_on</i>
+                {{ user.town }}
+            </ion-item>
+        </ion-list>
     </ion-card>
 
     <ion-card color="secondary" v-if="!!church">
@@ -36,43 +34,48 @@
         <ion-card-header>
             <ion-card-title>{{ church.name }}</ion-card-title>
         </ion-card-header>
-        <ion-card-content>
-            <ion-list lines="full">
-                <ion-item color="secondary">
-                    <i class="material-icons mr-3">location_on</i>
-                    {{ church.zipcode }} {{ church.town }}
-                </ion-item>
-                <ion-item v-if="(church.email)">
-                    <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated"><a
-                            href="mailto: {{ church.email }}">{{ church.email }}</a></ion-label>
-                </ion-item>
-                <ion-item v-if="(church.phone)">
-                    <ion-label><a href="tel: {{ church.phone }}">{{ church.phone }}</a></ion-label>
-                </ion-item>
-            </ion-list>
-        </ion-card-content>
+        <ion-list lines="full">
+            <ion-item color="secondary">
+                <i class="material-icons mr-3">location_on</i>
+                {{ church.zipcode }} {{ church.town }}
+            </ion-item>
+            <ion-item v-if="(church.email)">
+                <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated"><a
+                        href="mailto: {{ church.email }}">{{ church.email }}</a></ion-label>
+            </ion-item>
+            <ion-item v-if="(church.phone)">
+                <ion-label><a href="tel: {{ church.phone }}">{{ church.phone }}</a></ion-label>
+            </ion-item>
+        </ion-list>
     </ion-card>
 </template>
 
 <script>
 
 import { mapGetters } from "vuex";
-import { IonCard, IonCardTitle, IonList, IonCardContent, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
+import { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
-    components: { IonCard, IonCardTitle, IonList, IonCardContent, IonChip, IonCardHeader, IonLabel, IonItem },
+    components: { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem },
     computed: {
         ...mapGetters({
             user: 'getUser',
             church: 'getChurch',
             token: 'getToken',
         }),
+        getAvatar() {
+            let base_url = 'https://add-fnadf.fr';
+            if (process.env.NODE_ENV === 'development') {
+                base_url = 'http://myloc.me:3000';
+            }
+            return base_url + '/avatars/' + this.user.id + '.png';
+        },
     },
     beforeCreate: function () {
         this.$store.dispatch('getConnectedUser');
 
-        if (null === token || null === this.user) {
+        if (null === this.token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });
         }
     },

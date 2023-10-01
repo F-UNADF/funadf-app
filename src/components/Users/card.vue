@@ -18,7 +18,7 @@
 
         </ion-card-content>
         <ion-card-header style="text-align: center;">
-            <img :src=user.avatar alt="Avatar User"
+            <img :src=getAvatar alt="Avatar User"
                 style="max-width: 100px; border-radius: 50%; margin: 10px auto; display: block;">
             <ion-card-title>{{ user.fullname }}</ion-card-title>
             <hr />
@@ -48,6 +48,13 @@ export default {
             fees: 'getFees',
             token: 'getToken',
         }),
+        getAvatar() {
+            let base_url = 'https://add-fnadf.fr';
+            if (process.env.NODE_ENV === 'development') {
+                base_url = 'http://myloc.me:3000';
+            }
+            return base_url + '/avatars/' + this.user.id + '.png';
+        },
     },
     methods: {
         hasFeeForYear(year) {
@@ -63,8 +70,8 @@ export default {
     beforeCreate: function () {
         this.$store.dispatch('getConnectedUser');
 
-        if (null === token || null === this.user) {
-            this.$router.push({ name: 'Login', replace: true });
+        if (this.user === null) {
+            this.$router.push({ name: 'Login' });
         }
     },
     data() {

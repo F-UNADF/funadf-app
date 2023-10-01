@@ -55,7 +55,7 @@ export default {
         login: function () {
             this.$store.dispatch('login', this.credential).then(() => {
                 if (null !== this.token) {
-                    sessionStorage.setItem('token', this.token);
+                    localStorage.setItem('token', this.token);
                     this.$root.presentToast('Vous êtes connecté !');
                     this.$router.push({ name: 'UserShow', replace: true });
                 }
