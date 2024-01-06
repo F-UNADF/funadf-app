@@ -1,48 +1,32 @@
 <template>
-    <ion-card>
-        <ion-card-header>
-            <ion-toolbar>
-                <ion-title>Connexion</ion-title>
-            </ion-toolbar>
-        </ion-card-header>
-        <ion-card-content>
+    <v-card class="mx-3 pa-5 pb-8 mt-3">
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">Email</div>
+        <v-text-field placeholder="Email" prepend-inner-icon="mdi-email-outline" v-model="credential.email"></v-text-field>
 
-            <ion-item>
-                <ion-label position="stacked" color="primary">Email</ion-label>
-                <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false" autocapitalize="off"
-                    required autocomplete="email"></ion-input>
-            </ion-item>
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+            Mot de passe
+            <a class="text-caption text-decoration-none text-blue" href="#" rel="noopener noreferrer" target="_blank">
+                J'ai oublié mont mot de passe ?</a>
+        </div>
 
-            <ion-item>
-                <ion-label position="stacked" color="primary">Mot de passe</ion-label>
-                <ion-input v-model="credential['password']" name="password" :type="showPassword ? 'text' : 'password'"
-                    required :show-password="showPassword" autocomplete="current-password">
-                </ion-input>
-                <i class="material-icons visibilityIcon" @click="togglePassword()">
-                    {{ showPassword ? 'visibility_off' :
-                        'visibility' }}
-                </i>
-            </ion-item>
+        <v-text-field :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            :type="showPassword ? 'text' : 'password'" placeholder="Votre mot de passe"
+            prepend-inner-icon="mdi-lock-outline" @click:append-inner="showPassword = !showPassword"
+            v-model="credential.password"></v-text-field>
 
-            <ion-item-divider></ion-item-divider>
-
-            <ion-row responsive-sm>
-                <ion-col>
-                    <ion-button expand="block" @click="login()">Connexion</ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-card-content>
-    </ion-card>
+        <v-btn block class="mb-8" color="primary" size="large" @click="login">
+            Connexion
+        </v-btn>
+    </v-card>
 </template>
 
 <script>
 
 import { mapGetters } from "vuex";
-import { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
 
 export default {
     name: "loginComponent",
-    components: { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
+    components: {},
     computed: {
         ...mapGetters({
             user: 'getUser',
@@ -69,11 +53,10 @@ export default {
         },
     },
     data: function () {
-        var credential = {
+        let credential = {
             email: '',
             password: '',
         };
-
         return {
             credential: credential,
             showPassword: false,
@@ -87,12 +70,3 @@ export default {
     },
 };
 </script>
-
-<style>
-.visibilityIcon {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-
-}
-</style>

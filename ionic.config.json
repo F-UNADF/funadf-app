@@ -1,7 +1,0 @@
-{
-  "name": "add-fnadf",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "vue"
-}

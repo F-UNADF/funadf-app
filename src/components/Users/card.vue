@@ -36,12 +36,11 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonCard } from '@ionic/vue';
 import QrcodeVue from 'qrcode.vue'
 
 export default {
     name: "UserCardComponent",
-    components: { IonCard, QrcodeVue },
+    components: { QrcodeVue },
     computed: {
         ...mapGetters({
             user: 'getUser',

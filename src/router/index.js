@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { createRouter, createWebHistory } from 'vue-router'
 
 const isAuthenticated = (sessionStorage.getItem('token') !== null);
 

@@ -95,12 +95,11 @@
 
 <script>
 
-import { IonInput, IonItem, IonLabel, IonRadioGroup, IonRadio, IonCheckbox } from '@ionic/vue';
 import { mapGetters } from "vuex";
 
 export default {
   name: "VoteShow",
-  components: { IonInput, IonItem, IonLabel, IonRadioGroup, IonRadio, IonCheckbox },
+  components: {},
   computed: {
     ...mapGetters({
       campaign: 'getCampaign',

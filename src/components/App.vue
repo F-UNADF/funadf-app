@@ -1,59 +1,27 @@
 <template>
-    <ion-app>
-        <ion-header>
-            <ion-toolbar color="primary">
-                <ion-title class="title">
-                    <div class="logo">
-                        <img class="add-logo" src="/assets/logo-add.png" alt="Logo UNADF">
-                        <span>UNADF</span>
-                        <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF">
-                    </div>
-                </ion-title>
-                <ion-buttons slot="end">
-                    <ion-button v-if="this.loggedIn" @click="logout()">
-                        <i class="material-icons">cancel</i>
-                    </ion-button>
-                </ion-buttons>
-                <ion-buttons slot="start">
-                    <ion-button v-if="hasHistory" @click="goBack()">
-                        <i class="material-icons">arrow_back</i>
-                    </ion-button>
-                </ion-buttons>
-            </ion-toolbar>
-        </ion-header>
+    <v-app>
+        <TopBar :user="this.user" />
 
-        <ion-content>
+        <v-main class="bg-blue-lighten-5">
             <router-view></router-view>
-        </ion-content>
+        </v-main>
 
-        <!-- Tab bar -->
-        <ion-tab-bar color="primary" v-if="this.loggedIn">
-            <ion-tab-button ref="profil" tab="profil" href="/user">
-                <i class="material-icons">face</i>
-                <ion-label>Profil</ion-label>
-            </ion-tab-button>
+        <BottomBar />
 
-            <ion-tab-button tab="contact" ref="contact" href="/carte">
-                <i class="material-icons">account_box</i>
-                <ion-label>Carte</ion-label>
-            </ion-tab-button>
-
-            <ion-tab-button tab="votes" ref="votes" href="/votes">
-                <i class="material-icons">thumb_up</i>
-                <ion-label>Votes</ion-label>
-            </ion-tab-button>
-        </ion-tab-bar>
-    </ion-app>
+        <SnackBar :text="snackbar.text" :color="snackbar.color" :show="snackbar.show" />
+    </v-app>
 </template>
 
 <script>
 
-import { IonContent, IonTabBar, IonButtons, IonButton, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, toastController, IonLabel } from '@ionic/vue';
 import { mapGetters } from "vuex";
+import TopBar from "./Layouts/TopBar.vue";
+import BottomBar from "./Layouts/BottomBar.vue";
+import SnackBar from "./Tools/SnackBar.vue";
 
 export default ({
     name: 'App',
-    components: { IonContent, IonTabBar, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonLabel },
+    components: { TopBar, BottomBar, SnackBar },
     computed: {
         ...mapGetters({
             user: 'getUser',
@@ -67,20 +35,9 @@ export default ({
 
     methods: {
         async presentToast(message, color = 'success') {
-            const toast = await toastController.create({
-                message: message,
-                duration: 3000,
-                cssClass: 'custom-toast',
-                color: color,
-                buttons: [
-                    {
-                        text: 'x',
-                        role: 'cancel'
-                    }
-                ],
-            });
-
-            await toast.present();
+            this.snackbar.text = message;
+            this.snackbar.color = color;
+            this.snackbar.show = true;
         },
         logout() {
             this.$store.dispatch('logout');
@@ -94,8 +51,11 @@ export default ({
 
     data: function () {
         return {
-            messageToast: "Test Message",
-            showToast: false,
+            snackbar: {
+                text: '',
+                color: '',
+                show: false,
+            }
         }
     },
 });

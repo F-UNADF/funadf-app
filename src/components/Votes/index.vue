@@ -34,11 +34,10 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonContent, IonRefresher, IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent } from '@ionic/vue';
 
 export default {
     name: "VotesIndex",
-    components: { IonContent, IonRefresher, IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent },
+    components: {},
     computed: {
         ...mapGetters({
             items: 'getItems',
