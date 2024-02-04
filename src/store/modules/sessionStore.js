@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let base_url = 'https://add-fnadf.fr';
+let base_url = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_URL : 'http://myloc.me:3000';
 
 // initial state
 const state = () => ({
@@ -23,16 +23,15 @@ const getters = {
 // actions
 const actions = {
     login({ commit }, credential) {
-        var data = new FormData();
-        data.append('user[email]', credential.email);
-        data.append('user[password]', credential.password);
-        var config = {
-            method: 'post',
-            url: base_url + '/v1/users/sign_in',
-            data: data,
-        }
+        console.log(base_url);
+
+        let url = base_url + '/users/sign_in';
+        let user = {
+            email: credential.email,
+            password: credential.password
+        };
         return new Promise((resolve, reject) => {
-            axios(config).then((res) => {
+            axios.post(url, user).then((res) => {
                 commit('setToken', res.data.token);
                 localStorage.setItem('token', res.data.token);
                 commit('setLoggedIn', true);

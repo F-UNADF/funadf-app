@@ -2,9 +2,9 @@
     <ion-card color="primary">
         <ion-card-header>
             <div class="avatar">
-                <img :src=getAvatar alt="Avatar User">
+                <ion-img :src=getAvatar alt="Avatar {{ user.lastname }} {{ user.firstname }}"></ion-img>
             </div>
-            <ion-card-title>{{ user.fullname }}</ion-card-title>
+            <ion-card-title>{{ user.lastname }} {{ user.firstname }}</ion-card-title>
             <ion-chip>
                 <i class="material-icons mr-3">account_box</i>
                 <ion-label>{{ user.id }}</ion-label>
@@ -52,19 +52,18 @@
 
 <script>
 
-import { mapGetters } from "vuex";
 import { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
     components: { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem },
+    props: {
+        user: Object,
+        church: Object,
+    },
     computed: {
-        ...mapGetters({
-            user: 'getUser',
-            church: 'getChurch',
-            token: 'getToken',
-        }),
         getAvatar() {
+            console.log(this.user);
             let base_url = 'https://add-fnadf.fr';
             if (process.env.NODE_ENV === 'development') {
                 base_url = 'http://myloc.me:3000';
@@ -72,18 +71,19 @@ export default {
             return base_url + '/avatars/' + this.user.id + '.png';
         },
     },
-    beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
-
-        if (null === this.token || null === this.user) {
-            this.$router.push({ name: 'Login', replace: true });
-        }
-    },
 };
 </script>
 
 <style scoped>
-.avatar img {
+.avatar {
+    text-align: center;
+    min-height: 25vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar ion-img {
     display: block;
     width: 75%;
     margin: 0 auto 30px;

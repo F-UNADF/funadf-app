@@ -18,14 +18,15 @@
 
         <ion-card v-for="item in items" :key="item.id">
             <ion-card-header>
-                <ion-card-title>{{ item.campaign_name }}</ion-card-title>
-                <ion-card-subtitle>{{ item.structure_name }}</ion-card-subtitle>
+                <ion-card-title>{{ item.name }}</ion-card-title>
+                <ion-card-subtitle>{{ item.structure.name }}</ion-card-subtitle>
             </ion-card-header>
 
             <ion-card-content>
-                <ion-button v-if="item.campaign_state === 'opened'" expand="block" @click="goVote(item)">Voter
-                    !</ion-button>
-                <ion-button v-else expand="block" disabled>Vote indisponible</ion-button>
+                <ion-button v-if="item.campaign_state === 'opened'" expand="block" @click="goVote(item)">
+                    Voter !
+                </ion-button>
+                <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
             </ion-card-content>
         </ion-card>
     </ion-content>
@@ -55,6 +56,7 @@ export default {
         doRefresh: function (event) {
             this.$store.dispatch('items');
             event.detail.complete();
+            console.log(this.items);
         },
     },
     beforeCreate: function () {
