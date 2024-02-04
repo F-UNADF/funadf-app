@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let base_url = 'https://add-fnadf.fr';
+let base_url = process.env.NODE_ENV === 'production' ? 'https://add-fnadf.fr' : 'http://myloc.me:3000';
 
 // initial state
 const state = () => ({
@@ -26,7 +26,6 @@ const getters = {
 const actions = {
   items: function ({ commit }) {
     let token = localStorage.getItem('token');
-    console.log(token);
     let params = new URLSearchParams([['token', token]]);
 
     return new Promise((resolve, reject) => {

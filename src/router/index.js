@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/user',
     name: 'UserShow',
-    component: () => import("../components/Users/show"),
+    component: () => import("@/pages/home"),
   },
   {
     path: '/votes',
@@ -32,6 +32,16 @@ const routes = [
     path: '/carte',
     name: 'UserCard',
     component: () => import("../components/Users/card"),
+  },
+  {
+    path: '/annuaire',
+    name: 'SearchIndex',
+    component: () => import("../components/Search/index"),
+  },
+  {
+    path: '/result/:type/:id',
+    name: 'searchShow',
+    component: () => import("../components/Search/show"),
   }
 ]
 

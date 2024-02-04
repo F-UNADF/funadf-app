@@ -1,5 +1,34 @@
 <template>
     <ion-app>
+        <ion-menu v-if="userIsLoggedIn" type="push" side="end" ref="side-menu" content-id="main-content">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title>Menu</ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content>
+                <ion-list>
+                    <ion-menu-toggle>
+                        <ion-item @click="routeTo('annuaire')">
+                            <ion-icon slot="start" :icon="search"></ion-icon>
+                            <ion-label>Annuaire</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                </ion-list>
+            </ion-content>
+            <ion-footer>
+                <ion-note color="medium" class="ion-padding-vertical ion-padding-horizontal">
+                    Version : {{ app_version }}
+                </ion-note>
+                <ion-list>
+                    <ion-item color="danger" @click="logout()">
+                        <ion-icon slot="start" :icon="logInOutline"></ion-icon>
+                        <ion-label>Déconnexion</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-footer>
+        </ion-menu>
+
         <ion-header>
             <ion-toolbar color="primary">
                 <ion-title class="title">
@@ -9,20 +38,21 @@
                         <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF">
                     </div>
                 </ion-title>
-                <ion-buttons slot="end">
-                    <ion-button v-if="this.loggedIn" @click="logout()">
-                        <i class="material-icons">cancel</i>
-                    </ion-button>
-                </ion-buttons>
+
                 <ion-buttons slot="start">
                     <ion-button v-if="hasHistory" @click="goBack()">
                         <i class="material-icons">arrow_back</i>
                     </ion-button>
                 </ion-buttons>
+
+
+                <ion-buttons slot="end">
+                    <ion-menu-button></ion-menu-button>
+                </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content>
+        <ion-content id="main-content">
             <router-view></router-view>
         </ion-content>
 
@@ -48,12 +78,16 @@
 
 <script>
 
-import { IonContent, IonTabBar, IonButtons, IonButton, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, toastController, IonLabel } from '@ionic/vue';
+import { IonIcon, IonContent, IonTabBar, IonButtons, IonButton, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, toastController, IonLabel } from '@ionic/vue';
 import { mapGetters } from "vuex";
+import { logInOutline, search } from 'ionicons/icons';
 
 export default ({
     name: 'App',
-    components: { IonContent, IonTabBar, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonLabel },
+    components: { IonIcon, IonContent, IonTabBar, IonTabButton, IonApp, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonLabel },
+    setup() {
+        return { logInOutline, search };
+    },
     computed: {
         ...mapGetters({
             user: 'getUser',
@@ -90,12 +124,24 @@ export default ({
         goBack() {
             this.$router.go(-1);
         },
+        onSwipe(event) {
+            console.log(event);
+            // Check if the swipe is from the left
+            if (event.detail.direction === 'x' && event.detail.startX <= 50) {
+                this.goBack();
+            }
+        },
+        routeTo(route) {
+            this.$router.push(route);
+            this.menu.close();
+        }
     },
 
     data: function () {
         return {
             messageToast: "Test Message",
             showToast: false,
+            app_version: '0.0.0',
         }
     },
 });
