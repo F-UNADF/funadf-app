@@ -13,14 +13,14 @@ export default {
     name: "HomePage",
     components: { UserShow },
     computed: {
-        ...mapGetters({
+        ...mapGetters('sessionStore', {
             user: 'getUser',
             church: 'getChurch',
             token: 'getToken',
         }),
     },
     beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
+        this.$store.dispatch('sessionStore/getConnectedUser');
 
         if (null === this.token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });

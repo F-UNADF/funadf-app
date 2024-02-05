@@ -43,7 +43,7 @@ export default {
     name: "UserCardComponent",
     components: { IonCard, QrcodeVue },
     computed: {
-        ...mapGetters({
+        ...mapGetters('sessionStore', {
             user: 'getUser',
             fees: 'getFees',
             token: 'getToken',
@@ -53,7 +53,7 @@ export default {
             if (process.env.NODE_ENV === 'development') {
                 base_url = 'http://myloc.me:3000';
             }
-            return base_url + '/avatars/' + this.user.id + '.png';
+            return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
         },
     },
     methods: {
@@ -68,7 +68,7 @@ export default {
         },
     },
     beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
+        this.$store.dispatch('sessionStore/getConnectedUser');
 
         if (this.user === null) {
             this.$router.push({ name: 'Login' });

@@ -1,6 +1,9 @@
 import axios from "axios";
 
-let base_url = process.env.NODE_ENV === 'production' ? 'https://add-fnadf.fr' : 'http://myloc.me:3000';
+let base_url =
+  process.env.NODE_ENV === "production"
+    ? "https://add-fnadf.fr"
+    : "http://myloc.me:3000";
 
 // initial state
 const state = () => ({
@@ -25,59 +28,68 @@ const getters = {
 // actions
 const actions = {
   items: function ({ commit }) {
-    let token = localStorage.getItem('token');
-    let params = new URLSearchParams([['token', token]]);
+    let token = localStorage.getItem("token");
+    let params = new URLSearchParams([["token", token]]);
 
     return new Promise((resolve, reject) => {
-      axios.get(base_url + '/v1/votes', { params }).then((res) => {
-        commit('setItems', res.data.campaigns);
-        resolve(res);
-      }).catch((error) => {
-        reject(error, 2000);
-      });
+      axios
+        .get(base_url + "/v1/votes", { params })
+        .then((res) => {
+          commit("setItems", res.data.campaigns);
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error, 2000);
+        });
     });
   },
   getCampaign: function ({ commit }, id) {
-    let token = localStorage.getItem('token');
-    let params = new URLSearchParams([['token', token]]);
+    let token = localStorage.getItem("token");
+    let params = new URLSearchParams([["token", token]]);
 
     return new Promise((resolve, reject) => {
-      axios.get(base_url + '/v1/votes/' + id, { params }).then((res) => {
-        commit('setCampaign', res.data.campaign);
-        commit('setMotions', res.data.motions);
-        commit('setVoters', res.data.voters);
-        commit('setResults');
-        resolve(res);
-      }).catch((error) => {
-        reject(error, 2000);
-      });
+      axios
+        .get(base_url + "/v1/votes/" + id, { params })
+        .then((res) => {
+          commit("setCampaign", res.data.campaign);
+          commit("setMotions", res.data.motions);
+          commit("setVoters", res.data.voters);
+          commit("setResults");
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error, 2000);
+        });
     });
   },
   vote: function ({ commit }, payload) {
-    let token = localStorage.getItem('token');
-    let params = new URLSearchParams([['token', token]]);
+    let token = localStorage.getItem("token");
+    let params = new URLSearchParams([["token", token]]);
 
     return new Promise((resolve, reject) => {
-      axios.post(base_url + '/v1/votes', payload, { params }).then((res) => {
-        resolve(res);
-        console.log(commit);
-      }).catch((error) => {
-        reject(error, 2000);
-      });
+      axios
+        .post(base_url + "/v1/votes", payload, { params })
+        .then((res) => {
+          resolve(res);
+          console.log(commit);
+        })
+        .catch((error) => {
+          reject(error, 2000);
+        });
     });
-  }
+  },
 };
 
 // mutations
 const mutations = {
-  setItems: (state, payload) => state.items = payload,
-  setItem: (state, payload) => state.item = payload,
-  setCampaign: (state, payload) => state.campaign = payload,
-  setMotions: (state, payload) => state.motions = payload,
-  setVoters: (state, payload) => state.voters = payload,
+  setItems: (state, payload) => (state.items = payload),
+  setItem: (state, payload) => (state.item = payload),
+  setCampaign: (state, payload) => (state.campaign = payload),
+  setMotions: (state, payload) => (state.motions = payload),
+  setVoters: (state, payload) => (state.voters = payload),
   setResults: (state) => {
     state.results = [];
-    state.motions.forEach(element => {
+    state.motions.forEach((element) => {
       state.results.push({
         motion_id: element.id,
         choices: element.choices,
@@ -88,9 +100,9 @@ const mutations = {
 };
 
 export default {
-  namespace: true,
+  namespaced: true,
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

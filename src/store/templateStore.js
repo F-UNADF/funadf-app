@@ -1,7 +1,9 @@
 import axios from "axios";
 
-// const base_url = 'https://add-fnadf.fr';
-const base_url = 'http://myloc.me:3000';
+let base_url =
+  process.env.NODE_ENV === "production"
+    ? "https://add-fnadf.fr"
+    : "http://myloc.me:3000";
 
 // initial state
 const state = () => ({
@@ -23,46 +25,49 @@ const getters = {
 const actions = {
   login({ commit }, credential) {
     var data = new FormData();
-    data.append('user[email]', credential.email);
-    data.append('user[password]', credential.password);
+    data.append("user[email]", credential.email);
+    data.append("user[password]", credential.password);
     var config = {
-      method: 'post',
-      url: base_url + '/v1/users/sign_in',
+      method: "post",
+      url: base_url + "/v1/users/sign_in",
       data: data,
-    }
+    };
     return new Promise((resolve, reject) => {
-      axios(config).then((res) => {
-        commit('setToken', res.data.token);
-        commit('setLoggedIn', true);
-        resolve(res);
-      }).catch((error) => {
-        commit('setLoggedIn', false);
-        reject(error, 2000);
-      });
+      axios(config)
+        .then((res) => {
+          commit("setToken", res.data.token);
+          commit("setLoggedIn", true);
+          resolve(res);
+        })
+        .catch((error) => {
+          commit("setLoggedIn", false);
+          reject(error, 2000);
+        });
     });
   },
   getConnectedUser({ commit }) {
-    let token = localStorage.getItem('token');
-    commit('setToken', token);
+    let token = localStorage.getItem("token");
+    commit("setToken", token);
 
     var config = {
-      method: 'get',
-      url: base_url + '/v1/users/' + token,
+      method: "get",
+      url: base_url + "/v1/users/" + token,
     };
     return new Promise((resolve, reject) => {
-      axios(config).then((res) => {
-        commit('setUser', res.data.user);
-        commit('setChurch', res.data.church);
-        commit('setLoggedIn', true);
-        resolve(res);
-      }).catch((error) => {
-        localStorage.removeItem('token');
-        commit('setLoggedIn', false);
-        reject(error, 2000);
-      });
+      axios(config)
+        .then((res) => {
+          commit("setUser", res.data.user);
+          commit("setChurch", res.data.church);
+          commit("setLoggedIn", true);
+          resolve(res);
+        })
+        .catch((error) => {
+          localStorage.removeItem("token");
+          commit("setLoggedIn", false);
+          reject(error, 2000);
+        });
     });
-  }
-
+  },
 };
 
 // mutations
@@ -78,13 +83,13 @@ const mutations = {
   },
   setLoggedIn(state, payload) {
     state.loggedIn = payload;
-  }
+  },
 };
 
 export default {
-  namespace: true,
+  namespaced: true,
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

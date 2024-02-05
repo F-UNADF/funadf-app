@@ -164,9 +164,7 @@ export default {
     };
   },
   beforeCreate: function () {
-    this.$store.dispatch('getConnectedUser');
-
-    console.log(this.user);
+    this.$store.dispatch('sessionStore/getConnectedUser');
 
     if (this.user === null) {
       this.$router.push({ name: 'Login' });

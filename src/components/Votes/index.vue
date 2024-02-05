@@ -1,7 +1,7 @@
 <template>
     <ion-content>
         <ion-refresher slot="fixed" @ionRefresh="doRefresh">
-            <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirer pour actualiser" refreshingSpinner="crescent"
+            <ion-refresher-content pullingText="Tirer pour actualiser" refreshingSpinner="crescent"
                 refreshingText="Actualisation...">
             </ion-refresher-content>
         </ion-refresher>
@@ -41,7 +41,7 @@ export default {
     name: "VotesIndex",
     components: { IonContent, IonRefresher, IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent },
     computed: {
-        ...mapGetters({
+        ...mapGetters('votesStore', {
             items: 'getItems',
             token: 'getToken',
             user: 'getUser',
@@ -49,19 +49,18 @@ export default {
     },
     methods: {
         goVote: function (item) {
-            this.$store.commit('setItem', item);
-            this.$store.dispatch('getCampaign', item.campaign_id);
+            this.$store.commit('votesStore/setItem', item);
+            this.$store.dispatch('votesStore/getCampaign', item.campaign_id);
             this.$router.push({ name: 'VoteShow', params: { campaign_id: item.campaign_id } });
         },
         doRefresh: function (event) {
-            this.$store.dispatch('items');
+            this.$store.dispatch('votesStore/items');
             event.detail.complete();
-            console.log(this.items);
         },
     },
     beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
-        this.$store.dispatch('items');
+        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('votesStore/items');
 
 
         if (null === this.token || null === this.user) {
