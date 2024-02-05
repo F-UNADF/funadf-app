@@ -1,17 +1,19 @@
 <template>
+    <ion-refresher slot="fixed" @ionRefresh="searchItems($event)">
+        <ion-refresher-content pullingText="Tirer pour actualiser" refreshingSpinner="crescent"
+            refreshingText="Actualisation...">
+        </ion-refresher-content>
+    </ion-refresher>
+    <ion-header>
+        <ion-toolbar>
+            <ion-title>Annuaire</ion-title>
+        </ion-toolbar>
+        <ion-toolbar>
+            <ion-searchbar animated="true" placeholder="Ville, Nom, Code postal" :value="search"
+                @input="search = $event.target.value"></ion-searchbar>
+        </ion-toolbar>
+    </ion-header>
     <ion-content>
-        <ion-refresher slot="fixed" @ionRefresh="searchItems">
-            <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirer pour actualiser" refreshingSpinner="crescent"
-                refreshingText="Actualisation...">
-            </ion-refresher-content>
-        </ion-refresher>
-
-        <ion-card>
-            <ion-item fill="outline">
-                <ion-input type="search" placeholder="Ville, Nom, Code postal" :value="search"
-                    @input="search = $event.target.value"></ion-input>
-            </ion-item>
-        </ion-card>
 
         <ion-list class="profile-card">
             <ion-item v-for="result in results" :key="result.id"
@@ -31,12 +33,12 @@
 
 <script>
 
-import { IonContent, IonRefresher, IonRefresherContent, IonInput } from '@ionic/vue';
+import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/vue';
 import axios from 'axios';
 
 export default {
     name: "VotesIndex",
-    components: { IonContent, IonRefresher, IonRefresherContent, IonInput },
+    components: { IonContent, IonRefresher, IonRefresherContent },
     data() {
         return {
             search: '',
@@ -44,8 +46,13 @@ export default {
         };
     },
     methods: {
-        searchItems() {
-
+        searchItems(event) {
+            // refresh if search length is less than 3
+            if (this.search.length < 3) {
+                this.results = [];
+                event.target.complete();
+                return true;
+            }
             let base_url = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_URL : 'http://myloc.me:3000';
             // Make the HTTP request to /api/search with the search query as a parameter
             axios.get(base_url + '/api/search', {
@@ -54,7 +61,7 @@ export default {
                 },
             }).then((res) => {
                 this.results = res.data;
-
+                event.target.complete();
             }).catch((error) => {
                 console.error('Error searching:', error);
             });
@@ -66,7 +73,7 @@ export default {
         }
     },
     beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
+        this.$store.dispatch('sessionStore/getConnectedUser');
 
         if (null === this.token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });

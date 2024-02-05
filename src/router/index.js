@@ -10,11 +10,21 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import("../components/LoginForm"),
+    component: () => import("@/components/LoginForm"),
     props: true
   },
   {
     path: '/user',
+    name: 'Home',
+    component: () => import("@/pages/home"),
+  },
+  {
+    path: '/user/edit',
+    name: 'UserEdit',
+    component: () => import("@/components/Users/edit"),
+  },
+  {
+    path: '/user/:id',
     name: 'UserShow',
     component: () => import("@/pages/home"),
   },

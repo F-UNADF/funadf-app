@@ -1,6 +1,6 @@
 <template>
     <ion-content>
-        <user-show :user="searchedUser" v-if="searchedUser"></user-show>
+        <user-show :user="searchedUser" v-if="searchedUser" :canEdit="false"></user-show>
         <church-show :church="searchedChurch" :members="structureMembers" v-if="searchedChurch"></church-show>
         <association-show :association="searchedAssociation" :members="structureMembers"
             v-if="searchedAssociation"></association-show>
@@ -60,7 +60,7 @@ export default {
         '$route': 'getItem'
     },
     beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
+        this.$store.dispatch('sessionStore/getConnectedUser');
 
         if (null === this.token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });

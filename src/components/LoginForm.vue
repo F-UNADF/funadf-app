@@ -80,9 +80,9 @@ export default {
         }
     },
     beforeCreate: function () {
-        this.$store.dispatch('getConnectedUser');
+        this.$store.dispatch('sessionStore/getConnectedUser');
         if (null !== localStorage.getItem('token')) {
-            this.$router.push({ name: 'UserShow', replace: true });
+            this.$router.push('/user');
         }
     },
 };

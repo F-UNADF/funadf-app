@@ -5,13 +5,20 @@
                 <ion-img :src=getAvatar alt="Avatar {{ user.lastname }} {{ user.firstname }}"></ion-img>
             </div>
             <ion-card-title>{{ user.lastname }} {{ user.firstname }}</ion-card-title>
-            <ion-chip>
-                <i class="material-icons mr-3">account_box</i>
-                <ion-label>{{ user.id }}</ion-label>
-            </ion-chip>
-            <ion-chip><i class="material-icons mr-3">bookmark</i>
-                <ion-label>{{ user.level }}</ion-label>
-            </ion-chip>
+            <ion-toolbar color="transparent">
+                <ion-chip>
+                    <i class="material-icons mr-3">account_box</i>
+                    <ion-label>{{ user.id }}</ion-label>
+                </ion-chip>
+                <ion-chip><i class="material-icons mr-3">bookmark</i>
+                    <ion-label>{{ user.level }}</ion-label>
+                </ion-chip>
+                <ion-button v-if="this.canEdit" shape="rounded" size="small" slot="end" fill="outline" color="dark"
+                    @click="this.$router.push('user/edit');">
+                    <i slot="icon-only" class="material-icons">edit</i>
+                </ion-button>
+            </ion-toolbar>
+
         </ion-card-header>
         <ion-list lines="full">
             <ion-item color="primary" v-if="!!user.email">
@@ -60,6 +67,10 @@ export default {
     props: {
         user: Object,
         church: Object,
+        canEdit: {
+            type: Boolean,
+            default: true
+        }
     },
     computed: {
         getAvatar() {
@@ -68,7 +79,7 @@ export default {
             if (process.env.NODE_ENV === 'development') {
                 base_url = 'http://myloc.me:3000';
             }
-            return base_url + '/avatars/' + this.user.id + '.png';
+            return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
         },
     },
 };

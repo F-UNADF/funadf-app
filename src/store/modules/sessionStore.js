@@ -1,105 +1,112 @@
 import axios from "axios";
 
-let base_url = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_URL : 'http://myloc.me:3000';
+let base_url =
+  process.env.NODE_ENV === "production"
+    ? "https://add-fnadf.fr"
+    : "http://myloc.me:3000";
 
 // initial state
 const state = () => ({
-    user: {},
-    church: {},
-    fees: [],
-    token: null,
-    loggedIn: false,
+  user: {},
+  church: {},
+  fees: [],
+  token: null,
+  loggedIn: false,
 });
 
 // getters
 const getters = {
-    getUser: (state) => state.user,
-    getChurch: (state) => state.church,
-    getToken: (state) => state.token,
-    getFees: (state) => state.fees,
-    getLoggedIn: (state) => state.loggedIn,
+  getUser: (state) => state.user,
+  getChurch: (state) => state.church,
+  getToken: (state) => state.token,
+  getFees: (state) => state.fees,
+  getLoggedIn: (state) => state.loggedIn,
 };
 
 // actions
 const actions = {
-    login({ commit }, credential) {
-        console.log(base_url);
+  login({ commit }, credential) {
+    console.log(base_url);
 
-        let url = base_url + '/users/sign_in';
-        let user = {
-            email: credential.email,
-            password: credential.password
-        };
-        return new Promise((resolve, reject) => {
-            axios.post(url, user).then((res) => {
-                commit('setToken', res.data.token);
-                localStorage.setItem('token', res.data.token);
-                commit('setLoggedIn', true);
-                resolve(res);
-            }).catch((error) => {
-                commit('setLoggedIn', false);
-                reject(error, 2000);
-            });
+    let url = base_url + "/users/sign_in";
+    let user = {
+      email: credential.email,
+      password: credential.password,
+    };
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, user)
+        .then((res) => {
+          commit("setToken", res.data.token);
+          localStorage.setItem("token", res.data.token);
+          commit("setLoggedIn", true);
+          resolve(res);
+        })
+        .catch((error) => {
+          commit("setLoggedIn", false);
+          reject(error, 2000);
         });
-    },
-    logout({ commit }) {
-        commit('setToken', null);
-        commit('setLoggedIn', false);
-        localStorage.removeItem('token');
-    },
-    getConnectedUser({ commit }) {
-        let token = localStorage.getItem('token');
-        commit('setToken', token);
+    });
+  },
+  logout({ commit }) {
+    commit("setToken", null);
+    commit("setLoggedIn", false);
+    localStorage.removeItem("token");
+  },
+  getConnectedUser({ commit }) {
+    let token = localStorage.getItem("token");
+    commit("setToken", token);
 
-        if (!token) {
-            commit('setLoggedIn', false);
-            return;
-        }
-
-        var config = {
-            method: 'get',
-            url: base_url + '/v1/users/' + token,
-        };
-        return new Promise((resolve, reject) => {
-            axios(config).then((res) => {
-                commit('setUser', res.data.user);
-                commit('setChurch', res.data.church);
-                commit('setFees', res.data.fees);
-                commit('setLoggedIn', true);
-                resolve(res);
-            }).catch((error) => {
-                localStorage.removeItem('token');
-                commit('setLoggedIn', false);
-                reject(error, 2000);
-            });
-        });
+    if (!token) {
+      commit("setLoggedIn", false);
+      return;
     }
 
+    var config = {
+      method: "get",
+      url: base_url + "/v1/users/" + token,
+    };
+    return new Promise((resolve, reject) => {
+      axios(config)
+        .then((res) => {
+          commit("setUser", res.data.user);
+          commit("setChurch", res.data.church);
+          commit("setFees", res.data.fees);
+          commit("setLoggedIn", true);
+          resolve(res);
+        })
+        .catch((error) => {
+          localStorage.removeItem("token");
+          commit("setLoggedIn", false);
+          reject(error, 2000);
+        });
+    });
+  },
 };
 
 // mutations
 const mutations = {
-    setUser(state, user) {
-        state.user = user;
-    },
-    setChurch(state, church) {
-        state.church = church;
-    },
-    setFees(state, fees) {
-        state.fees = fees;
-    },
-    setToken(state, token) {
-        state.token = token;
-    },
-    setLoggedIn(state, payload) {
-        state.loggedIn = payload;
-    }
+  setUser(state, user) {
+    state.user = user;
+  },
+  setChurch(state, church) {
+    state.church = church;
+  },
+  setFees(state, fees) {
+    state.fees = fees;
+  },
+  setToken(state, token) {
+    state.token = token;
+  },
+  setLoggedIn(state, payload) {
+    state.loggedIn = payload;
+  },
 };
 
 export default {
-    namespace: true,
-    state,
-    getters,
-    actions,
-    mutations
+  namespaced: true,
+  state,
+  getters,
+  actions,
+  mutations,
 };

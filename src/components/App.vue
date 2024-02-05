@@ -89,7 +89,7 @@ export default ({
         return { logInOutline, search };
     },
     computed: {
-        ...mapGetters({
+        ...mapGetters('sessionStore', {
             user: 'getUser',
             loggedIn: 'getLoggedIn',
         }),
@@ -124,16 +124,8 @@ export default ({
         goBack() {
             this.$router.go(-1);
         },
-        onSwipe(event) {
-            console.log(event);
-            // Check if the swipe is from the left
-            if (event.detail.direction === 'x' && event.detail.startX <= 50) {
-                this.goBack();
-            }
-        },
         routeTo(route) {
             this.$router.push(route);
-            this.menu.close();
         }
     },
 
@@ -141,7 +133,7 @@ export default ({
         return {
             messageToast: "Test Message",
             showToast: false,
-            app_version: '0.0.0',
+            app_version: '1.1.0',
         }
     },
 });
