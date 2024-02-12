@@ -1,11 +1,5 @@
 <template>
     <ion-content>
-        <ion-refresher slot="fixed" @ionRefresh="doRefresh">
-            <ion-refresher-content pullingText="Tirer pour actualiser" refreshingSpinner="crescent"
-                refreshingText="Actualisation...">
-            </ion-refresher-content>
-        </ion-refresher>
-
         <ion-card v-if="items.length === 0">
             <ion-card-header>
                 <ion-card-title>Aucun vote</ion-card-title>
@@ -29,17 +23,18 @@
                 <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
             </ion-card-content>
         </ion-card>
+        <ion-button expand="block" @click="doRefresh()">Rafraichir la liste</ion-button>
     </ion-content>
 </template>
 
 <script>
 
 import { mapGetters } from "vuex";
-import { IonContent, IonRefresher, IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent } from '@ionic/vue';
+import { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton } from '@ionic/vue';
 
 export default {
     name: "VotesIndex",
-    components: { IonContent, IonRefresher, IonRefresherContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent },
+    components: { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton },
     computed: {
         ...mapGetters('votesStore', {
             items: 'getItems',
@@ -53,9 +48,8 @@ export default {
             this.$store.dispatch('votesStore/getCampaign', item.campaign_id);
             this.$router.push({ name: 'VoteShow', params: { campaign_id: item.campaign_id } });
         },
-        doRefresh: function (event) {
+        doRefresh: function () {
             this.$store.dispatch('votesStore/items');
-            event.detail.complete();
         },
     },
     beforeCreate: function () {

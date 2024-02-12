@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 
-const isAuthenticated = (sessionStorage.getItem('token') !== null);
+const isAuthenticated = (localStorage.getItem('token') !== null);
 
 const routes = [
   {
@@ -46,11 +46,11 @@ const routes = [
   {
     path: '/annuaire',
     name: 'SearchIndex',
-    component: () => import("../components/Search/index"),
+    component: () => import("../components/Search/index")
   },
   {
-    path: '/result/:type/:id',
-    name: 'searchShow',
+    path: '/annuaire/:type/:id',
+    name: 'SearchShow',
     component: () => import("../components/Search/show"),
   }
 ]

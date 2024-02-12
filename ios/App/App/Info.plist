@@ -2,8 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>L&apos;accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.social-networking</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>Fr</string>
 	<key>CFBundleDisplayName</key>
 	<string>Pasteurs ADD</string>
 	<key>CFBundleExecutable</key>

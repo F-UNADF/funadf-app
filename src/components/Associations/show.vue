@@ -2,7 +2,7 @@
     <ion-card color="primary">
         <ion-card-header>
             <div class="avatar">
-                <ion-img :src=getAvatar alt="Avatar {{ association.name }}"></ion-img>
+                <ion-img :src=getAvatar alt="Avatar Association"></ion-img>
             </div>
             <ion-card-title>{{ association.name }}</ion-card-title>
             <ion-chip>

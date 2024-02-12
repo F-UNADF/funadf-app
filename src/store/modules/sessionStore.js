@@ -3,7 +3,7 @@ import axios from "axios";
 let base_url =
   process.env.NODE_ENV === "production"
     ? "https://add-fnadf.fr"
-    : "http://myloc.me:3000";
+    : "https://add-fnadf.fr";
 
 // initial state
 const state = () => ({
@@ -26,16 +26,13 @@ const getters = {
 // actions
 const actions = {
   login({ commit }, credential) {
-    console.log(base_url);
-
     let url = base_url + "/users/sign_in";
-    let user = {
-      email: credential.email,
-      password: credential.password,
-    };
+    let formData = new FormData();
+    formData.append("email", credential.email);
+    formData.append("password", credential.password);
     return new Promise((resolve, reject) => {
       axios
-        .post(url, user)
+        .post(url, formData)
         .then((res) => {
           commit("setToken", res.data.token);
           localStorage.setItem("token", res.data.token);
@@ -51,36 +48,35 @@ const actions = {
   logout({ commit }) {
     commit("setToken", null);
     commit("setLoggedIn", false);
-    localStorage.removeItem("token");
+    localStorage.setItem("token", null);
   },
   getConnectedUser({ commit }) {
     let token = localStorage.getItem("token");
     commit("setToken", token);
 
-    if (!token) {
-      commit("setLoggedIn", false);
-      return;
+    if (token !== null) {
+      var config = {
+        method: "get",
+        url: base_url + "/v1/users/" + token,
+      };
+      return new Promise((resolve, reject) => {
+        axios(config)
+          .then((res) => {
+            let user = res.data.user;
+            user.gratitudes = res.data.gratitudes;
+            commit("setUser", user);
+            commit("setChurch", res.data.church);
+            commit("setFees", res.data.fees);
+            commit("setLoggedIn", true);
+            resolve(res);
+          })
+          .catch((error) => {
+            localStorage.removeItem("token");
+            commit("setLoggedIn", false);
+            reject(error, 2000);
+          });
+      });
     }
-
-    var config = {
-      method: "get",
-      url: base_url + "/v1/users/" + token,
-    };
-    return new Promise((resolve, reject) => {
-      axios(config)
-        .then((res) => {
-          commit("setUser", res.data.user);
-          commit("setChurch", res.data.church);
-          commit("setFees", res.data.fees);
-          commit("setLoggedIn", true);
-          resolve(res);
-        })
-        .catch((error) => {
-          localStorage.removeItem("token");
-          commit("setLoggedIn", false);
-          reject(error, 2000);
-        });
-    });
   },
 };
 
