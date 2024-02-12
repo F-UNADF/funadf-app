@@ -11,7 +11,7 @@
                     <ion-label>{{ user.id }}</ion-label>
                 </ion-chip>
                 <ion-chip><i class="material-icons mr-3">bookmark</i>
-                    <ion-label>{{ user.level }}</ion-label>
+                    <ion-label>{{ level }}</ion-label>
                 </ion-chip>
                 <ion-button v-if="this.canEdit" shape="rounded" size="small" slot="end" fill="outline" color="dark"
                     @click="this.$router.push('user/edit');">
@@ -25,9 +25,9 @@
                 <i class="material-icons mr-3">mail</i>
                 <a href="mailto: {{ user.email }}" color="light">{{ user.email }}</a>
             </ion-item>
-            <ion-item color="primary" v-if="!!user.phone">
+            <ion-item color="primary" v-if="!!user.phone_1">
                 <i class="material-icons mr-3">phone</i>
-                <a href="tel: {{ user.phone }}">{{ user.phone }}</a>
+                <a href="tel: {{ user.phone_1 }}">{{ user.phone_1 }}</a>
             </ion-item>
             <ion-item color="primary" v-if="!!user.town">
                 <i class="material-icons mr-3">location_on</i>
@@ -58,12 +58,22 @@
 </template>
 
 <script>
-
-import { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
+import { IonCard, IonCardHeader, IonCardTitle, IonToolbar, IonChip, IonButton, IonImg, IonLabel, IonList, IonItem } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
-    components: { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem },
+    components: {
+        IonCard,
+        IonCardHeader,
+        IonCardTitle,
+        IonToolbar,
+        IonChip,
+        IonButton,
+        IonImg,
+        IonList,
+        IonItem,
+        IonLabel,
+    },
     props: {
         user: Object,
         church: Object,
@@ -74,13 +84,27 @@ export default {
     },
     computed: {
         getAvatar() {
-            console.log(this.user);
             let base_url = 'https://add-fnadf.fr';
-            if (process.env.NODE_ENV === 'development') {
-                base_url = 'http://myloc.me:3000';
-            }
             return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
         },
+        level() {
+            if (this.user && !this.user.gratitudes) {
+                return 'N/A';
+            }
+            const gratitudes = this.user.gratitudes;
+            if (gratitudes.length === 0) {
+                return 'N/A';
+            }
+
+            // Finding the max start_at gratitude
+            const maxStartAt = gratitudes.reduce((max, gratitude) => {
+                return gratitude.start_at > max ? gratitude.start_at : max;
+            }, gratitudes[0].start_at);
+
+            // Finding the level corresponding to the max start_at gratitude
+            const maxStartAtGratitude = gratitudes.find(gratitude => gratitude.start_at === maxStartAt);
+            return maxStartAtGratitude ? maxStartAtGratitude.level : 'N/A';
+        }
     },
 };
 </script>

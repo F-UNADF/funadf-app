@@ -3,7 +3,7 @@
         <ion-card color="primary">
             <ion-card-header>
                 <div class="avatar">
-                    <ion-img :src=getLogo alt="Avatar {{ church.name }}"></ion-img>
+                    <ion-img :src=getLogo alt="Avatar"></ion-img>
                 </div>
                 <ion-card-title>{{ church.name }}</ion-card-title>
                 <ion-chip>
@@ -45,11 +45,11 @@
 
 <script>
 
-import { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
+import { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem, IonImg, IonAvatar, IonContent } from '@ionic/vue';
 
 export default {
     name: "ChurcHShowComponent",
-    components: { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem },
+    components: { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem, IonImg, IonAvatar, IonContent },
     props: {
         church: Object,
         members: Array,

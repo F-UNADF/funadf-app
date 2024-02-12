@@ -3,7 +3,7 @@ import axios from "axios";
 let base_url =
   process.env.NODE_ENV === "production"
     ? "https://add-fnadf.fr"
-    : "http://myloc.me:3000";
+    : "https://add-fnadf.fr";
 
 // initial state
 const state = () => ({
@@ -19,29 +19,6 @@ const getters = {
 const actions = {
   // create save action
   save: function ({ commit }, { id, payload }) {
-    // transform item to form data
-    var form_data = new FormData();
-
-    for (var key in payload) {
-      form_data.append(`user[user][${key}]`, payload[key]);
-    }
-    return new Promise((resolve, reject) => {
-      axios
-        .patch(base_url + "/api/users/" + id, form_data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          commit("setUser", res.data.user);
-          resolve(res);
-        })
-        .catch((error) => {
-          reject(error, 2000);
-        });
-    });
-  },
-  saveAvatar: function ({ commit }, { id, payload }) {
     return new Promise((resolve, reject) => {
       axios
         .patch(base_url + "/api/users/" + id, payload, {

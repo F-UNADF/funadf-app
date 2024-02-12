@@ -41,19 +41,18 @@
                 <i class="material-icons" style="margin-left: 10px;">chevron_right</i>
             </ion-item>
         </ion-list>
-
     </ion-content>
 </template>
 
 <script>
 
-import { IonInput, IonLabel } from '@ionic/vue';
+import { IonInput, IonLabel, IonButton, IonItem, IonList, IonContent } from '@ionic/vue';
 import { mapGetters } from 'vuex';
 import { Camera, CameraResultType } from '@capacitor/camera';
 
 export default {
     name: "UserShowComponent",
-    components: { IonInput, IonLabel },
+    components: { IonInput, IonLabel, IonButton, IonItem, IonList, IonContent },
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',
@@ -62,15 +61,21 @@ export default {
         }),
         getAvatar() {
             let base_url = 'https://add-fnadf.fr';
-            if (process.env.NODE_ENV === 'development') {
-                base_url = 'http://myloc.me:3000';
-            }
             return base_url + '/avatars/' + this.user.id + '.png?cache=' + this.cache;
         },
     },
     methods: {
         saveUser() {
-            this.$store.dispatch('usersStore/save', { id: this.editedUser.id, payload: this.editedUser }).then(() => {
+            let formData = new FormData();
+            formData.append('user[user][lastname]', this.editedUser.lastname);
+            formData.append('user[user][firstname]', this.editedUser.firstname);
+            formData.append('user[user][address_1]', this.editedUser.address_1);
+            formData.append('user[user][zipcode]', this.editedUser.zipcode);
+            formData.append('user[user][town]', this.editedUser.town);
+            formData.append('user[user][phone_1]', this.editedUser.phone_1);
+            formData.append('user[user][birthdate]', this.editedUser.birthdate);
+
+            this.$store.dispatch('usersStore/save', { id: this.editedUser.id, payload: formData }).then(() => {
                 this.$root.presentToast('Votre profil a été mis à jour !');
                 this.$router.push('/user');
             });
@@ -79,6 +84,7 @@ export default {
             Camera.getPhoto({
                 quality: 90,
                 allowEditing: true,
+                cameraSource: 'Prompt',
                 resultType: CameraResultType.Uri,
             }).then((image) => {
                 this.takenPicture = image.Uri;
@@ -90,21 +96,18 @@ export default {
                         let formData = new FormData();
                         formData.append('user[user][avatar]', blob, 'photo.jpg');
 
-
-                        this.$store.dispatch(
-                            'usersStore/saveAvatar',
-                            { id: this.user.id, payload: formData },
+                        this.$store.dispatch('usersStore/save', { id: this.user.id, payload: formData },
                             {
-                                headers: {
-                                    "Content-Type": "multipart/form-data",
-                                }
+                                headers: { "Content-Type": "multipart/form-data" }
                             }).then(() => {
                                 this.$root.presentToast('Votre avatar a été mis à jour !');
                                 this.cache = new Date().getTime();
                             });
 
                     });
-            })
+            }).catch((error) => {
+                console.error(error);
+            });
         },
     },
     watch: {

@@ -8,10 +8,11 @@
 
 import { mapGetters } from "vuex";
 import UserShow from '@/components/Users/show.vue';
+import { IonContent } from '@ionic/vue';
 
 export default {
     name: "HomePage",
-    components: { UserShow },
+    components: { UserShow, IonContent },
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',

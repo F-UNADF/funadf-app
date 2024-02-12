@@ -4,7 +4,6 @@ import router from "./router";
 import store from "./store/index";
 
 import { IonicVue } from "@ionic/vue";
-import { IonicStorage } from "@ionic/storage";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css";
@@ -25,14 +24,12 @@ import "@ionic/vue/css/display.css";
 /* Theme variables */
 import "@/theme/variables.css";
 import "material-design-icons/iconfont/material-icons.css";
-
-import { defineCustomElements } from "@ionic/pwa-elements/loader";
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
 defineCustomElements(window);
 
 // Create a new store instance.
 const app = createApp(App)
   .use(IonicVue)
-  .use(IonicStorage)
   .use(store)
   .use(router);
 

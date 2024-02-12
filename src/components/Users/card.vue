@@ -5,7 +5,7 @@
                 <h3 class="display-3">Carte Pastorale<br>des Assemblées de Dieu</h3>
             </ion-text>
 
-            <qrcode-vue :value="user.passphrase" size="300" render-as="svg" class="qrcode"></qrcode-vue>
+            <qrcode-vue :value="user.passphrase" :size=300 render-as="svg" class="qrcode"></qrcode-vue>
 
             <ion-row class="ion-justify-content-center">
                 <ion-col v-for="(year, index) in years" :key="index">
@@ -19,7 +19,7 @@
         </ion-card-content>
         <ion-card-header style="text-align: center;">
             <img :src=getAvatar alt="Avatar User"
-                style="max-width: 100px; border-radius: 50%; margin: 10px auto; display: block;">
+                style="max-width: 200px; border-radius: 50%; margin: 10px auto; display: block;">
             <ion-card-title>{{ user.fullname }}</ion-card-title>
             <hr />
             <ion-chip>
@@ -36,12 +36,12 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonCard } from '@ionic/vue';
+import { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle } from '@ionic/vue';
 import QrcodeVue from 'qrcode.vue'
 
 export default {
     name: "UserCardComponent",
-    components: { IonCard, QrcodeVue },
+    components: { IonCard, QrcodeVue, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle },
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',
@@ -50,9 +50,6 @@ export default {
         }),
         getAvatar() {
             let base_url = 'https://add-fnadf.fr';
-            if (process.env.NODE_ENV === 'development') {
-                base_url = 'http://myloc.me:3000';
-            }
             return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
         },
     },

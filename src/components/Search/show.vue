@@ -10,6 +10,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import { IonContent } from '@ionic/vue';
 import UserShow from '@/components/Users/show.vue';
 import ChurchShow from '@/components/Churches/show.vue';
 import AssociationShow from '@/components/Associations/show.vue';
@@ -17,7 +18,7 @@ import axios from 'axios';
 
 export default {
     name: "SearchShow",
-    components: { UserShow, ChurchShow, AssociationShow },
+    components: { IonContent, UserShow, ChurchShow, AssociationShow },
     computed: {
         ...mapGetters({
             user: 'getUser',
@@ -40,11 +41,14 @@ export default {
             this.type = this.$route.params.type;
             this.id = this.$route.params.id;
 
-            let base_url = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_URL : 'http://myloc.me:3000';
+            let base_url = 'https://add-fnadf.fr';
             let endpoint = base_url + '/api/' + this.type.toLowerCase() + '/' + this.id;
 
             axios.get(endpoint).then((res) => {
                 this.searchedUser = res.data.user;
+                if (this.searchedUser) {
+                    this.searchedUser.gratitudes = res.data.gratitudes;
+                }
                 this.searchedChurch = res.data.church;
                 this.searchedAssociation = res.data.association;
                 this.structureMembers = res.data.members;

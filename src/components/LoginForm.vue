@@ -38,13 +38,13 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
+import { IonToolbar, IonTitle, IonItemDivider, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
 
 export default {
     name: "loginComponent",
-    components: { IonToolbar, IonTitle, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
+    components: { IonToolbar, IonTitle, IonItemDivider, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
     computed: {
-        ...mapGetters({
+        ...mapGetters('sessionStore', {
             user: 'getUser',
             church: 'getChurch',
             token: 'getToken',
@@ -53,11 +53,11 @@ export default {
 
     methods: {
         login: function () {
-            this.$store.dispatch('login', this.credential).then(() => {
+            this.$store.dispatch('sessionStore/login', this.credential).then(() => {
                 if (null !== this.token) {
                     localStorage.setItem('token', this.token);
                     this.$root.presentToast('Vous êtes connecté !');
-                    this.$router.push({ name: 'UserShow', replace: true });
+                    this.$router.push({ name: 'Home', replace: true });
                 }
             }, (error) => {
                 console.log(error);
@@ -81,7 +81,7 @@ export default {
     },
     beforeCreate: function () {
         this.$store.dispatch('sessionStore/getConnectedUser');
-        if (null !== localStorage.getItem('token')) {
+        if (this.user) {
             this.$router.push('/user');
         }
     },
