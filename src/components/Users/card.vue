@@ -68,7 +68,7 @@ export default {
         this.$store.dispatch('sessionStore/getConnectedUser');
 
         if (this.user === null) {
-            this.$router.push({ name: 'Login' });
+            this.$router.push({ name: 'Login', replace: true });
         }
     },
     data() {
