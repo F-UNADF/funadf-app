@@ -48,11 +48,10 @@ const actions = {
   logout({ commit }) {
     commit("setToken", null);
     commit("setLoggedIn", false);
-    localStorage.setItem("token", null);
+    localStorage.removeItem("token");
   },
   getConnectedUser({ commit }) {
     let token = localStorage.getItem("token");
-    commit("setToken", token);
 
     if (token !== null) {
       var config = {
@@ -68,6 +67,7 @@ const actions = {
             commit("setChurch", res.data.church);
             commit("setFees", res.data.fees);
             commit("setLoggedIn", true);
+            commit("setToken", token);
             resolve(res);
           })
           .catch((error) => {
