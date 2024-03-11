@@ -2,46 +2,48 @@
   <ion-content @swipeleft="goBack()">
     <ion-card>
       <ion-card-header text-center>
-        <ion-card-title>{{ campaign.name }}</ion-card-title>
-        <h3>Bulletin de vote :</h3>
+        <h4 class="text-h5 font-weight-bold mb-4">
+          <span v-if="meeting" class="text-grey text-h6">Rassemblement : {{ meeting.name }}<br></span>
+          Structure : {{ structure.name }}<br>
+          <small>Campagne : {{ campaign.name }}</small>
+        </h4>
       </ion-card-header>
 
       <ion-card-content>
         <form ref="vote">
-          <div v-for="result in this.editResult" :key="result.motion_id">
+          <div class="motion" v-for="result in  this.editResult " :key="result.motion_id">
             <ion-label position="stacked">
               {{ getMotionName(result.motion_id) }}
             </ion-label>
 
-            <div v-if="getMotionKind(result.motion_id) === 'neutral'">
-              <ion-radio-group v-model="result.vote">
-                <ion-item>
-                  <ion-label>Oui</ion-label>
-                  <ion-radio value="Oui"></ion-radio>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Non</ion-label>
-                  <ion-radio value="Non"></ion-radio>
-                </ion-item>
-                <ion-item class="neutre">
-                  <ion-label>Neutre</ion-label>
-                  <ion-radio value="Neutre"></ion-radio>
-                </ion-item>
-              </ion-radio-group>
-            </div>
 
-            <div v-if="getMotionKind(result.motion_id) === 'binary'">
-              <ion-radio-group v-model="result.vote">
-                <ion-item>
-                  <ion-label>Oui</ion-label>
-                  <ion-radio value="Oui"></ion-radio>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Non</ion-label>
-                  <ion-radio value="Non"></ion-radio>
-                </ion-item>
-              </ion-radio-group>
-            </div>
+            <ion-list v-if="getMotionKind(result.motion_id) === 'neutral'">
+              <ion-item v-for="choice in  ['Oui', 'Non', 'Neutre'] " v-bind:key="choice">
+                <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
+                  :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
+                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
+                <ion-label>{{ choice }}</ion-label>
+              </ion-item>
+              <ion-item v-if="result.max_choices > 1">
+                <ion-label color="warning">
+                  Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
+                </ion-label>
+              </ion-item>
+            </ion-list>
+
+            <ion-list v-if="getMotionKind(result.motion_id) === 'binary'">
+              <ion-item v-for="choice in  ['Oui', 'Non'] " v-bind:key="choice">
+                <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
+                  :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
+                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
+                <ion-label>{{ choice }}</ion-label>
+              </ion-item>
+              <ion-item v-if="result.max_choices > 1">
+                <ion-label color="warning">
+                  Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
+                </ion-label>
+              </ion-item>
+            </ion-list>
 
             <div v-if="getMotionKind(result.motion_id) === 'free'">
               <ion-item>
@@ -50,13 +52,20 @@
             </div>
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'choices'">
-              <ion-radio-group v-model="result.vote">
-                <ion-item v-for="choice in result.choices.split(',')" v-bind:key="choice" :value="choice">
-                  <ion-label>{{ choice }}</ion-label>
-                  <ion-radio :value="choice"></ion-radio>
-                </ion-item>
-              </ion-radio-group>
+              <ion-item v-for="choice in  result.choices.split(',') " v-bind:key="choice">
+                <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
+                  :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
+                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
+                <ion-label>{{ choice }}</ion-label>
+              </ion-item>
             </ion-list>
+            <p v-if="getMotionKind(result.motion_id) === 'choices' && result.max_choices > 1">
+              Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
+            </p>
+
+            <p v-if="['binary', 'neutral', 'choices'].includes(getMotionKind(result.motion_id))">
+              Pour changer de vote, décochez d'abord votre choix précédent
+            </p>
           </div>
         </form>
 
@@ -66,8 +75,8 @@
       <ion-card-header text-center>
         <ion-card-title>Mes bulletins</ion-card-title>
       </ion-card-header>
-      <ion-card-content>
-        <div v-for="voter in this.editVoters" :key="voter.resource_id">
+      <ion-card-content v-if="this.present">
+        <div v-for=" voter  in  this.editVoters " :key="voter.resource_id">
           <ion-item v-if="voter.has_voted === 0">
             <ion-checkbox slot="start" v-model="voter.selected"></ion-checkbox>
             <ion-label>
@@ -83,6 +92,9 @@
           </ion-item>
         </div>
       </ion-card-content>
+      <ion-card-content color="warning" v-else>
+        Vous n'êtes pas présent à ce rassemblement
+      </ion-card-content>
     </ion-card>
     <ion-card>
       <ion-card-content>
@@ -95,20 +107,23 @@
 
 <script>
 
-import { IonInput, IonItem, IonLabel, IonRadioGroup, IonRadio, IonCheckbox } from '@ionic/vue';
+import { IonInput, IonItem, IonLabel, IonCheckbox, IonContent, IonCard, IonCardTitle, IonCardHeader, IonList, IonCardContent, IonButton } from '@ionic/vue';
 import { mapGetters } from "vuex";
 
 export default {
   name: "VoteShow",
-  components: { IonInput, IonItem, IonLabel, IonRadioGroup, IonRadio, IonCheckbox },
+  components: { IonInput, IonItem, IonLabel, IonCheckbox, IonContent, IonCard, IonCardTitle, IonCardHeader, IonList, IonCardContent, IonButton },
   computed: {
-    ...mapGetters({
+    ...mapGetters('votesStore', {
       campaign: 'getCampaign',
       user: 'getUser',
       motions: 'getMotions',
       results: 'getResults',
       voters: 'getVoters',
       token: 'getToken',
+      meeting: 'getMeeting',
+      structure: 'getStructure',
+      present: 'getPresent',
     }),
 
   },
@@ -120,12 +135,12 @@ export default {
       console.log(this.editResult);
 
       if (this.editVoters.some(voter => voter.selected === true) === false) {
-        this.$root.presentToast('Merci de sélectionner au moins un bulletin !', 'warning');
+        this.$root.presentToast('Merci de sélectionner au moins un bulletin !', 'danger');
         return;
       }
 
 
-      this.$store.dispatch('vote', { campaign_id: this.$route.params.campaign_id, results: this.editResult, voters: this.editVoters })
+      this.$store.dispatch('votesStore/vote', { campaign_id: this.$route.params.campaign_id, results: this.editResult, voters: this.editVoters })
         .then(() => {
           this.$root.presentToast('Votre vote a été pris en compte !');
           this.$router.push({ name: 'VotesIndex' });
@@ -136,6 +151,33 @@ export default {
     },
     getMotionKind: function (motion_id) {
       return this.motions.find(motion => motion.id === motion_id).kind;
+    },
+    updateResult: function (result, value) {
+      // value should be in an array for result.vote
+      // check if result.vote is an array
+
+      if (Array.isArray(result.vote)) {
+        let nbr_vote = result.vote.length;
+        // check if value is already in result.vote
+        if (result.vote.includes(value)) {
+          // remove value from result.vote
+          result.vote = result.vote.filter(item => item !== value);
+          return false;
+        } else {
+          // add value to result.vote
+          // if result.max_choices is defined, check if result.vote.length < result.max_choices
+
+          if (nbr_vote === result.max_choices) {
+            result.vote.shift();
+          }
+          result.vote.push(value);
+          return true;
+        }
+      } else {
+        // if result.vote is not an array, create an array with value
+        result.vote = [value];
+        return true;
+      }
     },
   },
   watch: {
@@ -170,7 +212,7 @@ export default {
       this.$router.push({ name: 'Login' });
     }
 
-    this.$store.dispatch('getCampaign', this.$route.params.campaign_id);
+    this.$store.dispatch('votesStore/getCampaign', this.$route.params.campaign_id);
   },
 };
 </script>
@@ -178,7 +220,7 @@ export default {
 <style>
 ion-radio-group {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: start;
   flex-wrap: wrap;
 }
@@ -189,5 +231,14 @@ ion-radio-group>ion-item {
 
 ion-radio-group>ion-item.neutre {
   flex: 1 1;
+}
+
+.motion {
+  margin-bottom: 20px;
+}
+
+.motion>.label-stacked {
+  margin-bottom: 5px;
+  display: block;
 }
 </style>

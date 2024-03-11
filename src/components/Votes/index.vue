@@ -17,7 +17,7 @@
             </ion-card-header>
 
             <ion-card-content>
-                <ion-button v-if="item.campaign_state === 'opened'" expand="block" @click="goVote(item)">
+                <ion-button v-if="item.state === 'opened'" expand="block" @click="goVote(item)">
                     Voter !
                 </ion-button>
                 <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
@@ -45,8 +45,8 @@ export default {
     methods: {
         goVote: function (item) {
             this.$store.commit('votesStore/setItem', item);
-            this.$store.dispatch('votesStore/getCampaign', item.campaign_id);
-            this.$router.push({ name: 'VoteShow', params: { campaign_id: item.campaign_id } });
+            this.$store.dispatch('votesStore/getCampaign', item.id);
+            this.$router.push({ name: 'VoteShow', params: { campaign_id: item.id } });
         },
         doRefresh: function () {
             this.$store.dispatch('votesStore/items');
