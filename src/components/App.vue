@@ -168,7 +168,7 @@ export default {
         return {
             messageToast: "Test Message",
             showToast: false,
-            app_version: "1.2.0",
+            app_version: "1.2.1",
         };
     },
 };
