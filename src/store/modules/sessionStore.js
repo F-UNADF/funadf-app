@@ -3,7 +3,14 @@ import axios from "axios";
 let base_url =
   process.env.NODE_ENV === "production"
     ? "https://add-fnadf.fr"
-    : "https://add-fnadf.fr";
+    : "http://myloc.me:3000";
+
+// si on a un token dans le local storage ou en session on le met dans le header par defaut de axios
+const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+
+if (token) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
 
 // initial state
 const state = () => ({
@@ -36,6 +43,7 @@ const actions = {
         .then((res) => {
           commit("setToken", res.data.token);
           localStorage.setItem("token", res.data.token);
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
           commit("setLoggedIn", true);
           resolve(res);
         })
@@ -50,53 +58,23 @@ const actions = {
     commit("setLoggedIn", false);
     localStorage.removeItem("token");
   },
-  getConnectedUser({ commit }) {
-    let token = localStorage.getItem("token");
-
-    if (token !== null) {
-      var config = {
-        method: "get",
-        url: base_url + "/v1/users/" + token,
-      };
-      return new Promise((resolve, reject) => {
-        axios(config)
-          .then((res) => {
-            let user = res.data.user;
-            user.gratitudes = res.data.gratitudes;
-            commit("setUser", user);
-            commit("setChurch", res.data.church);
-            commit("setFees", res.data.fees);
-            commit("setLoggedIn", true);
-            commit("setToken", token);
-            resolve(res);
-          })
-          .catch((error) => {
-            localStorage.removeItem("token");
-            commit("setLoggedIn", false);
-            reject(error, 2000);
-          });
-      });
+  async fetchUser({ commit }) {
+    try {
+      const response = await axios.get(base_url + '/api/current_user');
+      commit('setCurrentUser', response.data.user);
+    } catch (error) {
+      commit('setCurrentUser', null);
     }
   },
 };
 
 // mutations
 const mutations = {
-  setUser(state, user) {
-    state.user = user;
-  },
-  setChurch(state, church) {
-    state.church = church;
-  },
-  setFees(state, fees) {
-    state.fees = fees;
-  },
-  setToken(state, token) {
-    state.token = token;
-  },
-  setLoggedIn(state, payload) {
-    state.loggedIn = payload;
-  },
+  setCurrentUser(state, user) { state.user = user; },
+  setChurch(state, church) { state.church = church; },
+  setFees(state, fees) { state.fees = fees; },
+  setToken(state, token) { state.token = token; },
+  setLoggedIn(state, payload) { state.loggedIn = payload; },
 };
 
 export default {

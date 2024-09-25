@@ -41,7 +41,11 @@ export default {
             this.type = this.$route.params.type;
             this.id = this.$route.params.id;
 
-            let base_url = 'https://add-fnadf.fr';
+            let base_url =
+                process.env.NODE_ENV === "production"
+                    ? "https://add-fnadf.fr"
+                    : "http://myloc.me:3000";
+
             let endpoint = base_url + '/api/' + this.type.toLowerCase() + '/' + this.id;
 
             axios.get(endpoint).then((res) => {
@@ -64,7 +68,7 @@ export default {
         '$route': 'getItem'
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('sessionStore/fetchUser');
 
         if (null === this.token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });

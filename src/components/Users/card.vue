@@ -27,7 +27,7 @@
                 <ion-label>{{ user.id }}</ion-label>
             </ion-chip>
             <ion-chip><i class="material-icons">bookmark</i>
-                <ion-label>{{ user.level }}</ion-label>
+                <ion-label>{{ level() }}</ion-label>
             </ion-chip>
         </ion-card-header>
     </ion-card>
@@ -45,8 +45,15 @@ export default {
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',
-            fees: 'getFees',
             token: 'getToken',
+        }),
+        ...mapGetters('profilStore', {
+            profile: 'getProfile',
+            gratitudes: 'getGratitudes',
+            roles: 'getRoles',
+            phases: 'getPhases',
+            presidencies: 'getPresidences',
+            fees: 'getFees',
         }),
         getAvatar() {
             let base_url = 'https://add-fnadf.fr';
@@ -63,9 +70,28 @@ export default {
         getChipIcon(year) {
             return this.hasFeeForYear(year) ? 'done' : 'close';
         },
+        level() {
+            if (this.user && !this.gratitudes) {
+                return 'N/A';
+            }
+            const gratitudes = this.gratitudes;
+            if (gratitudes.length === 0) {
+                return 'N/A';
+            }
+
+            // Finding the max start_at gratitude
+            const maxStartAt = gratitudes.reduce((max, gratitude) => {
+                return gratitude.start_at > max ? gratitude.start_at : max;
+            }, gratitudes[0].start_at);
+
+            // Finding the level corresponding to the max start_at gratitude
+            const maxStartAtGratitude = gratitudes.find(gratitude => gratitude.start_at === maxStartAt);
+            return maxStartAtGratitude ? maxStartAtGratitude.level : 'N/A';
+        }
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('sessionStore/fetchUser');
+        this.$store.dispatch('profilStore/getProfile');
 
         if (this.user === null) {
             this.$router.push({ name: 'Login', replace: true });
