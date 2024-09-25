@@ -156,9 +156,10 @@ export default {
             await toast.present();
         },
         logout() {
-            this.$store.dispatch("sessionStore/logout");
-            this.presentToast("Vous êtes déconnectés");
-            this.$router.push("/");
+            this.$store.dispatch("sessionStore/logout").then(() => {
+                this.presentToast("Vous êtes déconnectés");
+                this.$router.go("/login");
+            });
         },
         goBack() {
             this.$router.go(-1);

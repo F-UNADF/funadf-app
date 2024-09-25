@@ -35,7 +35,7 @@ export default {
         this.$store.dispatch('profilStore/getProfile');
 
         if (null === this.user) {
-            this.$router.push({ name: 'Login', replace: true });
+            this.$router.push('/login');
         }
     },
 };

@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton } from '@ionic/vue';
+import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonCol } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
@@ -78,6 +78,7 @@ export default {
         IonLabel,
         IonFab,
         IonFabButton,
+        IonCol
     },
     props: {
         user: Object,
