@@ -173,7 +173,7 @@ export default {
         return {
             messageToast: "Test Message",
             showToast: false,
-            app_version: "1.2.1",
+            app_version: "1.3.0",
         };
     },
 };
