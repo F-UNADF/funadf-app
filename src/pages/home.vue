@@ -1,6 +1,6 @@
 <template>
     <ion-content>
-        <user-show :user="this.user" :church="this.church"></user-show>
+        <user-show :user="this.user" :church="this.currentChurch" :canEdit="true"></user-show>
     </ion-content>
 </template>
 
@@ -16,14 +16,25 @@ export default {
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',
-            church: 'getChurch',
-            token: 'getToken',
         }),
+        ...mapGetters('profilStore', {
+            profile: 'getProfile',
+            gratitudes: 'getGratitudes',
+            roles: 'getRoles',
+            phases: 'getPhases',
+            presidencies: 'getPresidences',
+            fees: 'getFees',
+        }),
+        currentChurch() {
+            // on recupere léglise courante en se basant sur phases, la plus recente n'avant pas de end_at
+            return this.phases.filter(phase => phase.end_at === null)[0];
+        },
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('sessionStore/fetchUser');
+        this.$store.dispatch('profilStore/getProfile');
 
-        if (null === this.token || null === this.user) {
+        if (null === this.user) {
             this.$router.push({ name: 'Login', replace: true });
         }
     },

@@ -3,7 +3,7 @@ import axios from "axios";
 let base_url =
   process.env.NODE_ENV === "production"
     ? "https://add-fnadf.fr"
-    : "https://add-fnadf.fr";
+    : "http://myloc.me:3000";
 
 // initial state
 const state = () => ({
@@ -34,12 +34,9 @@ const getters = {
 // actions
 const actions = {
   items: function ({ commit }) {
-    let token = localStorage.getItem("token");
-    let params = new URLSearchParams([["token", token]]);
-
     return new Promise((resolve, reject) => {
       axios
-        .get(base_url + "/v1/votes", { params })
+        .get(base_url + "/api/votes")
         .then((res) => {
           commit("setItems", res.data.campaigns);
           resolve(res);
@@ -50,12 +47,9 @@ const actions = {
     });
   },
   getCampaign: function ({ commit }, id) {
-    let token = localStorage.getItem("token");
-    let params = new URLSearchParams([["token", token]]);
-
     return new Promise((resolve, reject) => {
       axios
-        .get(base_url + "/v1/votes/" + id, { params })
+        .get(base_url + "/api/votes/" + id)
         .then((res) => {
           commit("setCampaign", res.data.campaign);
           commit("setMotions", res.data.motions);

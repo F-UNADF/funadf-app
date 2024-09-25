@@ -12,7 +12,7 @@
                         <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF" />
                     </div>
                 </ion-title>
-                <ion-buttons slot="end" v-if="userIsLoggedIn">
+                <ion-buttons slot="end" v-if="loggedIn">
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
             </ion-toolbar>
@@ -61,6 +61,11 @@
             <ion-tab-button tab="contact" ref="contact" href="/carte">
                 <i class="material-icons">account_box</i>
                 <ion-label>Carte</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="feed" ref="feed" href="/feed">
+                <i class="material-icons">rss_feed</i>
+                <ion-label>Feed</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="votes" ref="votes" href="/votes">
@@ -124,10 +129,9 @@ export default {
     computed: {
         ...mapGetters("sessionStore", {
             user: "getUser",
-            loggedIn: "getLoggedIn",
         }),
-        userIsLoggedIn: function () {
-            return true === this.loggedIn;
+        loggedIn() {
+            return this.user !== null;
         },
         hasHistory() {
             return window.history.length > 2;

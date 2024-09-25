@@ -53,7 +53,7 @@ export default {
         },
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('sessionStore/fetchUser');
         this.$store.dispatch('votesStore/items');
 
 

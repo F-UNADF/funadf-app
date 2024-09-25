@@ -67,7 +67,7 @@ export default {
         }
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('sessionStore/fetchUser');
 
         if (null === this.token || null === this.user) {
             this.$router.push({ name: 'Login', replace: true });
