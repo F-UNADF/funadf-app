@@ -11,14 +11,14 @@
 
       <ion-card-content>
         <form ref="vote">
-          <div class="motion" v-for="result in  this.editResult " :key="result.motion_id">
+          <div class="motion" v-for="result in this.editResult " :key="result.motion_id">
             <ion-label position="stacked">
               {{ getMotionName(result.motion_id) }}
             </ion-label>
 
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'neutral'">
-              <ion-item v-for="choice in  ['Oui', 'Non', 'Neutre'] " v-bind:key="choice">
+              <ion-item v-for="choice in ['Oui', 'Non', 'Neutre'] " v-bind:key="choice">
                 <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
                   :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
@@ -32,7 +32,7 @@
             </ion-list>
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'binary'">
-              <ion-item v-for="choice in  ['Oui', 'Non'] " v-bind:key="choice">
+              <ion-item v-for="choice in ['Oui', 'Non'] " v-bind:key="choice">
                 <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
                   :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
@@ -52,7 +52,7 @@
             </div>
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'choices'">
-              <ion-item v-for="choice in  result.choices.split(',') " v-bind:key="choice">
+              <ion-item v-for="choice in result.choices.split(',') " v-bind:key="choice">
                 <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
                   :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
@@ -76,8 +76,8 @@
         <ion-card-title>Mes bulletins</ion-card-title>
       </ion-card-header>
       <ion-card-content v-if="this.present">
-        <div v-for=" voter  in  this.editVoters " :key="voter.resource_id">
-          <ion-item v-if="voter.has_voted === 0">
+        <div v-for=" voter in this.editVoters " :key="voter.resource_id">
+          <ion-item v-if="voter.has_voted === null || voter.has_voted === 0">
             <ion-checkbox slot="start" v-model="voter.selected"></ion-checkbox>
             <ion-label>
               {{ voter.name }}
@@ -206,7 +206,7 @@ export default {
     };
   },
   beforeCreate: function () {
-    this.$store.dispatch('sessionStore/getConnectedUser');
+    this.$store.dispatch('sessionStore/fetchUser');
 
     if (this.user === null) {
       this.$router.push({ name: 'Login' });

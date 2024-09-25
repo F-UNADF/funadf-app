@@ -9,8 +9,8 @@
 
             <ion-item>
                 <ion-label position="stacked" color="primary">Email</ion-label>
-                <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false" autocapitalize="off"
-                    required autocomplete="email"></ion-input>
+                <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false"
+                    autocapitalize="off" required autocomplete="email"></ion-input>
             </ion-item>
 
             <ion-item>
@@ -80,7 +80,7 @@ export default {
         }
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/getConnectedUser');
+        this.$store.dispatch('sessionStore/fetchUser');
         if (this.user) {
             this.$router.push('/user');
         }

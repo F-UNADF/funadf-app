@@ -14,6 +14,11 @@ const routes = [
     props: true
   },
   {
+    path: '/feed',
+    name: 'Feed',
+    component: () => import("@/pages/feed"),
+  },
+  {
     path: '/user',
     name: 'Home',
     component: () => import("@/pages/home"),
