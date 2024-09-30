@@ -1,27 +1,35 @@
 <template>
   <ion-content>
     <ion-row v-if="!this.search_in_progress">
-      <ion-row v-for="post in items" :key="post.id">
+      <ion-col cols="12" v-for="post in items" :key="post.id">
         <ion-card>
-          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+          <img alt="Image" :src="post.images[0]" v-if="post.images.length > 0" />
           <ion-card-header>
+            <ion-card-subtitle>
+              <ion-chip>
+                <ion-avatar>
+                  <img :src="'https://add-fnadf.fr/logos/' + post.structure_id + '.png'" width="20" alt="avatar" />
+                </ion-avatar>
+                <ion-label>{{ post.structure.name }}</ion-label>
+              </ion-chip>
+            </ion-card-subtitle>
             <ion-card-title>{{ post.post.title }}</ion-card-title>
-            <ion-card-subtitle>{{ post.structure.name }}</ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content v-html="post.post.content"></ion-card-content>
+          <ion-card-content>
+            <ion-row v-if="post?.attachments" class="pb-3">
+              <ion-col v-for="(attachment, index) in post?.attachments" :key="index" class="d-flex child-flex" cols="4">
+                <ion-button :href="attachment" target="_blank" size="small" expand="block">
+                  Pièce jointe {{ index + 1 }}
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
         </ion-card>
-      </ion-row>
+      </ion-col>
     </ion-row>
-    <ion-col cols="12" v-if="this.search_in_progress">
-      <ion-row>
-        <ion-col>
-          <v-progress-circular style="display: block; margin: 0 auto;" color="primary" indeterminate :size="50"
-            :width="8"></v-progress-circular>
-        </ion-col>
-      </ion-row>
-    </ion-col>
-    <ion-col cols="12">
+    <ion-col cols=" 12">
       <ion-button expand="block" color="primary" @click="load()" :loading="this.loading" v-if="!this.endOfFeed">
         VOIR PLUS
       </ion-button>
@@ -33,11 +41,11 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonContent, IonButton } from '@ionic/vue';
+import { IonContent, IonButton, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonRow, IonCol, IonChip } from '@ionic/vue';
 
 export default {
   name: "HomePage",
-  components: { IonContent, IonButton },
+  components: { IonContent, IonButton, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonRow, IonCol, IonChip },
   computed: {
     ...mapGetters('sessionStore', {
       user: 'getUser',
