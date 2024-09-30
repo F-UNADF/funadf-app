@@ -2,18 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSMinimumSystemVersion</key>
-	<string>13.3</string>
-	<key>NSCameraUsageDescription</key>
-	<string>L&apos;accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.social-networking</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>Fr</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Pasteurs ADD</string>
 	<key>CFBundleExecutable</key>
@@ -30,8 +20,18 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.social-networking</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>L'accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>L'accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>L'accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
