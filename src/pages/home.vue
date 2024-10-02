@@ -31,12 +31,11 @@ export default {
         },
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/fetchUser');
-        this.$store.dispatch('profilStore/getProfile');
-
-        if (null === this.user) {
+        if (null === localStorage.getItem('token')) {
             this.$router.push('/login');
         }
+        this.$store.dispatch('sessionStore/fetchUser');
+        this.$store.dispatch('profilStore/getProfile');
     },
 };
 </script>

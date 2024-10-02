@@ -90,12 +90,11 @@ export default {
         }
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/fetchUser');
-        this.$store.dispatch('profilStore/getProfile');
-
-        if (this.user === null) {
+        if (null === localStorage.getItem('token')) {
             this.$router.push({ name: 'Login', replace: true });
         }
+        this.$store.dispatch('sessionStore/fetchUser');
+        this.$store.dispatch('profilStore/getProfile');
     },
     data() {
         let years = [];

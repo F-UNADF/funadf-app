@@ -24,6 +24,9 @@ const getters = {
 // actions
 const actions = {
   fetchFeed({ commit, state }) {
+    if (null === localStorage.getItem("token")) {
+      return;
+    }
     return new Promise((resolve, reject) => {
       axios.get(base_url + '/api/feed?offset=' + state.offset).then((res) => {
         commit('setItems', res.data.posts);

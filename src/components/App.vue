@@ -131,7 +131,7 @@ export default {
             user: "getUser",
         }),
         loggedIn() {
-            return this.user !== null;
+            return localStorage.getItem('token');
         },
         hasHistory() {
             return window.history.length > 2;
@@ -168,13 +168,17 @@ export default {
             this.$router.push(route);
         },
     },
-
     data: function () {
         return {
             messageToast: "Test Message",
             showToast: false,
             app_version: "1.2.2",
         };
+    },
+    beforeCreate: function () {
+        if (null === localStorage.getItem('token')) {
+            this.$router.push({ name: 'Login', replace: true });
+        }
     },
 };
 </script>
