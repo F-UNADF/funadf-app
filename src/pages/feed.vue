@@ -8,7 +8,9 @@
             <ion-card-subtitle>
               <ion-chip>
                 <ion-avatar>
-                  <img :src="'https://add-fnadf.fr/logos/' + post.structure_id + '.png'" width="20" alt="avatar" />
+                  <img
+                    :src="'https://add-fnadf.fr/logos/' + post.post.structure_id + '.png?cahe=' + new Date().getTime()"
+                    width="20" alt="avatar" />
                 </ion-avatar>
                 <ion-label>{{ post.structure.name }}</ion-label>
               </ion-chip>
