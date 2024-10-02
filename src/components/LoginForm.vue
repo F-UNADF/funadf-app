@@ -37,28 +37,16 @@
 
 <script>
 
-import { mapGetters } from "vuex";
 import { IonToolbar, IonTitle, IonItemDivider, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
 
 export default {
     name: "loginComponent",
     components: { IonToolbar, IonTitle, IonItemDivider, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
-    computed: {
-        ...mapGetters('sessionStore', {
-            user: 'getUser',
-            church: 'getChurch',
-            token: 'getToken',
-        }),
-    },
-
     methods: {
         login: function () {
             this.$store.dispatch('sessionStore/login', this.credential).then(() => {
-                if (null !== this.token) {
-                    localStorage.setItem('token', this.token);
-                    this.$root.presentToast('Vous êtes connecté !');
-                    this.$router.push({ name: 'Home', replace: true });
-                }
+                this.$root.presentToast('Vous êtes connecté !');
+                this.$router.push({ name: 'Home', replace: true });
             }, (error) => {
                 console.log(error);
                 this.$root.presentToast('Merci de vérifier vos informations !', "danger");
@@ -80,9 +68,8 @@ export default {
         }
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/fetchUser');
-        if (this.user) {
-            this.$router.push('/user');
+        if (null !== localStorage.getItem('token')) {
+            this.$router.push({ name: 'user', replace: true });
         }
     },
 };

@@ -53,13 +53,11 @@ export default {
         },
     },
     beforeCreate: function () {
-        this.$store.dispatch('sessionStore/fetchUser');
-        this.$store.dispatch('votesStore/items');
-
-
-        if (null === this.token || null === this.user) {
+        if (null === localStorage.getItem('token')) {
             this.$router.push({ name: 'Login', replace: true });
         }
+        this.$store.dispatch('sessionStore/fetchUser');
+        this.$store.dispatch('votesStore/items');
     },
 };
 </script>

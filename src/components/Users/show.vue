@@ -91,7 +91,8 @@ export default {
     computed: {
         getAvatar() {
             let base_url = 'https://add-fnadf.fr';
-            return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
+            let user_id = this.user.id;
+            return base_url + '/avatars/' + user_id + '.png' + '?cache=' + new Date().getTime();
         },
     },
 };
