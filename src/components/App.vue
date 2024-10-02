@@ -52,7 +52,7 @@
         </ion-content>
 
         <!-- Tab bar -->
-        <ion-tab-bar color="primary" v-if="loggedIn">
+        <ion-tab-bar color="primary" v-if="this.loggedIn === true">
             <ion-tab-button ref="profil" tab="profil" href="/user">
                 <i class="material-icons">face</i>
                 <ion-label>Profil</ion-label>
@@ -130,14 +130,17 @@ export default {
         ...mapGetters("sessionStore", {
             user: "getUser",
         }),
-        loggedIn() {
-            return localStorage.getItem('token');
-        },
         hasHistory() {
             return window.history.length > 2;
         },
     },
-
+    watch: {
+        user: function (value) {
+            if (value) {
+                this.loggedIn = true;
+            }
+        },
+    },
     methods: {
         async presentToast(message, color = "success") {
             const toast = await toastController.create({
@@ -172,6 +175,7 @@ export default {
         return {
             messageToast: "Test Message",
             showToast: false,
+            loggedIn: false,
             app_version: "1.2.2",
         };
     },

@@ -16,7 +16,7 @@ console.log('token', token);
 
 // initial state
 const state = () => ({
-  user: {},
+  user: { id: 0 },
   church: {},
   fees: [],
 });
