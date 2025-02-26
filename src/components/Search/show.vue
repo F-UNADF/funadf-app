@@ -56,8 +56,6 @@ export default {
                 this.searchedChurch = res.data.church;
                 this.searchedAssociation = res.data.association;
                 this.structureMembers = res.data.members;
-            }).catch((error) => {
-                console.error('Error searching:', error);
             });
         }
     },

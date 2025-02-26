@@ -23,7 +23,9 @@
                 <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
             </ion-card-content>
         </ion-card>
-        <ion-button expand="block" @click="doRefresh()">Rafraichir la liste</ion-button>
+        <ion-card color="transparent">
+            <ion-button expand="block" @click="doRefresh()">Rafraichir la liste</ion-button>
+        </ion-card>
     </ion-content>
 </template>
 
