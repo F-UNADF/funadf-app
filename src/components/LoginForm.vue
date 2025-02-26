@@ -47,8 +47,7 @@ export default {
             this.$store.dispatch('sessionStore/login', this.credential).then(() => {
                 this.$root.presentToast('Vous êtes connecté !');
                 this.$router.push({ name: 'Home', replace: true });
-            }, (error) => {
-                console.log(error);
+            }, () => {
                 this.$root.presentToast('Merci de vérifier vos informations !', "danger");
             });
         },

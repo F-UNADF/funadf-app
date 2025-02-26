@@ -56,8 +56,6 @@ export default {
                 },
             }).then((res) => {
                 this.results = res.data;
-            }).catch((error) => {
-                console.error('Error searching:', error);
             });
         },
     },

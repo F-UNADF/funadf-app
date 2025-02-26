@@ -132,13 +132,10 @@ export default {
       this.$router.go(-1);
     },
     goVote: function () {
-      console.log(this.editResult);
-
       if (this.editVoters.some(voter => voter.selected === true) === false) {
         this.$root.presentToast('Merci de sélectionner au moins un bulletin !', 'danger');
         return;
       }
-
 
       this.$store.dispatch('votesStore/vote', { campaign_id: this.$route.params.campaign_id, results: this.editResult, voters: this.editVoters })
         .then(() => {

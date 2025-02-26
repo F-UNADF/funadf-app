@@ -183,7 +183,7 @@ export default {
         if (null === localStorage.getItem('token')) {
             this.$router.push({ name: 'Login', replace: true });
         }
-    },
+    }, 
 };
 </script>
 

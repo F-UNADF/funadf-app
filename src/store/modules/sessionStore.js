@@ -12,8 +12,6 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
-console.log('token', token);
-
 // initial state
 const state = () => ({
   user: { id: 0 },
@@ -39,7 +37,6 @@ const actions = {
       axios
         .post(url, formData)
         .then((res) => {
-          console.log(res.data.token);
           let token = res.data.token;
           localStorage.setItem("token", token);
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;

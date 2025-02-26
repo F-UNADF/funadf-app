@@ -70,15 +70,12 @@ const actions = {
     });
   },
   vote: function ({ commit }, payload) {
-    let token = localStorage.getItem("token");
-    let params = new URLSearchParams([["token", token]]);
-
+    console.log(commit);
     return new Promise((resolve, reject) => {
       axios
-        .post(base_url + "/api/votes", payload, { params })
+        .post(base_url + "/api/votes", payload)
         .then((res) => {
           resolve(res);
-          console.log(commit);
         })
         .catch((error) => {
           reject(error, 2000);
