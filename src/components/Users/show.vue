@@ -1,33 +1,33 @@
 <template>
-    <ion-card color="primary">
+    <ion-card>
         <ion-card-header>
             <div class="avatar">
-                <ion-img :src=getAvatar alt="Avatar {{ user.lastname }} {{ user.firstname }}"></ion-img>
+                <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
             </div>
             <ion-card-title>{{ user.lastname }} {{ user.firstname }}</ion-card-title>
             <ion-col>
-                <ion-chip>
+                <ion-chip color="primary">
                     <i class="material-icons mr-3">account_box</i>
                     <ion-label>{{ user.id }}</ion-label>
                 </ion-chip>
             </ion-col>
             <ion-col>
-                <ion-chip>
+                <ion-chip color="primary">
                     <i class="material-icons mr-3">bookmark</i>
                     <ion-label>{{ user.level }}</ion-label>
                 </ion-chip>
             </ion-col>
         </ion-card-header>
         <ion-list lines="full">
-            <ion-item color="primary" v-if="!!user.email">
+            <ion-item v-if="!!user.email">
                 <i class="material-icons mr-3">mail</i>
-                <a :href="'mailto:' + user.email" color="light">{{ user.email }}</a>
+                <a :href="'mailto:' + user.email">{{ user.email }}</a>
             </ion-item>
-            <ion-item color="primary" v-if="!!user.phone_1">
+            <ion-item v-if="!!user.phone_1">
                 <i class="material-icons mr-3">phone</i>
                 <a :href="'tel:' + user.phone_1">{{ user.phone_1 }}</a>
             </ion-item>
-            <ion-item color="primary" v-if="!!user.town">
+            <ion-item v-if="!!user.town">
                 <i class="material-icons mr-3">location_on</i>
                 {{ user.town }}
             </ion-item>
@@ -90,7 +90,11 @@ export default {
     },
     computed: {
         getAvatar() {
-            let base_url = 'https://add-fnadf.fr';
+            let base_url =
+                process.env.NODE_ENV === "production"
+                    ? "https://add-fnadf.fr"
+                    : "http://myloc.me:3000";
+
             let user_id = this.user.id;
             return base_url + '/avatars/' + user_id + '.png' + '?cache=' + new Date().getTime();
         },

@@ -23,6 +23,12 @@ const getters = {
 
 // actions
 const actions = {
+  initFeed({ commit }) {
+    commit('setItems', {});
+    commit('setOffset', 0);
+    commit('setLoading', false);
+    commit('setEndOfFeed', false);
+  },
   fetchFeed({ commit, state }) {
     if (null === localStorage.getItem("token")) {
       return;
