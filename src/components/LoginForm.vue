@@ -1,12 +1,6 @@
 <template>
     <ion-card>
-        <ion-card-header>
-            <ion-toolbar>
-                <ion-title>Connexion</ion-title>
-            </ion-toolbar>
-        </ion-card-header>
         <ion-card-content>
-
             <ion-item>
                 <ion-label position="stacked" color="primary">Email</ion-label>
                 <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false"
@@ -24,8 +18,6 @@
                 </i>
             </ion-item>
 
-            <ion-item-divider></ion-item-divider>
-
             <ion-row responsive-sm>
                 <ion-col>
                     <ion-button expand="block" @click="login()">Connexion</ion-button>
@@ -36,12 +28,11 @@
 </template>
 
 <script>
-
-import { IonToolbar, IonTitle, IonItemDivider, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
+import { IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard } from '@ionic/vue';
 
 export default {
     name: "loginComponent",
-    components: { IonToolbar, IonTitle, IonItemDivider, IonCardHeader, IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
+    components: { IonLabel, IonInput, IonItem, IonButton, IonCol, IonRow, IonCardContent, IonCard },
     methods: {
         login: function () {
             this.$store.dispatch('sessionStore/login', this.credential).then(() => {

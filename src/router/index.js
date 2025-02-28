@@ -5,7 +5,7 @@ const isAuthenticated = (localStorage.getItem('token') !== null);
 const routes = [
   {
     path: '/',
-    redirect: (isAuthenticated) ? '/user' : '/login',
+    redirect: (isAuthenticated) ? '/feed' : '/login',
   },
   {
     path: '/login',

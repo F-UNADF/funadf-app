@@ -1,11 +1,9 @@
 <template>
-    <ion-card color="light">
+    <ion-card>
         <ion-card-content>
             <ion-text>
                 <h3 class="display-3">Carte Pastorale<br>des Assemblées de Dieu</h3>
             </ion-text>
-
-            <qrcode-vue :value="user.passphrase" :size=300 render-as="svg" class="qrcode"></qrcode-vue>
 
             <ion-row class="ion-justify-content-center">
                 <ion-col v-for="(year, index) in years" :key="index">
@@ -22,11 +20,12 @@
                 style="max-width: 200px; border-radius: 50%; margin: 10px auto; display: block;">
             <ion-card-title>{{ user.fullname }}</ion-card-title>
             <hr />
-            <ion-chip>
+            <ion-chip color="secondary">
                 <i class="material-icons">account_box</i>
                 <ion-label>{{ user.id }}</ion-label>
             </ion-chip>
-            <ion-chip><i class="material-icons">bookmark</i>
+            <ion-chip color="secondary">
+                <i class="material-icons">bookmark</i>
                 <ion-label>{{ level() }}</ion-label>
             </ion-chip>
         </ion-card-header>
@@ -56,7 +55,10 @@ export default {
             fees: 'getFees',
         }),
         getAvatar() {
-            let base_url = 'https://add-fnadf.fr';
+            let base_url =
+                process.env.NODE_ENV === "production"
+                    ? "https://add-fnadf.fr"
+                    : "http://myloc.me:3000";
             return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
         },
     },

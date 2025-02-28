@@ -2,23 +2,16 @@
     <ion-page>
         <ion-header>
             <ion-toolbar color="primary">
-                <ion-buttons slot="start">
-                    <ion-back-button text="" default-href="/carte"></ion-back-button>
-                </ion-buttons>
-                <ion-title class="title">
-                    <div class="logo">
-                        <img class="add-logo" src="/assets/logo-add.png" alt="Logo UNADF" />
-                        <span>UNADF</span>
-                        <img class="unadf-logo" src="/assets/logo-unadf.png" alt="Logo UNADF" />
-                    </div>
-                </ion-title>
-                <ion-buttons slot="end" v-if="loggedIn">
+                <ion-buttons slot="start" v-if="loggedIn">
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
+                <ion-title>
+                    <ion-img src="/assets/logo-add.png" class="add-logo"></ion-img>
+                </ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-menu side="end" content-id="main-content">
+        <ion-menu side="start" content-id="main-content">
             <ion-header>
                 <ion-toolbar>
                     <ion-title>Menu</ion-title>
@@ -65,7 +58,7 @@
 
             <ion-tab-button tab="feed" ref="feed" href="/feed">
                 <i class="material-icons">rss_feed</i>
-                <ion-label>Feed</ion-label>
+                <ion-label>Actualités</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="votes" ref="votes" href="/votes">
@@ -82,7 +75,6 @@ import {
     IonHeader,
     IonToolbar,
     IonButtons,
-    IonBackButton,
     IonTitle,
     IonContent,
     IonMenu,
@@ -97,6 +89,7 @@ import {
     IonTabButton,
     IonMenuButton,
     toastController,
+    IonImg
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
 import { logInOutline, search, arrowBack } from "ionicons/icons";
@@ -108,7 +101,6 @@ export default {
         IonHeader,
         IonToolbar,
         IonButtons,
-        IonBackButton,
         IonTitle,
         IonContent,
         IonMenu,
@@ -122,6 +114,7 @@ export default {
         IonTabBar,
         IonTabButton,
         IonMenuButton,
+        IonImg,
     },
     setup() {
         return { logInOutline, search, arrowBack };
@@ -183,26 +176,14 @@ export default {
         if (null === localStorage.getItem('token')) {
             this.$router.push({ name: 'Login', replace: true });
         }
-    }, 
+    },
 };
 </script>
 
 <style>
-.logo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    flex-direction: row;
-}
-
-.unadf-logo {
-    height: 40px;
-    display: inline-block;
-}
-
 .add-logo {
-    max-width: 50px;
-    display: inline-block;
+    display: block;
+    margin: 0 auto;
+    max-width: 80px;
 }
 </style>

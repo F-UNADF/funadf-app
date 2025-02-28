@@ -8,9 +8,7 @@
             <ion-card-subtitle>
               <ion-chip>
                 <ion-avatar>
-                  <img
-                    :src="'https://add-fnadf.fr/logos/' + post.post.structure_id + '.png?cahe=' + new Date().getTime()"
-                    width="20" alt="avatar" />
+                  <img :src="getAvatar(post.post.structure_id)" width="20" alt="avatar" />
                 </ion-avatar>
                 <ion-label>{{ post.structure.name }}</ion-label>
               </ion-chip>
@@ -63,12 +61,20 @@ export default {
     load: function () {
       this.$store.dispatch('feedStore/loadMore');
     },
+    getAvatar: function (id) {
+      let base_url =
+        process.env.NODE_ENV === "production"
+          ? "https://add-fnadf.fr"
+          : "http://myloc.me:3000";
+      return base_url + '/logos/' + id + '.png' + '?cache=' + new Date().getTime();
+    },
   },
   beforeCreate: function () {
     if (null === localStorage.getItem('token')) {
       this.$router.push({ name: 'Login', replace: true });
     }
     this.$store.dispatch('sessionStore/fetchUser');
+    this.$store.dispatch('feedStore/initFeed');
     this.$store.dispatch('feedStore/fetchFeed');
   },
   data() {
