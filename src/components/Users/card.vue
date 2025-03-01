@@ -17,17 +17,30 @@
         </ion-card-content>
         <ion-card-header style="text-align: center;">
             <img :src=getAvatar alt="Avatar User"
-                style="max-width: 200px; border-radius: 50%; margin: 10px auto; display: block;">
-            <ion-card-title>{{ user.fullname }}</ion-card-title>
-            <hr />
-            <ion-chip color="secondary">
-                <i class="material-icons">account_box</i>
-                <ion-label>{{ user.id }}</ion-label>
-            </ion-chip>
-            <ion-chip color="secondary">
-                <i class="material-icons">bookmark</i>
-                <ion-label>{{ level() }}</ion-label>
-            </ion-chip>
+                style="max-width: 200px; border-radius: 50%; margin: 10px auto 30px; display: block;">
+
+            <ion-card-title class="ion-text-center ion-margin-bottom">
+                {{ user.lastname }} {{ user.firstname }}
+            </ion-card-title>
+
+
+            <ion-grid>
+                <ion-row class="ion-justify-content-center">
+                    <ion-col size="6">
+                        <ion-chip color="secondary">
+                            <i class="material-icons mr-3">account_box</i>
+                            <ion-label>{{ user.id }}</ion-label>
+                        </ion-chip>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-chip color="secondary">
+                            <i class="material-icons mr-3">bookmark</i>
+                            <ion-label>{{ user.level }}</ion-label>
+                        </ion-chip>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
         </ion-card-header>
     </ion-card>
 </template>

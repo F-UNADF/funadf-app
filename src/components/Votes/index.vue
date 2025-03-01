@@ -1,4 +1,7 @@
 <template>
+    <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
     <ion-content>
         <ion-card v-if="items.length === 0">
             <ion-card-header>
@@ -45,6 +48,13 @@ export default {
         }),
     },
     methods: {
+        handleRefresh: function (event) {
+            this.$store.dispatch('votesStore/items').then(() => {
+                setTimeout(() => {
+                    event.detail.complete();
+                }, 2000);
+            });
+        },
         goVote: function (item) {
             this.$store.commit('votesStore/setItem', item);
             this.$store.dispatch('votesStore/getCampaign', item.id);

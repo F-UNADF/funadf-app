@@ -57,6 +57,11 @@ const routes = [
     path: '/annuaire/:type/:id',
     name: 'SearchShow',
     component: () => import("../components/Search/show"),
+  },
+  {
+    path: '/documents',
+    name: 'DocumentsIndex',
+    component: () => import("../components/Documents/index"),
   }
 ]
 
