@@ -49,11 +49,10 @@
 
 import { mapGetters } from "vuex";
 import { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle } from '@ionic/vue';
-import QrcodeVue from 'qrcode.vue'
 
 export default {
     name: "UserCardComponent",
-    components: { IonCard, QrcodeVue, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle },
+    components: { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle },
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',
