@@ -124,7 +124,7 @@ export default {
             user: "getUser",
         }),
         loggedIn() {
-            return localStorage.getItem('token') !== null;
+            return this.user.id !== 0;
         },
     },
     methods: {
@@ -168,6 +168,7 @@ export default {
         if (null === localStorage.getItem('token')) {
             this.$router.push({ name: 'Login', replace: true });
         }
+        this.$store.dispatch('sessionStore/fetchUser');
     },
 };
 </script>

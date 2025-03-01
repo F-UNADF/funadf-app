@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import { IonList, IonListHeader, IonLabel } from '@ionic/vue';
+import { IonList, IonLabel } from '@ionic/vue';
 export default {
   name: "NestedDocument",
-  components: { IonList, IonListHeader, IonLabel },
+  components: { IonList, IonLabel },
   props: {
     item: Object,
   },
