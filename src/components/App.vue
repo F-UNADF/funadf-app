@@ -45,15 +45,15 @@
         </ion-content>
 
         <!-- Tab bar -->
-        <ion-tab-bar color="primary" v-if="this.loggedIn === true">
+        <ion-tab-bar color="primary" v-if="this.loggedIn">
             <ion-tab-button ref="profil" tab="profil" href="/user">
                 <i class="material-icons">face</i>
                 <ion-label>Profil</ion-label>
             </ion-tab-button>
 
-            <ion-tab-button tab="contact" ref="contact" href="/carte">
-                <i class="material-icons">account_box</i>
-                <ion-label>Carte</ion-label>
+            <ion-tab-button tab="documents" ref="documents" href="/documents">
+                <i class="material-icons">folder</i>
+                <ion-label>Documents</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="feed" ref="feed" href="/feed">
@@ -123,15 +123,8 @@ export default {
         ...mapGetters("sessionStore", {
             user: "getUser",
         }),
-        hasHistory() {
-            return window.history.length > 2;
-        },
-    },
-    watch: {
-        user: function (value) {
-            if (value) {
-                this.loggedIn = true;
-            }
+        loggedIn() {
+            return localStorage.getItem('token') !== null;
         },
     },
     methods: {
@@ -168,8 +161,7 @@ export default {
         return {
             messageToast: "Test Message",
             showToast: false,
-            loggedIn: false,
-            app_version: "1.2.2",
+            app_version: "1.3.0",
         };
     },
     beforeCreate: function () {

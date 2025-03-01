@@ -4,20 +4,30 @@
             <div class="avatar">
                 <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
             </div>
-            <ion-card-title>{{ user.lastname }} {{ user.firstname }}</ion-card-title>
-            <ion-col>
-                <ion-chip color="primary">
-                    <i class="material-icons mr-3">account_box</i>
-                    <ion-label>{{ user.id }}</ion-label>
-                </ion-chip>
-            </ion-col>
-            <ion-col>
-                <ion-chip color="primary">
-                    <i class="material-icons mr-3">bookmark</i>
-                    <ion-label>{{ user.level }}</ion-label>
-                </ion-chip>
-            </ion-col>
+
+            <ion-card-title class="ion-text-center ion-margin-bottom">{{ user.lastname }} {{ user.firstname
+                }}</ion-card-title>
+
+
+            <ion-grid>
+                <ion-row class="ion-justify-content-center">
+                    <ion-col size="4">
+                        <ion-chip color="secondary">
+                            <i class="material-icons mr-3">account_box</i>
+                            <ion-label>{{ user.id }}</ion-label>
+                        </ion-chip>
+                    </ion-col>
+                    <ion-col size="8">
+                        <ion-chip color="secondary">
+                            <i class="material-icons mr-3">bookmark</i>
+                            <ion-label>{{ user.level }}</ion-label>
+                        </ion-chip>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
         </ion-card-header>
+
         <ion-list lines="full">
             <ion-item v-if="!!user.email">
                 <i class="material-icons mr-3">mail</i>
