@@ -34,7 +34,7 @@ export default {
       let base_url =
         process.env.NODE_ENV === "production"
           ? "https://add-fnadf.fr"
-          : "http://myloc.me:3000";
+          : "http://app.localhost:3000";
       if (activeItems?.href) {
         window.open(base_url + activeItems.href, "_blank"); // Ouvrir le fichier
       }

@@ -39,11 +39,11 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonContent, IonButton, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonRow, IonCol, IonChip } from '@ionic/vue';
+import { IonContent, IonButton, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonRow, IonCol, IonChip, IonRefresher, IonRefresherContent } from '@ionic/vue';
 
 export default {
   name: "HomePage",
-  components: { IonContent, IonButton, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonRow, IonCol, IonChip },
+  components: { IonContent, IonButton, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonRow, IonCol, IonChip, IonRefresher, IonRefresherContent },
   computed: {
     ...mapGetters('sessionStore', {
       user: 'getUser',
@@ -71,7 +71,7 @@ export default {
       let base_url =
         process.env.NODE_ENV === "production"
           ? "https://add-fnadf.fr"
-          : "http://myloc.me:3000";
+          : "http://app.localhost:3000";
       return base_url + '/logos/' + id + '.png' + '?cache=' + new Date().getTime();
     },
   },
