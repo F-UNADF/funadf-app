@@ -16,9 +16,13 @@
   </ion-list>
 
   <ion-list v-if="isOpen" class="ion-margin-start">
-    <ion-item v-for="item in item.documents" :key="item.id" @click="$emit('downloadDocument', item)">
+    <ion-item 
+      v-for="item in item.documents" 
+      :key="item.id" 
+      @click="handleClick(item)"
+    >
       <i class="material-icons" slot="start">
-        file_download
+        {{ item.type === 'url' ? 'link' : 'file_download' }}
       </i>
       <ion-label>{{ item.name }}</ion-label>
     </ion-item>
@@ -26,16 +30,24 @@
 </template>
 
 <script>
-import { IonList, IonLabel } from '@ionic/vue';
+import { IonList, IonItem, IonLabel } from '@ionic/vue';
 export default {
   name: "NestedDocument",
-  components: { IonList, IonLabel },
+  components: { IonList, IonItem, IonLabel },
   props: {
     item: Object,
   },
+  emits: ['downloadDocument'],
   computed: {
   },
   methods: {
+    handleClick: function(item) {
+      if (item.type === 'url') {
+        window.open(item.url, '_blank');
+      } else {
+        this.$emit('downloadDocument', item);
+      }
+    }
   },
   data() {
     return {

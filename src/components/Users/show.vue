@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonCol } from '@ionic/vue';
+import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonRow, IonCol, IonGrid } from '@ionic/vue';
 
 export default {
     name: "UserShowComponent",
@@ -87,8 +87,10 @@ export default {
         IonItem,
         IonLabel,
         IonFab,
+        IonRow,
         IonFabButton,
-        IonCol
+        IonCol,
+        IonGrid
     },
     props: {
         user: Object,
@@ -103,7 +105,7 @@ export default {
             let base_url =
                 process.env.NODE_ENV === "production"
                     ? "https://add-fnadf.fr"
-                    : "http://myloc.me:3000";
+                    : "http://app.localhost:3000";
 
             let user_id = this.user.id;
             return base_url + '/avatars/' + user_id + '.png' + '?cache=' + new Date().getTime();

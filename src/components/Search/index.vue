@@ -48,7 +48,14 @@ export default {
                 this.results = [];
                 return true;
             }
-            let base_url = 'https://add-fnadf.fr';
+            console.log('searching for', this.search);
+            // On enregistre en session la recherche
+            sessionStorage.setItem('search', this.search);
+
+            let base_url =
+                process.env.NODE_ENV === "production"
+                    ? "https://add-fnadf.fr"
+                    : "http://app.localhost:3000";
             // Make the HTTP request to /api/search with the search query as a parameter
             axios.get(base_url + '/api/search', {
                 params: {
@@ -63,6 +70,10 @@ export default {
         search: function () {
             this.searchItems();
         }
+    },
+    mounted() {
+        this.search = sessionStorage.getItem('search') || '';
+        this.searchItems();
     },
     beforeCreate: function () {
         this.$store.dispatch('sessionStore/fetchUser');

@@ -3,7 +3,7 @@ import axios from "axios";
 let base_url =
   process.env.NODE_ENV === "production"
     ? "https://add-fnadf.fr"
-    : "http://myloc.me:3000";
+    : "http://app.localhost:3000";
 
 // initial state
 const state = () => ({
@@ -25,7 +25,6 @@ const actions = {
       axios
         .get(base_url + "/api/documents")
         .then((res) => {
-          console.log(res.data);
           commit("setItems", res.data);
           resolve(res);
         })

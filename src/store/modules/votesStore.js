@@ -3,7 +3,7 @@ import axios from "axios";
 let base_url =
   process.env.NODE_ENV === "production"
     ? "https://add-fnadf.fr"
-    : "http://myloc.me:3000";
+    : "http://app.localhost:3000";
 
 // initial state
 const state = () => ({
