@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609947767440",
+    "project_id": "funadf-49dfb",
+    "storage_bucket": "funadf-49dfb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609947767440:android:34014b3c433f7a522ffe15",
+        "android_client_info": {
+          "package_name": "funadf.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY_hs30rfhvr01flRAn2rs9qmrBhC7OC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
