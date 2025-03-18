@@ -31,6 +31,8 @@
 
 <script>
 import { IonList, IonItem, IonLabel } from '@ionic/vue';
+import { Browser } from '@capacitor/browser';
+
 export default {
   name: "NestedDocument",
   components: { IonList, IonItem, IonLabel },
@@ -41,11 +43,16 @@ export default {
   computed: {
   },
   methods: {
-    handleClick: function(item) {
+    handleClick: async function(item) {
       if (item.type === 'url') {
-        window.open(item.url, '_blank');
+        await Browser.open({ url: item.url });
       } else {
-        this.$emit('downloadDocument', item);
+        let base_url =
+          process.env.NODE_ENV === "production"
+            ? "https://add-fnadf.fr"
+            : "http://app.localhost:3000";
+        
+        await Browser.open({ url: base_url + item.href });
       }
     }
   },
