@@ -75,6 +75,13 @@
 			remoteGlobalIDString = 026A691286A2668863FEACBF5E52AD02;
 			remoteInfo = CapacitorCamera;
 		};
+		DAE4D8F52D88A90800C899EA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A9C1AE5EF2DE4871B3A49E5726100845;
+			remoteInfo = CapacitorPushNotifications;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,6 +114,7 @@
 		DA1CB02F297F18250070383B /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		DA7322442CA9708F00C0E5B7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
 		DA7322452CA9708F00C0E5B7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		DAE4D8F72D88ADFF00C899EA /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +169,7 @@
 		504EC3061FED79650016851F /* App */ = {
 			isa = PBXGroup;
 			children = (
+				DAE4D8F72D88ADFF00C899EA /* App.entitlements */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -182,6 +191,7 @@
 				DA1CB03E297F18260070383B /* Cordova.framework */,
 				DA1CB040297F18260070383B /* CapacitorHaptics.framework */,
 				DA1CB042297F18260070383B /* CapacitorKeyboard.framework */,
+				DAE4D8F62D88A90800C899EA /* CapacitorPushNotifications.framework */,
 				DA1CB044297F18260070383B /* CapacitorStatusBar.framework */,
 				DA1CB046297F18260070383B /* Pods_App.framework */,
 			);
@@ -307,6 +317,13 @@
 			fileType = wrapper.framework;
 			path = CapacitorCamera.framework;
 			remoteRef = DA86A1D52B7221BD009B8512 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DAE4D8F62D88A90800C899EA /* CapacitorPushNotifications.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CapacitorPushNotifications.framework;
+			remoteRef = DAE4D8F52D88A90800C899EA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -455,7 +472,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
@@ -527,6 +544,7 @@
 			baseConfigurationReference = CE27F62AFFE9454E259872DC /* Pods-App.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -560,6 +578,7 @@
 			baseConfigurationReference = 07E6280CE951FEFE171D3676 /* Pods-App.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

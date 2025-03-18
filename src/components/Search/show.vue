@@ -13,7 +13,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { IonContent, IonBackButton } from '@ionic/vue';
+import { IonContent, IonButton } from '@ionic/vue';
 import UserShow from '@/components/Users/show.vue';
 import ChurchShow from '@/components/Churches/show.vue';
 import AssociationShow from '@/components/Associations/show.vue';
@@ -21,7 +21,7 @@ import axios from 'axios';
 
 export default {
     name: "SearchShow",
-    components: { IonContent, UserShow, ChurchShow, AssociationShow, IonBackButton },
+    components: { IonContent, UserShow, ChurchShow, AssociationShow, IonButton },
     computed: {
         ...mapGetters({
             user: 'getUser',

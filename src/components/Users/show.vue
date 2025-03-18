@@ -1,75 +1,79 @@
 <template>
-    <ion-card>
-        <ion-card-header>
-            <div class="avatar">
-                <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
-            </div>
+    <ion-page>
+        <ion-content class="ion-padding">
+            <ion-card>
+                <ion-card-header>
+                    <div class="avatar">
+                        <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
+                    </div>
 
-            <ion-card-title class="ion-text-center ion-margin-bottom">{{ user.lastname }} {{ user.firstname
-                }}</ion-card-title>
+                    <ion-card-title class="ion-text-center ion-margin-bottom">{{ user.lastname }} {{ user.firstname
+                        }}</ion-card-title>
 
 
-            <ion-grid>
-                <ion-row class="ion-justify-content-center">
-                    <ion-col size="4">
-                        <ion-chip color="secondary">
-                            <i class="material-icons mr-3">account_box</i>
-                            <ion-label>{{ user.id }}</ion-label>
-                        </ion-chip>
-                    </ion-col>
-                    <ion-col size="8">
-                        <ion-chip color="secondary">
-                            <i class="material-icons mr-3">bookmark</i>
-                            <ion-label>{{ user.level }}</ion-label>
-                        </ion-chip>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
+                    <ion-grid>
+                        <ion-row class="ion-justify-content-center">
+                            <ion-col size="4">
+                                <ion-chip color="secondary">
+                                    <i class="material-icons mr-3">account_box</i>
+                                    <ion-label>{{ user.id }}</ion-label>
+                                </ion-chip>
+                            </ion-col>
+                            <ion-col size="8">
+                                <ion-chip color="secondary">
+                                    <i class="material-icons mr-3">bookmark</i>
+                                    <ion-label>{{ user.level }}</ion-label>
+                                </ion-chip>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
 
-        </ion-card-header>
+                </ion-card-header>
 
-        <ion-list lines="full">
-            <ion-item v-if="!!user.email">
-                <i class="material-icons mr-3">mail</i>
-                <a :href="'mailto:' + user.email">{{ user.email }}</a>
-            </ion-item>
-            <ion-item v-if="!!user.phone_1">
-                <i class="material-icons mr-3">phone</i>
-                <a :href="'tel:' + user.phone_1">{{ user.phone_1 }}</a>
-            </ion-item>
-            <ion-item v-if="!!user.town">
-                <i class="material-icons mr-3">location_on</i>
-                {{ user.town }}
-            </ion-item>
-        </ion-list>
-    </ion-card>
+                <ion-list lines="full">
+                    <ion-item v-if="!!user.email">
+                        <i class="material-icons mr-3">mail</i>
+                        <a :href="'mailto:' + user.email">{{ user.email }}</a>
+                    </ion-item>
+                    <ion-item v-if="!!user.phone_1">
+                        <i class="material-icons mr-3">phone</i>
+                        <a :href="'tel:' + user.phone_1">{{ user.phone_1 }}</a>
+                    </ion-item>
+                    <ion-item v-if="!!user.town">
+                        <i class="material-icons mr-3">location_on</i>
+                        {{ user.town }}
+                    </ion-item>
+                </ion-list>
+            </ion-card>
 
-    <ion-card color="secondary" v-if="!!church">
-        <!-- STRUCUTRE -->
-        <ion-card-header>
-            <ion-card-title>{{ church.name }}</ion-card-title>
-        </ion-card-header>
-        <ion-list lines="full">
-            <ion-item color="secondary">
-                <i class="material-icons mr-3">location_on</i>
-                {{ church.zipcode }} {{ church.town }}
-            </ion-item>
-            <ion-item v-if="(church.email)">
-                <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated"><a
-                        :href="'mailto:' + church.email">{{ church.email }}</a></ion-label>
-            </ion-item>
-            <ion-item v-if="(church.phone)">
-                <ion-label><a :href="'tel:' + church.phone">{{ church.phone }}</a></ion-label>
-            </ion-item>
-        </ion-list>
-    </ion-card>
+            <ion-card color="secondary" v-if="!!church">
+                <!-- STRUCUTRE -->
+                <ion-card-header>
+                    <ion-card-title>{{ church.name }}</ion-card-title>
+                </ion-card-header>
+                <ion-list lines="full">
+                    <ion-item color="secondary">
+                        <i class="material-icons mr-3">location_on</i>
+                        {{ church.zipcode }} {{ church.town }}
+                    </ion-item>
+                    <ion-item v-if="(church.email)">
+                        <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated"><a
+                                :href="'mailto:' + church.email">{{ church.email }}</a></ion-label>
+                    </ion-item>
+                    <ion-item v-if="(church.phone)">
+                        <ion-label><a :href="'tel:' + church.phone">{{ church.phone }}</a></ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-card>
 
-    <ion-fab v-if="this.canEdit === true" slot="fixed" vertical="bottom" horizontal="end"
-        @click="this.$router.push('user/edit');">
-        <ion-fab-button color="danger">
-            <i class="material-icons">edit</i>
-        </ion-fab-button>
-    </ion-fab>
+            <ion-fab v-if="this.canEdit === true" slot="fixed" vertical="bottom" horizontal="end"
+                @click="this.$router.push('user/edit');">
+                <ion-fab-button color="danger">
+                    <i class="material-icons">edit</i>
+                </ion-fab-button>
+            </ion-fab>
+        </ion-content>
+    </ion-page>
 </template>
 
 <script>

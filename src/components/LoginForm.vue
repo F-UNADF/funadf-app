@@ -1,30 +1,33 @@
 <template>
-    <ion-card>
-        <ion-card-content>
-            <ion-item>
-                <ion-label position="stacked" color="primary">Email</ion-label>
-                <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false"
-                    autocapitalize="off" required autocomplete="email"></ion-input>
-            </ion-item>
+    <ion-page>
+        <ion-card>
+            <ion-card-content>
+                <ion-item>
+                    <ion-label position="stacked" color="primary">Email</ion-label>
+                    <ion-input v-model="credential['email']" name="email" type="email" spellcheck="false"
+                        autocapitalize="off" required autocomplete="email"></ion-input>
+                </ion-item>
 
-            <ion-item>
-                <ion-label position="stacked" color="primary">Mot de passe</ion-label>
-                <ion-input v-model="credential['password']" name="password" :type="showPassword ? 'text' : 'password'"
-                    required :show-password="showPassword" autocomplete="current-password">
-                </ion-input>
-                <i class="material-icons visibilityIcon" @click="togglePassword()">
-                    {{ showPassword ? 'visibility_off' :
-                        'visibility' }}
-                </i>
-            </ion-item>
+                <ion-item>
+                    <ion-label position="stacked" color="primary">Mot de passe</ion-label>
+                    <ion-input v-model="credential['password']" name="password"
+                        :type="showPassword ? 'text' : 'password'" required :show-password="showPassword"
+                        autocomplete="current-password">
+                    </ion-input>
+                    <i class="material-icons visibilityIcon" @click="togglePassword()">
+                        {{ showPassword ? 'visibility_off' :
+                            'visibility' }}
+                    </i>
+                </ion-item>
 
-            <ion-row responsive-sm>
-                <ion-col>
-                    <ion-button expand="block" @click="login()">Connexion</ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-card-content>
-    </ion-card>
+                <ion-row responsive-sm>
+                    <ion-col>
+                        <ion-button expand="block" @click="login()">Connexion</ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-card-content>
+        </ion-card>
+    </ion-page>
 </template>
 
 <script>

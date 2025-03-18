@@ -48,7 +48,6 @@ export default {
                 this.results = [];
                 return true;
             }
-            console.log('searching for', this.search);
             // On enregistre en session la recherche
             sessionStorage.setItem('search', this.search);
 

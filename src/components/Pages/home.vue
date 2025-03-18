@@ -1,7 +1,9 @@
 <template>
-    <ion-content>
-        <user-show :user="this.user" :church="this.currentChurch" :canEdit="true"></user-show>
-    </ion-content>
+    <ion-page>
+        <ion-content>
+            <user-show :user="this.user" :church="this.currentChurch" :canEdit="true"></user-show>
+        </ion-content>
+    </ion-page>
 </template>
 
 <script>

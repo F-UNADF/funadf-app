@@ -69,8 +69,7 @@ const actions = {
         });
     });
   },
-  vote: function ({ commit }, payload) {
-    console.log(commit);
+  vote: function (payload) {
     return new Promise((resolve, reject) => {
       axios
         .post(base_url + "/api/votes", payload)

@@ -27,11 +27,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>L'accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
+	<string>L&apos;accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>L'accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>L'accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

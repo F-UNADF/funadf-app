@@ -1,35 +1,37 @@
 <template>
-    <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
-    <ion-content>
-        <ion-card v-if="items.length === 0">
-            <ion-card-header>
-                <ion-card-title>Aucun vote</ion-card-title>
-            </ion-card-header>
+    <ion-page>
+        <ion-content>
+            <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
+                <ion-refresher-content></ion-refresher-content>
+            </ion-refresher>
+            <ion-card v-if="items.length === 0">
+                <ion-card-header>
+                    <ion-card-title>Aucun vote</ion-card-title>
+                </ion-card-header>
 
-            <ion-card-content>
-                <ion-button expand="block" @click="$router.push({ name: 'Home' })">Retour</ion-button>
-            </ion-card-content>
-        </ion-card>
+                <ion-card-content>
+                    <ion-button expand="block" @click="$router.push({ name: 'Home' })">Retour</ion-button>
+                </ion-card-content>
+            </ion-card>
 
-        <ion-card v-for="item in items" :key="item.id">
-            <ion-card-header>
-                <ion-card-title>{{ item.name }}</ion-card-title>
-                <ion-card-subtitle>{{ item.structure.name }}</ion-card-subtitle>
-            </ion-card-header>
+            <ion-card v-for="item in items" :key="item.id">
+                <ion-card-header>
+                    <ion-card-title>{{ item.name }}</ion-card-title>
+                    <ion-card-subtitle>{{ item.structure.name }}</ion-card-subtitle>
+                </ion-card-header>
 
-            <ion-card-content>
-                <ion-button v-if="item.state === 'opened'" expand="block" @click="goVote(item)">
-                    Voter !
-                </ion-button>
-                <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
-            </ion-card-content>
-        </ion-card>
-        <ion-card color="transparent">
-            <ion-button expand="block" @click="doRefresh()">Rafraichir la liste</ion-button>
-        </ion-card>
-    </ion-content>
+                <ion-card-content>
+                    <ion-button v-if="item.state === 'opened'" expand="block" @click="goVote(item)">
+                        Voter !
+                    </ion-button>
+                    <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
+                </ion-card-content>
+            </ion-card>
+            <ion-card color="transparent">
+                <ion-button expand="block" @click="doRefresh()">Rafraichir la liste</ion-button>
+            </ion-card>
+        </ion-content>
+    </ion-page>
 </template>
 
 <script>
