@@ -46,24 +46,25 @@
 
         <!-- Tab bar -->
         <ion-tab-bar color="primary" v-if="this.loggedIn">
-            <ion-tab-button ref="profil" tab="profil" href="/user">
-                <i class="material-icons">face</i>
-                <ion-label>Profil</ion-label>
-            </ion-tab-button>
-
-            <ion-tab-button tab="documents" ref="documents" href="/documents">
-                <i class="material-icons">folder</i>
-                <ion-label>Documents</ion-label>
-            </ion-tab-button>
-
             <ion-tab-button tab="feed" ref="feed" href="/feed">
-                <i class="material-icons">rss_feed</i>
+                <ion-icon :icon="newspaper"></ion-icon>
                 <ion-label>Actualités</ion-label>
             </ion-tab-button>
 
+
+            <ion-tab-button tab="documents" ref="documents" href="/documents">
+                <ion-icon :icon="folderOpen"></ion-icon>
+                <ion-label>Documents</ion-label>
+            </ion-tab-button>
+
             <ion-tab-button tab="votes" ref="votes" href="/votes">
-                <i class="material-icons">thumb_up</i>
+                <ion-icon :icon="thumbsUp"></ion-icon>
                 <ion-label>Votes</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button ref="profil" tab="profil" href="/user">
+                <ion-icon :icon="personCircle"></ion-icon>
+                <ion-label>Profil</ion-label>
             </ion-tab-button>
         </ion-tab-bar>
     </ion-page>
@@ -89,10 +90,10 @@ import {
     IonTabButton,
     IonMenuButton,
     toastController,
-    IonImg
+    IonImg,
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
-import { logInOutline, search, arrowBack } from "ionicons/icons";
+import { logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle } from "ionicons/icons";
 
 export default {
     name: "App",
@@ -115,9 +116,6 @@ export default {
         IonTabButton,
         IonMenuButton,
         IonImg,
-    },
-    setup() {
-        return { logInOutline, search, arrowBack };
     },
     computed: {
         ...mapGetters("sessionStore", {
@@ -169,6 +167,9 @@ export default {
             this.$router.push({ name: 'Login', replace: true });
         }
         this.$store.dispatch('sessionStore/fetchUser');
+    },
+    setup() {
+        return { newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle };
     },
 };
 </script>
