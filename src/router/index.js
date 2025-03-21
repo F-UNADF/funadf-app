@@ -62,6 +62,16 @@ const routes = [
     path: '/documents',
     name: 'DocumentsIndex',
     component: () => import("../components/Documents/index"),
+  },
+  {
+    path: '/agenda',
+    name: 'EventsIndex',
+    component: () => import("../components/Events/index"),
+  },
+  {
+    path: '/agenda/:id',
+    name: 'EventsShow',
+    component: () => import("../components/Events/show"),
   }
 ]
 

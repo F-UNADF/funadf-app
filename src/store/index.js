@@ -5,6 +5,7 @@ import usersStore from "./modules/usersStore";
 import feedStore from "./modules/feedStore";
 import profilStore from "./modules/profilStore";
 import documentsStore from "./modules/documentsStore";
+import eventsStore from "./modules/eventsStore";
 
 const debug = process.env.NODE_ENV !== "production";
 
@@ -16,6 +17,7 @@ const store = createStore({
     profilStore,
     feedStore,
     documentsStore,
+    eventsStore,
   },
   strict: debug,
 });
