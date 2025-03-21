@@ -7,8 +7,6 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 
 if (token) {
     axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
-} else {
-    console.error('No CSRF token :(')
 }
 
 axios.interceptors.request.use(
@@ -24,23 +22,23 @@ axios.interceptors.request.use(
 )
 
 export default {
-    get (routeName, routeParameters = {}, query = {}, onSuccess, onError, config = {}) {
+    get(routeName, routeParameters = {}, query = {}, onSuccess, onError, config = {}) {
         axios.get(route(routeName, routeParameters, query), config).then(response => onSuccess(response), error => onError(error))
     },
 
-    post (routeName, routeParameters = {}, datas, onSuccess, onError, config = {}) {
+    post(routeName, routeParameters = {}, datas, onSuccess, onError, config = {}) {
         axios.post(route(routeName, routeParameters), datas, config).then(response => onSuccess(response), error => onError(error))
     },
 
-    put (routeName, routeParameters = {}, datas, onSuccess, onError) {
+    put(routeName, routeParameters = {}, datas, onSuccess, onError) {
         axios.put(route(routeName, routeParameters), datas).then(response => onSuccess(response), error => onError(error))
     },
 
-    patch (routeName, routeParameters = {}, datas, onSuccess, onError) {
+    patch(routeName, routeParameters = {}, datas, onSuccess, onError) {
         axios.put(route(routeName, routeParameters), datas).then(response => onSuccess(response), error => onError(error))
     },
 
-    delete (routeName, routeParameters = {}, onSuccess, onError, config) {
+    delete(routeName, routeParameters = {}, onSuccess, onError, config) {
         axios.delete(route(routeName, routeParameters), config).then(response => onSuccess(response), error => onError(error))
     },
 }

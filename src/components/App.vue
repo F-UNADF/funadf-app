@@ -8,6 +8,11 @@
                 <ion-title>
                     <ion-img src="/assets/logo-add.png" class="add-logo"></ion-img>
                 </ion-title>
+                <ion-buttons slot="end" v-if="loggedIn">
+                    <ion-button ref="profil" tab="profil" href="/user">
+                        <ion-icon :icon="personCircle"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
@@ -51,10 +56,14 @@
                 <ion-label>Actualités</ion-label>
             </ion-tab-button>
 
-
             <ion-tab-button tab="documents" ref="documents" href="/documents">
                 <ion-icon :icon="folderOpen"></ion-icon>
                 <ion-label>Documents</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="agenda" ref="agenda" href="/agenda">
+                <ion-icon :icon="calendarNumber"></ion-icon>
+                <ion-label>Agenda</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="votes" ref="votes" href="/votes">
@@ -62,10 +71,6 @@
                 <ion-label>Votes</ion-label>
             </ion-tab-button>
 
-            <ion-tab-button ref="profil" tab="profil" href="/user">
-                <ion-icon :icon="personCircle"></ion-icon>
-                <ion-label>Profil</ion-label>
-            </ion-tab-button>
         </ion-tab-bar>
     </ion-page>
 </template>
@@ -91,9 +96,10 @@ import {
     IonMenuButton,
     toastController,
     IonImg,
+    IonButton,
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
-import { logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle } from "ionicons/icons";
+import { logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber } from "ionicons/icons";
 
 export default {
     name: "App",
@@ -115,6 +121,7 @@ export default {
         IonTabBar,
         IonTabButton,
         IonMenuButton,
+        IonButton,
         IonImg,
     },
     computed: {
@@ -169,7 +176,7 @@ export default {
         this.$store.dispatch('sessionStore/fetchUser');
     },
     setup() {
-        return { newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle };
+        return { newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle, calendarNumber };
     },
 };
 </script>

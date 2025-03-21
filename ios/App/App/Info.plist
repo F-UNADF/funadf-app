@@ -5,9 +5,11 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Pasteurs ADD</string>
+	<string>ADD+</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -26,6 +28,10 @@
 	<string>13.3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Autoriser l'application à ajouter des événements à votre calendrier.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>L'accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
