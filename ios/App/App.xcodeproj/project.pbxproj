@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -88,6 +88,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = A9C1AE5EF2DE4871B3A49E5726100845;
 			remoteInfo = CapacitorPushNotifications;
+		};
+		DA67206B2D8D72DB008F5AFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA1CB02F297F18250070383B /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A60135599BA436B4A540E7E9B24C699D;
+			remoteInfo = CapacitorBrowser;
 		};
 		DA86A1D52B7221BD009B8512 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -199,6 +206,7 @@
 			children = (
 				DA1CB03A297F18260070383B /* Capacitor.framework */,
 				DA1CB03C297F18260070383B /* CapacitorApp.framework */,
+				DA67206C2D8D72DB008F5AFB /* CapacitorBrowser.framework */,
 				DA46CB202D8C7C6700BF6206 /* CapacitorCalendar.framework */,
 				DA86A1D62B7221BD009B8512 /* CapacitorCamera.framework */,
 				DA46CB222D8C7C6700BF6206 /* CapacitorCommunityHttp.framework */,
@@ -253,7 +261,7 @@
 				};
 			};
 			buildConfigurationList = 504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */;
-			compatibilityVersion = "Xcode 13.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = fr;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -345,6 +353,13 @@
 			fileType = wrapper.framework;
 			path = CapacitorPushNotifications.framework;
 			remoteRef = DA46CB232D8C7C6700BF6206 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA67206C2D8D72DB008F5AFB /* CapacitorBrowser.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CapacitorBrowser.framework;
+			remoteRef = DA67206B2D8D72DB008F5AFB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		DA86A1D62B7221BD009B8512 /* CapacitorCamera.framework */ = {
