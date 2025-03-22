@@ -53,17 +53,13 @@
                             <ion-icon slot="start" :icon="thumbsUp"></ion-icon>
                             <ion-label>Votes</ion-label>
                         </ion-item>
+                        <ion-item color="danger" @click="logout()">
+                            <ion-icon slot="start" :icon="logInOutline"></ion-icon>
+                            <ion-label>Déconnexion</ion-label>
+                        </ion-item>
                     </ion-menu-toggle>
                 </ion-list>
             </ion-content>
-            <ion-footer>
-                <ion-list>
-                    <ion-item color="danger" @click="logout()">
-                        <ion-icon slot="start" :icon="logInOutline"></ion-icon>
-                        <ion-label>Déconnexion</ion-label>
-                    </ion-item>
-                </ion-list>
-            </ion-footer>
         </ion-menu>
 
         <ion-content id="main-content">
@@ -110,7 +106,6 @@ import {
     IonItem,
     IonIcon,
     IonLabel,
-    IonFooter,
     IonTabBar,
     IonTabButton,
     IonMenuButton,
@@ -136,7 +131,6 @@ export default {
         IonItem,
         IonIcon,
         IonLabel,
-        IonFooter,
         IonTabBar,
         IonTabButton,
         IonMenuButton,
