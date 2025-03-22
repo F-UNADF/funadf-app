@@ -5,21 +5,22 @@
                 <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
             </div>
 
-            <ion-card-title class="ion-text-center ion-margin-bottom">{{ user.lastname }} {{ user.firstname
-                }}</ion-card-title>
+            <ion-card-title class="ion-text-center ion-margin-bottom">
+                {{ user.lastname }} {{ user.firstname }}
+            </ion-card-title>
 
 
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
                     <ion-col size="4">
-                        <ion-chip color="secondary">
-                            <i class="material-icons mr-3">account_box</i>
-                            <ion-label>{{ user.id }}</ion-label>
+                        <ion-chip color="light">
+                            <ion-icon :icon="idCard"></ion-icon>
+                            <ion-label>{{ getUserId(user.id) }}</ion-label>
                         </ion-chip>
                     </ion-col>
                     <ion-col size="8">
-                        <ion-chip color="secondary">
-                            <i class="material-icons mr-3">bookmark</i>
+                        <ion-chip color="light">
+                            <ion-icon :icon="bookmark"></ion-icon>
                             <ion-label>{{ user.level }}</ion-label>
                         </ion-chip>
                     </ion-col>
@@ -30,36 +31,46 @@
 
         <ion-list lines="full">
             <ion-item v-if="!!user.email">
-                <i class="material-icons mr-3">mail</i>
-                <a :href="'mailto:' + user.email">{{ user.email }}</a>
+                <ion-icon :icon="mail"></ion-icon>
+                <ion-button fill="clear" color="light" :href="'mailto:' + user.email">
+                    {{ user.email }}
+                </ion-button>
             </ion-item>
             <ion-item v-if="!!user.phone_1">
-                <i class="material-icons mr-3">phone</i>
-                <a :href="'tel:' + user.phone_1">{{ user.phone_1 }}</a>
+                <ion-icon :icon="call"></ion-icon>
+                <ion-button fill="clear" color="light" :href="'tel:' + user.phone_1">
+                    {{ user.phone_1 }}
+                </ion-button>
             </ion-item>
             <ion-item v-if="!!user.town">
-                <i class="material-icons mr-3">location_on</i>
+                <ion-icon :icon="location"></ion-icon>
                 {{ user.town }}
             </ion-item>
         </ion-list>
     </ion-card>
 
-    <ion-card color="secondary" v-if="!!church">
+    <ion-card v-if="!!church">
         <!-- STRUCUTRE -->
         <ion-card-header>
             <ion-card-title>{{ church.name }}</ion-card-title>
         </ion-card-header>
         <ion-list lines="full">
-            <ion-item color="secondary">
-                <i class="material-icons mr-3">location_on</i>
-                {{ church.zipcode }} {{ church.town }}
+            <ion-item>
+                <ion-icon :icon="location"></ion-icon>
+                {{ church.town }}
             </ion-item>
-            <ion-item v-if="(church.email)">
-                <ion-label class="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated"><a
-                        :href="'mailto:' + church.email">{{ church.email }}</a></ion-label>
+            <ion-item v-if="!!church.email">
+                <ion-icon :icon="mail"></ion-icon>
+                <ion-button color="light" fill="clear" :href="'mailto:' + church.email">
+                    {{ church.email }}
+                </ion-button>
             </ion-item>
-            <ion-item v-if="(church.phone)">
-                <ion-label><a :href="'tel:' + church.phone">{{ church.phone }}</a></ion-label>
+
+            <ion-item v-if="!!church.phone_1">
+                <ion-icon :icon="call"></ion-icon>
+                <ion-button color="light" fill="clear" :href="'tel:' + church.phone_1">
+                    {{ church.phone_1 }}
+                </ion-button>
             </ion-item>
         </ion-list>
     </ion-card>
@@ -73,7 +84,8 @@
 </template>
 
 <script>
-import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonRow, IonCol, IonGrid } from '@ionic/vue';
+import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonRow, IonCol, IonGrid, IonButton, IonIcon } from '@ionic/vue';
+import { mail, call, location, idCard, bookmark } from 'ionicons/icons';
 
 export default {
     name: "UserShowComponent",
@@ -90,7 +102,9 @@ export default {
         IonRow,
         IonFabButton,
         IonCol,
-        IonGrid
+        IonGrid,
+        IonButton,
+        IonIcon
     },
     props: {
         user: Object,
@@ -111,6 +125,14 @@ export default {
             return base_url + '/avatars/' + user_id + '.png' + '?cache=' + new Date().getTime();
         },
     },
+    methods: {
+        getUserId(id) {
+            return id.toString().padStart(5, '0');
+        }
+    },
+    setup() {
+        return { mail, call, location, idCard, bookmark };
+    }
 };
 </script>
 
@@ -130,14 +152,5 @@ export default {
     border-radius: 100%;
     overflow: hidden;
     padding: 0;
-}
-
-a {
-    color: #fff;
-    text-decoration: none;
-}
-
-.mr-3 {
-    margin-right: 10px;
 }
 </style>

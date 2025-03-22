@@ -11,8 +11,8 @@
 
       <ion-card-content>
         <form ref="vote">
-          <div class="motion" v-for="result in this.editResult" :key="result.motion_id">
-            <ion-label position="stacked">
+          <div class="motion ion-padding" v-for="result in this.editResult" :key="result.motion_id">
+            <ion-label position="stacked" style="font-size: 1.2em; text-align: center;">
               {{ getMotionName(result.motion_id) }}
             </ion-label>
 
@@ -33,11 +33,12 @@
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'binary'">
               <ion-item v-for="choice in ['Oui', 'Non']" v-bind:key="choice">
-                <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
+                <ion-checkbox color="light" @ion-change="updateResult(result, choice)" slot="start"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
                   :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
                 <ion-label>{{ choice }}</ion-label>
               </ion-item>
+
               <ion-item v-if="result.max_choices > 1">
                 <ion-label color="warning">
                   Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
@@ -59,11 +60,13 @@
                 <ion-label>{{ choice }}</ion-label>
               </ion-item>
             </ion-list>
-            <p v-if="getMotionKind(result.motion_id) === 'choices' && result.max_choices > 1">
+
+            <p v-if="getMotionKind(result.motion_id) === 'choices' && result.max_choices > 1" style="margin-top: 15px">
               Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
             </p>
 
-            <p v-if="['binary', 'neutral', 'choices'].includes(getMotionKind(result.motion_id))">
+            <p v-if="['binary', 'neutral', 'choices'].includes(getMotionKind(result.motion_id))"
+              style="margin-top: 15px">
               Pour changer de vote, décochez d'abord votre choix précédent
             </p>
           </div>
@@ -96,11 +99,9 @@
         Vous n'êtes pas présent à ce rassemblement
       </ion-card-content>
     </ion-card>
-    <ion-card>
-      <ion-card-content>
-        <ion-button expand="block" @click="goVote()">Valider</ion-button>
-      </ion-card-content>
-    </ion-card>
+
+    <ion-button class="ion-margin" expand="block" @click="goVote()">Valider</ion-button>
+
   </ion-content>
 </template>
 
@@ -134,6 +135,10 @@ export default {
     goVote: function () {
       if (this.editVoters.some(voter => voter.selected === true) === false) {
         this.$root.presentToast('Merci de sélectionner au moins un bulletin !', 'danger');
+        return;
+      }
+
+      if (!confirm('Êtes-vous sûr de vouloir valider votre vote ?')) {
         return;
       }
 
@@ -230,8 +235,42 @@ ion-radio-group>ion-item.neutre {
   flex: 1 1;
 }
 
+ion-checkbox {
+  --size: 32px;
+  --background-checked: #015486;
+}
+
+ion-checkbox::part(container) {
+  border-radius: 6px;
+  border: 2px solid #015486;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  ion-checkbox {
+    --background-checked: #f5f5f5;
+  }
+
+  ion-checkbox::part(container) {
+    border: 2px solid #f5f5f5;
+  }
+}
+
+ion-item {
+  --border-color: transparent;
+}
+
+
 .motion {
   margin-bottom: 20px;
+  border: solid 1px #015486;
+  border-radius: 15px
+}
+
+@media (prefers-color-scheme: dark) {
+  .motion {
+    border: solid 1px #f5f5f5;
+  }
 }
 
 .motion>.label-stacked {
