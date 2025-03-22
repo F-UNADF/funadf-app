@@ -8,8 +8,8 @@
             <ion-row class="ion-justify-content-center">
                 <ion-col v-for="(year, index) in years" :key="index">
                     <ion-chip :color="getChipColor(year)">
-                        <i class="material-icons">{{ getChipIcon(year) }}</i>
-                        {{ year }}
+                        <ion-icon :icon="getChipIcon(year)"></ion-icon>
+                        <ion-label>{{ year }}</ion-label>
                     </ion-chip>
                 </ion-col>
             </ion-row>
@@ -27,14 +27,14 @@
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
                     <ion-col size="6">
-                        <ion-chip color="secondary">
-                            <i class="material-icons mr-3">account_box</i>
-                            <ion-label>{{ user.id }}</ion-label>
+                        <ion-chip color="light">
+                            <ion-icon :icon="idCard"></ion-icon>
+                            <ion-label>{{ getUserId(user.id) }}</ion-label>
                         </ion-chip>
                     </ion-col>
                     <ion-col size="6">
-                        <ion-chip color="secondary">
-                            <i class="material-icons mr-3">bookmark</i>
+                        <ion-chip color="light">
+                            <ion-icon :icon="bookmark"></ion-icon>
                             <ion-label>{{ user.level }}</ion-label>
                         </ion-chip>
                     </ion-col>
@@ -49,6 +49,7 @@
 
 import { mapGetters } from "vuex";
 import { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle } from '@ionic/vue';
+import { bookmark, checkmark, close, idCard } from 'ionicons/icons';
 
 export default {
     name: "UserCardComponent",
@@ -70,11 +71,14 @@ export default {
             let base_url =
                 process.env.NODE_ENV === "production"
                     ? "https://add-fnadf.fr"
-                    : "http://myloc.me:3000";
+                    : "http://app.localhost:3000";
             return base_url + '/avatars/' + this.user.id + '.png' + '?cache=' + new Date().getTime();
         },
     },
     methods: {
+        getUserId(id) {
+            return id.toString().padStart(5, '0');
+        },
         hasFeeForYear(year) {
             return this.fees.filter(fee => fee.what === year.toString()).length > 0;
         },
@@ -82,7 +86,7 @@ export default {
             return this.hasFeeForYear(year) ? 'success' : 'danger';
         },
         getChipIcon(year) {
-            return this.hasFeeForYear(year) ? 'done' : 'close';
+            return this.hasFeeForYear(year) ? checkmark : close;
         },
         level() {
             if (this.user && !this.gratitudes) {
@@ -120,6 +124,9 @@ export default {
             years: years,
         }
     },
+    setup() {
+        return { checkmark, close, idCard, bookmark };
+    }
 };
 </script>
 

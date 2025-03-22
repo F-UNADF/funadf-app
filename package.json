@@ -49,7 +49,6 @@
     "@vue/cli-service": "^5.0.8",
     "@vue/test-utils": "2.4.6",
     "@vue/vue3-jest": "^27.0.0-alpha.3",
-    "cordova-res": "0.15.4",
     "cypress": "^13.15.0",
     "eslint": "8.57.1",
     "eslint-plugin-vue": "^8.2.0",

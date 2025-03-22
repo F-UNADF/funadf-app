@@ -1,41 +1,62 @@
 <template>
     <ion-page>
-        <ion-header>
+        <ion-header v-if="loggedIn">
             <ion-toolbar color="primary">
-                <ion-buttons slot="start" v-if="loggedIn">
+                <ion-buttons slot="start">
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
                 <ion-title>
                     <ion-img src="/assets/logo-add.png" class="add-logo"></ion-img>
                 </ion-title>
-                <ion-buttons slot="end" v-if="loggedIn">
-                    <ion-button ref="profil" tab="profil" href="/user">
-                        <ion-icon :icon="personCircle"></ion-icon>
+                <ion-buttons slot="end">
+                    <ion-button ref="profil" tab="profil" @click="routeTo('/user')">
+                        <ion-icon size="large" :icon="personCircle"></ion-icon>
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
-        <ion-menu side="start" content-id="main-content">
+        <ion-menu side="start" content-id="main-content" type="push">
             <ion-header>
-                <ion-toolbar>
+                <ion-toolbar color="primary">
                     <ion-title>Menu</ion-title>
                 </ion-toolbar>
             </ion-header>
             <ion-content>
                 <ion-list>
                     <ion-menu-toggle>
+                        <ion-item @click="routeTo('/user')">
+                            <ion-icon slot="start" :icon="personCircle"></ion-icon>
+                            <ion-label>Mon profil</ion-label>
+                        </ion-item>
                         <ion-item @click="routeTo('/annuaire')">
                             <ion-icon slot="start" :icon="search"></ion-icon>
                             <ion-label>Annuaire</ion-label>
+                        </ion-item>
+                        <ion-item @click="routeTo('/feed')">
+                            <ion-icon slot="start" :icon="newspaper"></ion-icon>
+                            <ion-label>Actualités</ion-label>
+                        </ion-item>
+                        <ion-item @click="routeTo('/documents')">
+                            <ion-icon slot="start" :icon="folderOpen"></ion-icon>
+                            <ion-label>Documents</ion-label>
+                        </ion-item>
+                        <ion-item @click="routeTo('/documents')">
+                            <ion-icon slot="start" :icon="calendarNumber"></ion-icon>
+                            <ion-label>Agenda</ion-label>
+                        </ion-item>
+                        <ion-item @click="routeTo('/carte')">
+                            <ion-icon slot="start" :icon="idCard"></ion-icon>
+                            <ion-label>Ma carte pastorale</ion-label>
+                        </ion-item>
+                        <ion-item @click="routeTo('/votes')">
+                            <ion-icon slot="start" :icon="thumbsUp"></ion-icon>
+                            <ion-label>Votes</ion-label>
                         </ion-item>
                     </ion-menu-toggle>
                 </ion-list>
             </ion-content>
             <ion-footer>
-                <ion-note color="medium" class="ion-padding-vertical ion-padding-horizontal">
-                    Version : {{ app_version }}
-                </ion-note>
                 <ion-list>
                     <ion-item color="danger" @click="logout()">
                         <ion-icon slot="start" :icon="logInOutline"></ion-icon>
@@ -89,7 +110,6 @@ import {
     IonItem,
     IonIcon,
     IonLabel,
-    IonNote,
     IonFooter,
     IonTabBar,
     IonTabButton,
@@ -99,7 +119,7 @@ import {
     IonButton,
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
-import { logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber } from "ionicons/icons";
+import { logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard } from "ionicons/icons";
 
 export default {
     name: "App",
@@ -116,7 +136,6 @@ export default {
         IonItem,
         IonIcon,
         IonLabel,
-        IonNote,
         IonFooter,
         IonTabBar,
         IonTabButton,
@@ -176,7 +195,7 @@ export default {
         this.$store.dispatch('sessionStore/fetchUser');
     },
     setup() {
-        return { newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle, calendarNumber };
+        return { newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle, calendarNumber, idCard };
     },
 };
 </script>

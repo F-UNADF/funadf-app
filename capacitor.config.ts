@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.funadf.app',
   appName: 'ADD+',
-  webDir: 'public',
+  webDir: 'dist',
   plugins: {
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],
@@ -18,6 +18,13 @@ const config: CapacitorConfig = {
   },
   server: {
     iosScheme: 'http',
+  }
+  ,
+  android: {
+    buildOptions: {
+      keystorePath: 'undefined',
+      keystoreAlias: 'undefined',
+    }
   }
 };
 
