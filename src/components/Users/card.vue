@@ -1,9 +1,9 @@
 <template>
     <ion-card>
         <ion-card-content>
-            <ion-text>
-                <h3 class="display-3">Carte Pastorale<br>des Assemblées de Dieu</h3>
-            </ion-text>
+            <ion-card-title style="text-align: center;">
+                <h3>Carte Pastorale<br>des Assemblées de Dieu</h3>
+            </ion-card-title>
 
             <ion-row class="ion-justify-content-center">
                 <ion-col v-for="(year, index) in years" :key="index">
@@ -27,13 +27,13 @@
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
                     <ion-col size="6">
-                        <ion-chip color="light">
+                        <ion-chip>
                             <ion-icon :icon="idCard"></ion-icon>
                             <ion-label>{{ getUserId(user.id) }}</ion-label>
                         </ion-chip>
                     </ion-col>
                     <ion-col size="6">
-                        <ion-chip color="light">
+                        <ion-chip>
                             <ion-icon :icon="bookmark"></ion-icon>
                             <ion-label>{{ user.level }}</ion-label>
                         </ion-chip>
@@ -48,12 +48,12 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle } from '@ionic/vue';
+import { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonCol, IonRow, IonCardTitle, IonIcon, IonGrid } from '@ionic/vue';
 import { bookmark, checkmark, close, idCard } from 'ionicons/icons';
 
 export default {
     name: "UserCardComponent",
-    components: { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonText, IonCol, IonRow, IonCardTitle },
+    components: { IonCard, IonCardContent, IonCardHeader, IonChip, IonLabel, IonCol, IonRow, IonCardTitle, IonIcon, IonGrid },
     computed: {
         ...mapGetters('sessionStore', {
             user: 'getUser',

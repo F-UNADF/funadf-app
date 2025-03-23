@@ -1,49 +1,48 @@
 <template>
-    <ion-card>
-        <ion-card-header>
-            <div class="avatar">
-                <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
-            </div>
+    <ion-card class="ion-margin-bottom">
 
-            <ion-card-title class="ion-text-center ion-margin-bottom">
-                {{ user.lastname }} {{ user.firstname }}
-            </ion-card-title>
+        <div class="avatar">
+            <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
+        </div>
+
+        <ion-card-title class="ion-text-center ion-margin-bottom">
+            {{ user.lastname }} {{ user.firstname }}
+        </ion-card-title>
 
 
-            <ion-grid>
-                <ion-row class="ion-justify-content-center">
-                    <ion-col size="4">
-                        <ion-chip color="light">
-                            <ion-icon :icon="idCard"></ion-icon>
-                            <ion-label>{{ getUserId(user.id) }}</ion-label>
-                        </ion-chip>
-                    </ion-col>
-                    <ion-col size="8">
-                        <ion-chip color="light">
-                            <ion-icon :icon="bookmark"></ion-icon>
-                            <ion-label>{{ user.level }}</ion-label>
-                        </ion-chip>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
+        <ion-grid>
+            <ion-row class="ion-justify-content-center">
+                <ion-col size="4">
+                    <ion-chip color="primary">
+                        <ion-icon :icon="idCard"></ion-icon>
+                        <ion-label>{{ getUserId(user.id) }}</ion-label>
+                    </ion-chip>
+                </ion-col>
+                <ion-col size="8">
+                    <ion-chip color="primary">
+                        <ion-icon :icon="bookmark"></ion-icon>
+                        <ion-label>{{ user.level }}</ion-label>
+                    </ion-chip>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
 
-        </ion-card-header>
 
         <ion-list lines="full">
             <ion-item v-if="!!user.email">
-                <ion-icon :icon="mail"></ion-icon>
-                <ion-button fill="clear" color="light" :href="'mailto:' + user.email">
+                <ion-icon slot="start" :icon="mail"></ion-icon>
+                <ion-button fill="clear" :href="'mailto:' + user.email">
                     {{ user.email }}
                 </ion-button>
             </ion-item>
             <ion-item v-if="!!user.phone_1">
-                <ion-icon :icon="call"></ion-icon>
-                <ion-button fill="clear" color="light" :href="'tel:' + user.phone_1">
+                <ion-icon slot="start" :icon="call"></ion-icon>
+                <ion-button fill="clear" :href="'tel:' + user.phone_1">
                     {{ user.phone_1 }}
                 </ion-button>
             </ion-item>
             <ion-item v-if="!!user.town">
-                <ion-icon :icon="location"></ion-icon>
+                <ion-icon slot="start" :icon="location"></ion-icon>
                 {{ user.town }}
             </ion-item>
         </ion-list>
@@ -56,19 +55,19 @@
         </ion-card-header>
         <ion-list lines="full">
             <ion-item>
-                <ion-icon :icon="location"></ion-icon>
+                <ion-icon slot="start" :icon="location"></ion-icon>
                 {{ church.town }}
             </ion-item>
             <ion-item v-if="!!church.email">
-                <ion-icon :icon="mail"></ion-icon>
-                <ion-button color="light" fill="clear" :href="'mailto:' + church.email">
+                <ion-icon slot="start" :icon="mail"></ion-icon>
+                <ion-button fill="clear" :href="'mailto:' + church.email">
                     {{ church.email }}
                 </ion-button>
             </ion-item>
 
             <ion-item v-if="!!church.phone_1">
-                <ion-icon :icon="call"></ion-icon>
-                <ion-button color="light" fill="clear" :href="'tel:' + church.phone_1">
+                <ion-icon slot="start" :icon="call"></ion-icon>
+                <ion-button fill="clear" :href="'tel:' + church.phone_1">
                     {{ church.phone_1 }}
                 </ion-button>
             </ion-item>

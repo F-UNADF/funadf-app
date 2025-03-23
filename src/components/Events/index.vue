@@ -7,7 +7,7 @@
       <img alt="Images Illustration" :src="event.images[0]" v-if="event.images.length > 0" />
       <ion-card-header>
         <ion-card-subtitle>
-          <ion-chip color="white">
+          <ion-chip color="primary">
             <ion-avatar>
               <img :src="getAvatar(event.structure.id)" width="20" alt="avatar" />
             </ion-avatar>
@@ -33,17 +33,19 @@
           </ion-col>
         </ion-row>
       </ion-card-content>
-      <ion-button size="small" shape="round" color="light" fill="clear" @click="addToCalendar(event)">
+      <ion-button size="small" shape="round" color="primary" fill="clear" @click="addToCalendar(event)">
         <ion-icon slot="start" :icon="calendarNumber"></ion-icon>
         Ajouter à mon calendrier
       </ion-button>
     </ion-card>
-    <ion-card color="transparent">
-      <ion-button expand="block" color="primary" @click="load()" :loading="this.loading" v-if="!this.endOfFeed">
-        VOIR PLUS
-      </ion-button>
-      <ion-button expand="block" color="secondary" v-else disabled>Il n'y a plus rien a voir !</ion-button>
-    </ion-card>
+
+    <ion-button expand="block" color="primary" class="ion-margin" @click="load()" :loading="this.loading"
+      v-if="!this.endOfFeed">
+      VOIR PLUS
+    </ion-button>
+    <ion-button expand="block" color="secondary" v-else disabled class="ion-margin">Il n'y a plus rien a voir
+      !</ion-button>
+
   </ion-content>
 </template>
 
@@ -92,7 +94,8 @@ export default {
     },
     async addToCalendar(event) {
       try {
-        await CapacitorCalendar.requestPermissions();
+        const perm = await CapacitorCalendar.requestPermissions({ read: true, write: true });
+        console.log(perm);
         await CapacitorCalendar.createEvent({
           title: event.event.title,
           startDate: new Date(event.event.start_at),
