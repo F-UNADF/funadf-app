@@ -29,6 +29,10 @@
                             <ion-icon slot="start" :icon="personCircle"></ion-icon>
                             <ion-label>Mon profil</ion-label>
                         </ion-item>
+                        <ion-item @click="routeTo('/carte')">
+                            <ion-icon slot="start" :icon="idCard"></ion-icon>
+                            <ion-label>Ma carte pastorale</ion-label>
+                        </ion-item>
                         <ion-item @click="routeTo('/annuaire')">
                             <ion-icon slot="start" :icon="search"></ion-icon>
                             <ion-label>Annuaire</ion-label>
@@ -44,10 +48,6 @@
                         <ion-item @click="routeTo('/documents')">
                             <ion-icon slot="start" :icon="calendarNumber"></ion-icon>
                             <ion-label>Agenda</ion-label>
-                        </ion-item>
-                        <ion-item @click="routeTo('/carte')">
-                            <ion-icon slot="start" :icon="idCard"></ion-icon>
-                            <ion-label>Ma carte pastorale</ion-label>
                         </ion-item>
                         <ion-item @click="routeTo('/votes')">
                             <ion-icon slot="start" :icon="thumbsUp"></ion-icon>

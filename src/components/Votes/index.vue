@@ -20,15 +20,15 @@
             </ion-card-header>
 
             <ion-card-content>
-                <ion-button v-if="item.state === 'opened'" expand="block" @click="goVote(item)">
+                <ion-button v-if="item.state === 'opened'" expand="block" @click="goVote(item)" color="primary">
                     Voter !
                 </ion-button>
-                <ion-button v-else expand="block" disabled>Le vote n'a pas démarré</ion-button>
+                <ion-button v-else expand="block" disabled color="primary">Le vote n'a pas démarré</ion-button>
             </ion-card-content>
         </ion-card>
-        <ion-card color="transparent">
-            <ion-button expand="block" @click="doRefresh()">Rafraichir la liste</ion-button>
-        </ion-card>
+
+        <ion-button expand="block" @click="doRefresh()" class="ion-margin">Rafraichir la liste</ion-button>
+
     </ion-content>
 </template>
 
