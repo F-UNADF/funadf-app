@@ -5,28 +5,55 @@ import FirebaseMessaging
 import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-
         FirebaseApp.configure()
-        // Demander la permission à l'utilisateur
-        UNUserNotificationCenter.current().delegate = self
-        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
 
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { granted, error in
-            if granted {
-                print("✅ Permission accordée")
-            } else {
-                print("❌ Permission refusée")
-            }
+        if #available(iOS 14.0, *) {
+            UNUserNotificationCenter.current()
+                .requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                    print("Permission granted: \(granted)")
+                    if let error = error {
+                        print("Erreur d'autorisation: \(error.localizedDescription)")
+                    }
+                    if granted {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                }
         }
 
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+
         application.registerForRemoteNotifications()
+
+
         return true
+    }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Gérer la réponse à la notification ici
+        let userInfo = response.notification.request.content.userInfo
+        NotificationCenter.default.post(name: Notification.Name("didReceiveRemoteNotification"), object: nil, userInfo: userInfo)
+        completionHandler()
+    }
+
+    @objc func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("Firebase Token: \(String(describing: fcmToken))")
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -64,32 +91,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Messaging.messaging().apnsToken = deviceToken
-    }
-
 }
 
-extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("📲 Token FCM : \(fcmToken ?? "Aucun token reçu")")
-    }
-}
-
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    // Cette fonction est appelée lorsque l'application est ouverte et reçoit une notification
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        print("📩 Notification reçue en foreground : \(notification.request.content.userInfo)")
-        if #available(iOS 14.0, *) {
-            completionHandler([.banner, .sound, .badge])
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-
-    // Cette fonction est appelée lorsque l'utilisateur appuie sur la notification
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print("📬 Notification ouverte par l'utilisateur : \(response.notification.request.content.userInfo)")
-        completionHandler()
-    }
-}
