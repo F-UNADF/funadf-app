@@ -2,8 +2,8 @@ import axios from "axios";
 
 let base_url =
   process.env.NODE_ENV === "production"
-    ? "https://add-fnadf.fr"
-    : "http://app.localhost:3000";
+    ? "https://app.addfrance.fr"
+    : "http://localhost:3000";
 
 // initial state
 const state = () => ({
@@ -69,7 +69,7 @@ const actions = {
         });
     });
   },
-  vote: function (payload) {
+  vote: function (nil, payload) {
     return new Promise((resolve, reject) => {
       axios
         .post(base_url + "/api/votes", payload)

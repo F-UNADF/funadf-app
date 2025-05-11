@@ -2,8 +2,8 @@ import axios from "axios";
 
 let base_url =
   process.env.NODE_ENV === "production"
-    ? "https://add-fnadf.fr"
-    : "http://app.localhost:3000";
+    ? "https://app.addfrance.fr"
+    : "http://localhost:3000";
 
 // si on a un token dans le local storage ou en session on le met dans le header par defaut de axios
 const token = localStorage.getItem('token');
@@ -62,6 +62,19 @@ const actions = {
     } catch (error) {
       commit('setCurrentUser', null);
     }
+  },
+  storeDeviceToken({ commit }, payload) {
+    // Return a Promise
+    return new Promise((resolve, reject) => {
+      axios.post(base_url + '/api/device_tokens', payload)
+        .then((response) => {
+          resolve(response);
+          commit("setLoggedIn", true);
+        })
+        .catch((error) => {
+          reject(error); // Reject with the error if request fails
+        });
+    });
   },
 };
 

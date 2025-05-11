@@ -53,8 +53,8 @@ export default {
 
             let base_url =
                 process.env.NODE_ENV === "production"
-                    ? "https://add-fnadf.fr"
-                    : "http://app.localhost:3000";
+                    ? "https://app.addfrance.fr"
+                    : "http://localhost:3000";
             // Make the HTTP request to /api/search with the search query as a parameter
             axios.get(base_url + '/api/search', {
                 params: {

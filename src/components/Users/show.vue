@@ -117,8 +117,8 @@ export default {
         getAvatar() {
             let base_url =
                 process.env.NODE_ENV === "production"
-                    ? "https://add-fnadf.fr"
-                    : "http://app.localhost:3000";
+                    ? "https://app.addfrance.fr"
+                    : "http://localhost:3000";
 
             let user_id = this.user.id;
             return base_url + '/avatars/' + user_id + '.png' + '?cache=' + new Date().getTime();

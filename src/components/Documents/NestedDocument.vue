@@ -16,11 +16,7 @@
   </ion-list>
 
   <ion-list v-if="isOpen" class="ion-margin-start">
-    <ion-item 
-      v-for="item in item.documents" 
-      :key="item.id" 
-      @click="handleClick(item)"
-    >
+    <ion-item v-for="item in item.documents" :key="item.id" @click="handleClick(item)">
       <i class="material-icons" slot="start">
         {{ item.type === 'url' ? 'link' : 'file_download' }}
       </i>
@@ -43,15 +39,15 @@ export default {
   computed: {
   },
   methods: {
-    handleClick: async function(item) {
+    handleClick: async function (item) {
       if (item.type === 'url') {
         await Browser.open({ url: item.url });
       } else {
         let base_url =
           process.env.NODE_ENV === "production"
-            ? "https://add-fnadf.fr"
-            : "http://app.localhost:3000";
-        
+            ? "https://app.addfrance.fr"
+            : "http://localhost:3000";
+
         await Browser.open({ url: base_url + item.href });
       }
     }
