@@ -31,10 +31,10 @@ export default {
       }, 2000);
     },
     downloadDocument(activeItems) {
-      let base_url =
-        process.env.NODE_ENV === "production"
-          ? "https://add-fnadf.fr"
-          : "http://app.localhost:3000";
+      let base_url = 'https://app.addfrance.fr';
+      if (process.env.NODE_ENV === 'development') {
+        base_url = 'http://localhost:3000';
+      }
       if (activeItems?.href) {
         window.open(base_url + activeItems.href, "_blank"); // Ouvrir le fichier
       }

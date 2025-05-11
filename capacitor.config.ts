@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'ADD+',
   webDir: 'dist',
   plugins: {
-    PushNotifications: {
+    FirebaseMessaging: {
       presentationOptions: ["badge", "sound", "alert"],
     },
   },
@@ -18,14 +18,7 @@ const config: CapacitorConfig = {
   },
   server: {
     iosScheme: 'http',
-  }
-  ,
-  android: {
-    buildOptions: {
-      keystorePath: 'undefined',
-      keystoreAlias: 'undefined',
-    }
-  }
+  },
 };
 
 export default config;

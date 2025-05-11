@@ -56,9 +56,9 @@ export default {
     },
     computed: {
         getLogo() {
-            let base_url = 'https://add-fnadf.fr';
+            let base_url = 'https://app.addfrance.fr';
             if (process.env.NODE_ENV === 'development') {
-                base_url = 'http://myloc.me:3000';
+                base_url = 'http://localhost:3000';
             }
             return base_url + '/avatars/' + this.church.id + '.png';
         },
@@ -68,9 +68,9 @@ export default {
     },
     methods: {
         getAvatar(id) {
-            let base_url = 'https://add-fnadf.fr';
+            let base_url = 'https://app.addfrance.fr';
             if (process.env.NODE_ENV === 'development') {
-                base_url = 'http://myloc.me:3000';
+                base_url = 'http://localhost:3000';
             }
             return base_url + '/avatars/' + id + '.png';
         },

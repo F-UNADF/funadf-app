@@ -60,7 +60,10 @@ export default {
             token: 'getToken',
         }),
         getAvatar() {
-            let base_url = 'https://add-fnadf.fr';
+            let base_url = 'https://app.addfrance.fr';
+            if (process.env.NODE_ENV === 'development') {
+                base_url = 'http://localhost:3000';
+            }
             return base_url + '/avatars/' + this.user.id + '.png?cache=' + this.cache;
         },
     },

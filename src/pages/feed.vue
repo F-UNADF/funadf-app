@@ -70,7 +70,7 @@ export default {
     getAvatar: function (id) {
       let base_url =
         process.env.NODE_ENV === "production"
-          ? "https://add-fnadf.fr"
+          ? "https://app.addfrance.fr"
           : "http://app.localhost:3000";
       return base_url + '/logos/' + id + '.png' + '?cache=' + new Date().getTime();
     },
@@ -92,4 +92,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+ion-card-title {
+  --color: #001521;
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-card-title {
+    --color: #f8f9fa;
+  }
+}
+</style>

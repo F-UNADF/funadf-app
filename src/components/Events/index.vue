@@ -55,6 +55,7 @@
 import { mapGetters } from "vuex";
 import { IonContent, IonButton, IonIcon, IonAvatar, IonLabel, IonCard, IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonChip, IonRefresher, IonRefresherContent, IonRow, IonCol } from '@ionic/vue';
 import { calendar, bookmark, calendarNumber } from 'ionicons/icons';
+import { Capacitor } from '@capacitor/core';
 import { CapacitorCalendar } from 'capacitor-calendar';
 
 export default {
@@ -82,8 +83,8 @@ export default {
     getAvatar: function (id) {
       let base_url =
         process.env.NODE_ENV === "production"
-          ? "https://add-fnadf.fr"
-          : "http://app.localhost:3000";
+          ? "https://app.addfrance.fr"
+          : "http://localhost:3000";
       return base_url + '/logos/' + id + '.png';
     },
     displayDate: function (start_at, end_at) {
@@ -93,19 +94,33 @@ export default {
       return start.toLocaleDateString('fr-FR', options) + ' - ' + end.toLocaleDateString('fr-FR', options);
     },
     async addToCalendar(event) {
-      try {
-        const perm = await CapacitorCalendar.requestPermissions({ read: true, write: true });
-        console.log(perm);
-        await CapacitorCalendar.createEvent({
-          title: event.event.title,
-          startDate: new Date(event.event.start_at),
-          endDate: new Date(event.event.end_at),
-          location: event.event.location || '',
-          notes: event.event.description || '',
-        });
-        this.$root.presentToast('Evenement ajouté à votre calendrier', 'success');
-      } catch (error) {
-        this.$root.presentToast('Un problème est survenu', 'warning');
+      if (Capacitor.isNativePlatform()) {
+        // create calendar event on mobile
+        let result;
+        try {
+          // the first time, the user will be prompted to grant permission
+          result = await CapacitorCalendar.getAvailableCalendars();
+        } catch (e) {
+          this.$root.presentToast('Erreur lors de la récupération des calendriers', 'warning');
+          return;
+        }
+
+        if (result?.availableCalendars.length) {
+          try {
+            // Création de l'événement
+            await CapacitorCalendar.createEvent({
+              title: event.event.title,
+              startDate: new Date(event.event.start_at).getTime(),
+              endDate: new Date(event.event.end_at).getTime(),
+              location: event.event.location || '',
+              notes: event.event.description || '',
+            });
+
+            this.$root.presentToast('Événement ajouté à votre calendrier', 'success');
+          } catch (error) {
+            this.$root.presentToast('Un problème est survenu', 'warning');
+          }
+        }
       }
     }
   },
@@ -129,3 +144,15 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+ion-card-title {
+  --color: #001521;
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-card-title {
+    --color: #f8f9fa;
+  }
+}
+</style>

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@capacitor-community/http": "^1.4.1",
+    "@capacitor-firebase/messaging": "^6.3.1",
     "@capacitor/android": "6.2.0",
     "@capacitor/app": "6.0.1",
     "@capacitor/browser": "^6.0.0",
@@ -19,7 +20,6 @@
     "@capacitor/haptics": "6.0.1",
     "@capacitor/ios": "6.2.0",
     "@capacitor/keyboard": "6.0.2",
-    "@capacitor/push-notifications": "^6.0.0",
     "@capacitor/status-bar": "6.0.1",
     "@ionic/core": "6.7.5",
     "@ionic/pwa-elements": "3.3.0",
@@ -29,6 +29,7 @@
     "axios": "^1.7.7",
     "capacitor-calendar": "^1.0.6",
     "core-js": "3.38.1",
+    "firebase": "^11.7.1",
     "loader-utils": "3.3.1",
     "material-design-icons": "^3.0.1",
     "qrcode.vue": "3.5.0",

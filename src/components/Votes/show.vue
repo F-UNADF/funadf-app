@@ -138,10 +138,6 @@ export default {
         return;
       }
 
-      if (!confirm('Êtes-vous sûr de vouloir valider votre vote ?')) {
-        return;
-      }
-
       this.$store.dispatch('votesStore/vote', { campaign_id: this.$route.params.campaign_id, results: this.editResult, voters: this.editVoters })
         .then(() => {
           this.$root.presentToast('Votre vote a été pris en compte !');
