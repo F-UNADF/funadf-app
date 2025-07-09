@@ -9,8 +9,11 @@
                     <ion-img src="/assets/addPlus_light.png" class="add-logo"></ion-img>
                 </ion-title>
                 <ion-buttons slot="end">
-                    <ion-button ref="profil" tab="profil" @click="routeTo('/user')">
-                        <ion-icon size="large" :icon="personCircle"></ion-icon>
+                    <ion-button fill="clear" @click="openEndMenu()">
+                        <ion-icon :icon="notificationsOutline" />
+                        <ion-badge v-if="unreadNotifications > 0" color="danger" class="notification-badge">
+                            {{ unreadNotifications }}
+                        </ion-badge>
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
@@ -59,6 +62,18 @@
                         </ion-item>
                     </ion-menu-toggle>
                 </ion-list>
+            </ion-content>
+        </ion-menu>
+
+        <ion-menu side="end" content-id="main-content" type="overlay">
+            <ion-header>
+                <ion-toolbar color="primary">
+                    <ion-title>Notifications</ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content>
+                <notification-item v-for="notification in notifications" :key="notification.id"
+                    :notification="notification" @click="goToNotification(notification)" />
             </ion-content>
         </ion-menu>
 
@@ -111,11 +126,16 @@ import {
     IonMenuButton,
     toastController,
     IonImg,
+    IonBadge,
     IonButton,
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
-import { logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard } from "ionicons/icons";
+import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard } from "ionicons/icons";
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
+import { Badge } from '@capawesome/capacitor-badge';
+import { isPlatform } from '@ionic/vue';
+import NotificationItem from "./Notifications/Item.vue";
+import axios from 'axios';
 
 export default {
     name: "App",
@@ -135,16 +155,27 @@ export default {
         IonTabBar,
         IonTabButton,
         IonMenuButton,
-        IonButton,
         IonImg,
+        IonBadge,
+        IonButton,
+        NotificationItem,
     },
     computed: {
         ...mapGetters("sessionStore", {
             user: "getUser",
         }),
+        ...mapGetters("notificationsStore", {
+            notifications: "getNotifications",
+        }),
         loggedIn() {
             return this.user.id !== 0;
         },
+        unreadNotifications() {
+            if (!this.notifications || !Array.isArray(this.notifications)) {
+                return 0;
+            }
+            return this.notifications.filter(notification => !notification.read).length;
+        }
     },
     methods: {
         async presentToast(message, color = "success") {
@@ -169,8 +200,36 @@ export default {
                 this.$router.go("/login");
             });
         },
+        async openEndMenu() {
+            const menu = document.querySelector('ion-menu[side="end"]');
+            if (menu) {
+                await menu.open();
+            } else {
+                console.error("Menu de droite non trouvé");
+            }
+        },
+        async closeEndMenu() {
+            const menu = document.querySelector('ion-menu[side="end"]');
+            if (menu) {
+                await menu.close();
+            } else {
+                console.error("Menu de droite non trouvé");
+            }
+        },
         goBack() {
             this.$router.go(-1);
+        },
+        goToNotification(notification) {
+            if (notification.notifiable_type === 'Post') {
+                this.$router.push({ name: 'PostsShow', params: { id: notification.notifiable_id } });
+            } else if (notification.notifiable_type === 'Event') {
+                this.$router.push({ name: 'EventsShow', params: { id: notification.notifiable_id } });
+            } else if (notification.notifiable_type === 'VoteCampaign') {
+                this.$router.push({ name: 'VotesShow', params: { campaign_id: notification.notifiable_id } });
+            }
+            this.closeEndMenu();
+            // Marquer la notification comme lue
+            this.markAsRead(notification);
         },
         routeTo(route) {
             this.$router.push(route);
@@ -215,31 +274,60 @@ export default {
             } else {
                 console.warn('user.id toujours non disponible après plusieurs tentatives');
             }
-        }
-
+        },
+        async markAsRead(notif) {
+            let base_url =
+                process.env.NODE_ENV === "production"
+                    ? "https://app.addfrance.fr"
+                    : "http://localhost:3000";
+            try {
+                await axios.patch(`${base_url}/api/notifications/${notif.id}/mark_as_read`);
+                await Badge.decrease();
+                this.$store.dispatch('notificationsStore/getNotifications'); // Rafraîchir les notifications
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour de la notification', error)
+            }
+        },
     },
     data: function () {
         return {
             messageToast: "Test Message",
             showToast: false,
             app_version: "1.3.0",
+            refreshInterval: null,
         };
     },
-    beforeCreate: function () {
+    beforeMount: function () {
         if (null === localStorage.getItem('token')) {
             this.$router.push({ name: 'Login', replace: true });
         }
         this.$store.dispatch('sessionStore/fetchUser');
+        this.$store.dispatch('notificationsStore/getNotifications');
     },
     async mounted() {
-        await this.initFirebaseToken();
-        FirebaseMessaging.onTokenRefresh(({ token }) => {
-            localStorage.setItem('firebase_token', token);
-            this.waitForUserAndSendToken(token);
-        });
+        if (isPlatform('ios')) {
+            await this.initFirebaseToken();
+            FirebaseMessaging.onTokenRefresh(({ token }) => {
+                localStorage.setItem('firebase_token', token);
+                this.waitForUserAndSendToken(token);
+            });
+        }
+        this.refreshInterval = setInterval(() => {
+            this.$store.dispatch('notificationsStore/getNotifications');
+        }, 60000); // 60000 ms = 1 minute
+
+        // Demande permission badge
+        const permissionResult = await Badge.requestPermissions();
+
+        if (permissionResult.display !== 'granted') return;
+
+        console.log('Permission pour les badges accordée');
+        // Initialise le badge à 0 au lancement
+        await Badge.clear();
+        await Badge.set({ count: this.unreadNotifications });
     },
     setup() {
-        return { newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle, calendarNumber, idCard };
+        return { notificationsOutline, newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle, calendarNumber, idCard };
     },
 };
 </script>
@@ -249,5 +337,13 @@ export default {
     display: block;
     margin: 0 auto;
     max-width: 80px;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 2px;
+    right: -2px;
+    font-size: 0.6rem;
+    border-radius: 50%;
 }
 </style>

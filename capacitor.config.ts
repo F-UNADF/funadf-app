@@ -8,6 +8,10 @@ const config: CapacitorConfig = {
     FirebaseMessaging: {
       presentationOptions: ["badge", "sound", "alert"],
     },
+    Badge: {
+      persist: true,
+      autoClear: false
+    }
   },
   android: {
     webContentsDebuggingEnabled: true

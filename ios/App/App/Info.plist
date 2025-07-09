@@ -31,13 +31,13 @@
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Autoriser l'application à ajouter des événements à votre calendrier.</string>
+	<string>Autoriser l&apos;application à ajouter des événements à votre calendrier.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>L'accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
+	<string>L&apos;accès à votre caméra vous permettra de mettre à jour votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>L'accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>L'accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
+	<string>L&apos;accès à votre galerie vous permettra de mettre à jour votre photo de profil.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

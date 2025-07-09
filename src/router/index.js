@@ -72,6 +72,11 @@ const routes = [
     path: '/agenda/:id',
     name: 'EventsShow',
     component: () => import("../components/Events/show"),
+  },
+  {
+    path: '/posts/:id',
+    name: 'PostsShow',
+    component: () => import("../components/Posts/show"),
   }
 ]
 

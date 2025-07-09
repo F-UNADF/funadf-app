@@ -1,5 +1,5 @@
 <template>
-    <ion-card class="ion-margin-bottom">
+    <ion-card class="ion-margin-bottom ion-padding-top">
 
         <div class="avatar">
             <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
@@ -31,15 +31,15 @@
         <ion-list lines="full">
             <ion-item v-if="!!user.email">
                 <ion-icon slot="start" :icon="mail"></ion-icon>
-                <ion-button fill="clear" :href="'mailto:' + user.email">
+                <a :href="'mailto:' + user.email">
                     {{ user.email }}
-                </ion-button>
+                </a>
             </ion-item>
             <ion-item v-if="!!user.phone_1">
                 <ion-icon slot="start" :icon="call"></ion-icon>
-                <ion-button fill="clear" :href="'tel:' + user.phone_1">
+                <a :href="'tel:' + user.phone_1">
                     {{ user.phone_1 }}
-                </ion-button>
+                </a>
             </ion-item>
             <ion-item v-if="!!user.town">
                 <ion-icon slot="start" :icon="location"></ion-icon>
@@ -60,16 +60,16 @@
             </ion-item>
             <ion-item v-if="!!church.email">
                 <ion-icon slot="start" :icon="mail"></ion-icon>
-                <ion-button fill="clear" :href="'mailto:' + church.email">
+                <a :href="'mailto:' + church.email">
                     {{ church.email }}
-                </ion-button>
+                </a>
             </ion-item>
 
             <ion-item v-if="!!church.phone_1">
                 <ion-icon slot="start" :icon="call"></ion-icon>
-                <ion-button fill="clear" :href="'tel:' + church.phone_1">
+                <a :href="'tel:' + church.phone_1">
                     {{ church.phone_1 }}
-                </ion-button>
+                </a>
             </ion-item>
         </ion-list>
     </ion-card>
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonRow, IonCol, IonGrid, IonButton, IonIcon } from '@ionic/vue';
+import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonRow, IonCol, IonGrid, IonIcon } from '@ionic/vue';
 import { mail, call, location, idCard, bookmark } from 'ionicons/icons';
 
 export default {
@@ -102,7 +102,6 @@ export default {
         IonFabButton,
         IonCol,
         IonGrid,
-        IonButton,
         IonIcon
     },
     props: {
@@ -151,5 +150,10 @@ export default {
     border-radius: 100%;
     overflow: hidden;
     padding: 0;
+}
+
+a {
+    color: var(--ion-color-primary);
+    text-decoration: none;
 }
 </style>
