@@ -307,7 +307,6 @@ export default {
         onThemeChange(ev) {
             const theme = ev.detail.value;
             this.theme = theme;
-            console.log('Thème sélectionné :', theme);
             localStorage.setItem('theme', theme);
             this.applyTheme(theme);
         },
@@ -347,7 +346,6 @@ export default {
 
         if (permissionResult.display !== 'granted') return;
 
-        console.log('Permission pour les badges accordée');
         // Initialise le badge à 0 au lancement
         await Badge.clear();
         await Badge.set({ count: this.unreadNotifications });
