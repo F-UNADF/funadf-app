@@ -37,7 +37,7 @@
   --ion-text-color: #0F1053;
   /* quasi noir, lisible */
   --ion-text-color-rgb: 15, 16, 83;
-  --ion-color-dark-text: #f5f5f5;
+  --ion-color-dark-text: #e5e7eb;
 
   /* Borders / neutrals */
   --ion-color-border: #e5e7eb;
@@ -109,7 +109,7 @@
   /* Text */
   --ion-text-color: #e7eaf3;
   --ion-text-color-rgb: 231, 234, 243;
-  --ion-color-dark-text: #e7eaf3;
+  --ion-color-dark-text: #1b2456;
 
   /* Borders / neutrals */
   --ion-color-border: #1b2456;
