@@ -100,7 +100,7 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-button class="ion-margin" expand="block" @click="goVote()">Valider</ion-button>
+    <ion-button class="ion-margin" expand="block" @click="goVote()" color="primary">Valider</ion-button>
 
   </ion-content>
 </template>

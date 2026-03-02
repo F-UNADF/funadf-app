@@ -7,7 +7,7 @@ let base_url =
 
 // initial state
 const state = () => ({
-  items: {},
+  items: [],
   offset: 0,
   loading: false,
   endOfFeed: false,
@@ -24,7 +24,7 @@ const getters = {
 // actions
 const actions = {
   initFeed({ commit }) {
-    commit('setItems', {});
+    commit('setItems', []);
     commit('setOffset', 0);
     commit('setLoading', false);
     commit('setEndOfFeed', false);

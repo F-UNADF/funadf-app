@@ -1,15 +1,15 @@
 <template>
     <ion-page>
         <ion-header v-if="loggedIn">
-            <ion-toolbar color="primary">
+            <ion-toolbar class="app-toolbar gradient-header">
                 <ion-buttons slot="start">
                     <ion-menu-button></ion-menu-button>
                 </ion-buttons>
                 <ion-title>
-                    <ion-img src="/assets/addPlus_light.png" class="add-logo"></ion-img>
+                    <ion-img src="/assets/ADD-plus-Bicouleur.svg" class="add-logo"></ion-img>
                 </ion-title>
                 <ion-buttons slot="end">
-                    <ion-button fill="clear" @click="openEndMenu()">
+                    <ion-button fill="clear" class="notif-button" @click="openEndMenu()">
                         <ion-icon :icon="notificationsOutline" />
                         <ion-badge v-if="unreadNotifications > 0" color="danger" class="notification-badge">
                             {{ unreadNotifications }}
@@ -28,35 +28,48 @@
             <ion-content>
                 <ion-list>
                     <ion-menu-toggle>
-                        <ion-item @click="routeTo('/user')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/user')">
                             <ion-icon slot="start" :icon="personCircle"></ion-icon>
                             <ion-label>Mon profil</ion-label>
                         </ion-item>
-                        <ion-item @click="routeTo('/carte')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/carte')">
                             <ion-icon slot="start" :icon="idCard"></ion-icon>
                             <ion-label>Ma carte pastorale</ion-label>
                         </ion-item>
-                        <ion-item @click="routeTo('/annuaire')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/annuaire')">
                             <ion-icon slot="start" :icon="search"></ion-icon>
                             <ion-label>Annuaire</ion-label>
                         </ion-item>
-                        <ion-item @click="routeTo('/feed')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/feed')">
                             <ion-icon slot="start" :icon="newspaper"></ion-icon>
                             <ion-label>Actualités</ion-label>
                         </ion-item>
-                        <ion-item @click="routeTo('/documents')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/documents')">
                             <ion-icon slot="start" :icon="folderOpen"></ion-icon>
                             <ion-label>Documents</ion-label>
                         </ion-item>
-                        <ion-item @click="routeTo('/agenda')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/agenda')">
                             <ion-icon slot="start" :icon="calendarNumber"></ion-icon>
                             <ion-label>Agenda</ion-label>
                         </ion-item>
-                        <ion-item @click="routeTo('/votes')">
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/votes')">
                             <ion-icon slot="start" :icon="thumbsUp"></ion-icon>
                             <ion-label>Votes</ion-label>
                         </ion-item>
-                        <ion-item color="danger" @click="logout()">
+                        <ion-item lines="none" class="menu-item theme-item">
+                            <ion-segment :value="theme" @ionChange="onThemeChange($event)" class="theme-segment">
+                                <ion-segment-button value="system">
+                                    <ion-label>Système</ion-label>
+                                </ion-segment-button>
+                                <ion-segment-button value="light">
+                                    <ion-label>Clair</ion-label>
+                                </ion-segment-button>
+                                <ion-segment-button value="dark">
+                                    <ion-label>Sombre</ion-label>
+                                </ion-segment-button>
+                            </ion-segment>
+                        </ion-item>
+                        <ion-item lines="none" class="menu-item" color="danger" @click="logout()">
                             <ion-icon slot="start" :icon="logInOutline"></ion-icon>
                             <ion-label>Déconnexion</ion-label>
                         </ion-item>
@@ -67,7 +80,7 @@
 
         <ion-menu side="end" content-id="main-content" type="overlay">
             <ion-header>
-                <ion-toolbar color="primary">
+                <ion-toolbar class="app-toolbar gradient-header">
                     <ion-title>Notifications</ion-title>
                 </ion-toolbar>
             </ion-header>
@@ -82,7 +95,7 @@
         </ion-content>
 
         <!-- Tab bar -->
-        <ion-tab-bar color="primary" v-if="this.loggedIn">
+        <ion-tab-bar v-if="this.loggedIn">
             <ion-tab-button tab="feed" ref="feed" href="/feed">
                 <ion-icon :icon="newspaper"></ion-icon>
                 <ion-label>Actualités</ion-label>
@@ -124,6 +137,8 @@ import {
     IonTabBar,
     IonTabButton,
     IonMenuButton,
+    IonSegment,
+    IonSegmentButton,
     toastController,
     IonImg,
     IonBadge,
@@ -159,6 +174,8 @@ export default {
         IonBadge,
         IonButton,
         NotificationItem,
+        IonSegment,
+        IonSegmentButton,
     },
     computed: {
         ...mapGetters("sessionStore", {
@@ -204,16 +221,12 @@ export default {
             const menu = document.querySelector('ion-menu[side="end"]');
             if (menu) {
                 await menu.open();
-            } else {
-                console.error("Menu de droite non trouvé");
             }
         },
         async closeEndMenu() {
             const menu = document.querySelector('ion-menu[side="end"]');
             if (menu) {
                 await menu.close();
-            } else {
-                console.error("Menu de droite non trouvé");
             }
         },
         goBack() {
@@ -237,7 +250,6 @@ export default {
         async initFirebaseToken() {
             const localToken = localStorage.getItem('firebase_token');
             if (localToken) {
-                console.log('Token déjà récupéré localement.');
                 this.waitForUserAndSendToken(localToken);
                 return;
             }
@@ -249,12 +261,11 @@ export default {
 
                     if (token) {
                         localStorage.setItem('firebase_token', token);
-                        console.log('Token récupéré et sauvegardé localement');
                         this.waitForUserAndSendToken(token);
                     }
                 }
-            } catch (err) {
-                console.error('Erreur lors de la récupération du token :', err);
+            } catch (error) {
+                // console.error('Erreur lors de l\'initialisation de Firebase Messaging', error);
             }
         },
         waitForUserAndSendToken(token, retries = 20) {
@@ -267,12 +278,8 @@ export default {
                     platform: 'mobile',
                 };
                 this.$store.dispatch('sessionStore/storeDeviceToken', payload);
-                console.log('Token envoyé au backend');
             } else if (retries > 0) {
-                console.log('En attente de user.id...');
                 setTimeout(() => this.waitForUserAndSendToken(token, retries - 1), 1000);
-            } else {
-                console.warn('user.id toujours non disponible après plusieurs tentatives');
             }
         },
         async markAsRead(notif) {
@@ -285,8 +292,24 @@ export default {
                 await Badge.decrease();
                 this.$store.dispatch('notificationsStore/getNotifications'); // Rafraîchir les notifications
             } catch (error) {
-                console.error('Erreur lors de la mise à jour de la notification', error)
+                // console.error('Erreur lors de la mise à jour de la notification', error)
             }
+        },
+        applyTheme(theme) {
+            const root = document.documentElement;
+
+            if (theme === 'system') {
+                root.removeAttribute('data-theme');
+            } else {
+                root.setAttribute('data-theme', theme);
+            }
+        },
+        onThemeChange(ev) {
+            const theme = ev.detail.value;
+            this.theme = theme;
+            console.log('Thème sélectionné :', theme);
+            localStorage.setItem('theme', theme);
+            this.applyTheme(theme);
         },
     },
     data: function () {
@@ -295,6 +318,7 @@ export default {
             showToast: false,
             app_version: "1.3.0",
             refreshInterval: null,
+            theme: localStorage.getItem('theme') || 'system',
         };
     },
     beforeMount: function () {
@@ -305,6 +329,8 @@ export default {
         this.$store.dispatch('notificationsStore/getNotifications');
     },
     async mounted() {
+        this.applyTheme(this.theme);
+
         if (isPlatform('ios')) {
             await this.initFirebaseToken();
             FirebaseMessaging.onTokenRefresh(({ token }) => {
@@ -342,8 +368,66 @@ export default {
 .notification-badge {
     position: absolute;
     top: 2px;
-    right: -2px;
-    font-size: 0.6rem;
-    border-radius: 50%;
+    right: 2px;
+    font-size: 10px;
+}
+
+.app-toolbar {
+    --border-width: 0;
+    --background: var(--ion-background-color);
+}
+
+ion-menu-button,
+ion-button {
+    --color: var(--ion-text-color);
+}
+
+.menu-item {
+    --background: transparent;
+    --border-radius: 12px;
+    margin: 4px 8px;
+    padding: 6px 8px;
+    transition: background 0.2s ease;
+}
+
+.menu-item:hover {
+    --background: rgba(121, 138, 244, 0.08);
+}
+
+ion-menu ion-content {
+    --padding-start: 8px;
+    --padding-end: 8px;
+}
+
+ion-tab-bar {
+    --background: var(--ion-card-background);
+    border-top: 1px solid var(--ion-color-border);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+}
+
+ion-tab-button {
+    --color: var(--ion-color-step-500);
+    --color-selected: var(--ion-color-primary);
+}
+
+ion-tab-button.ion-selected ion-icon {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+.theme-item {
+    align-items: center;
+}
+
+.theme-segment {
+    max-width: 210px;
+}
+
+.theme-segment ion-segment-button {
+    min-width: 0;
+}
+
+.theme-segment ion-label {
+    font-size: 12px;
 }
 </style>

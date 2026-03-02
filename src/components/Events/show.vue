@@ -20,45 +20,56 @@
       </ion-label>
     </ion-item>
   </ion-list>
-  <ion-card v-else>
-    <img alt="Images Illustration" :src="this.localEvent.images[0]" v-if="this.localEvent.images.length > 0" />
-    <ion-card-header>
-      <ion-card-subtitle>
-        <ion-chip color="primary">
-          <ion-avatar>
-            <img :src="getAvatar(this.localEvent.structure.id)" width="20" alt="avatar" />
-          </ion-avatar>
-          <ion-label>{{ this.localEvent.structure.name }}</ion-label>
-        </ion-chip>
-      </ion-card-subtitle>
-      <ion-card-title>{{ this.localEvent.title }}</ion-card-title>
+  <ion-card v-else class="event-card">
+    <div class="cover" v-if="localEvent.images?.length">
+      <img :src="localEvent.images[0]" alt="Illustration" />
+      <div class="cover-gradient"></div>
+    </div>
+
+    <ion-card-header class="event-header">
+      <ion-chip class="structure-chip" color="primary">
+        <ion-avatar>
+          <img :src="getAvatar(localEvent.structure?.id)" alt="avatar" />
+        </ion-avatar>
+        <ion-label>{{ localEvent.structure?.name }}</ion-label>
+      </ion-chip>
+
+      <ion-card-title class="event-title">{{ localEvent.title }}</ion-card-title>
+
+      <div class="event-meta">
+        <div class="meta-line">
+          <ion-icon :icon="calendar" class="meta-icon" />
+          <span>{{ displayDate(localEvent.start_at, localEvent.end_at) }}</span>
+        </div>
+
+        <div class="meta-line">
+          <ion-icon :icon="bookmark" class="meta-icon" />
+          <span>{{ localEvent.category?.name }}</span>
+        </div>
+      </div>
     </ion-card-header>
-    <ion-card-content>
-      <ion-icon :icon="calendar"></ion-icon>
-      {{ displayDate(this.localEvent.start_at, this.localEvent.end_at) }}
-      <br>
-      <ion-icon :icon="bookmark"></ion-icon>
-      {{ this.localEvent.category.name }}
-    </ion-card-content>
-    <ion-card-content v-html="this.localEvent.description"></ion-card-content>
-    <ion-card-content>
-      <ion-row v-if="this.localEvent?.attachments">
-        <ion-col v-for="(attachment, index) in this.localEvent?.attachments" :key="index" size="6">
-          <ion-button :href="attachment" target="_blank" size="small" expand="block">
-            Pièce jointe {{ index + 1 }}
+
+    <ion-card-content class="event-content" v-html="localEvent.description"></ion-card-content>
+
+    <ion-card-content v-if="localEvent.attachments?.length">
+      <ion-row>
+        <ion-col v-for="(attachment, index) in localEvent.attachments" :key="index" size="6">
+          <ion-button :href="attachment" target="_blank" size="small" expand="block" fill="outline">
+            Pièce {{ index + 1 }}
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-card-content>
-    <ion-button size="small" shape="round" color="primary" fill="clear" @click="addToCalendar(this.localEvent)">
-      <ion-icon slot="start" :icon="calendarNumber"></ion-icon>
+
+    <ion-button class="event-cta" size="small" shape="round" fill="clear" @click="addToCalendar(localEvent)">
+      <ion-icon slot="start" :icon="calendarNumber" />
       Ajouter à mon calendrier
     </ion-button>
   </ion-card>
 </template>
 
 <script>
-import { IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonChip, IonAvatar, IonLabel, IonRow, IonCol, IonButton, IonSkeletonText, IonList, IonListHeader, IonItem, IonThumbnail } from '@ionic/vue';
+import { IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonAvatar, IonLabel, IonRow, IonCol, IonButton, IonSkeletonText, IonList, IonListHeader, IonItem, IonThumbnail } from '@ionic/vue';
 import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorCalendar } from 'capacitor-calendar';
@@ -76,7 +87,6 @@ export default {
     IonCard,
     IonCardContent,
     IonCardHeader,
-    IonCardSubtitle,
     IonCardTitle,
     IonChip,
     IonAvatar,
@@ -100,48 +110,34 @@ export default {
       return base_url + '/logos/' + id + '.png' + '?cache=' + new Date().getTime();
     },
     async addToCalendar(event) {
-      if (Capacitor.isNativePlatform()) {
-        // create calendar event on mobile
-        let result;
-        try {
-          // the first time, the user will be prompted to grant permission
-          result = await CapacitorCalendar.getAvailableCalendars();
-        } catch (e) {
-          this.$root.presentToast('Erreur lors de la récupération des calendriers', 'warning');
-          return;
-        }
+      if (!Capacitor.isNativePlatform()) return;
 
-        if (result?.availableCalendars.length) {
-          try {
-            // Création de l'événement
-            await CapacitorCalendar.createEvent({
-              title: event.event.title,
-              startDate: new Date(event.event.start_at).getTime(),
-              endDate: new Date(event.event.end_at).getTime(),
-              location: event.event.location || '',
-              notes: event.event.description || '',
-            });
+      try {
+        const result = await CapacitorCalendar.getAvailableCalendars();
+        if (!result?.availableCalendars?.length) return;
 
-            this.$root.presentToast('Événement ajouté à votre calendrier', 'success');
-          } catch (error) {
-            this.$root.presentToast('Un problème est survenu', 'warning');
-          }
-        }
+        await CapacitorCalendar.createEvent({
+          title: event.title,
+          startDate: new Date(event.start_at).getTime(),
+          endDate: new Date(event.end_at).getTime(),
+          location: event.location || '',
+          notes: event.description || '',
+        });
+
+        this.$root.presentToast('Événement ajouté à votre calendrier', 'success');
+      } catch (e) {
+        this.$root.presentToast('Un problème est survenu', 'warning');
       }
     },
-    displayDate() {
+    displayDate(startStr, endStr) {
       const format = (dateStr) => {
-        const date = new Date(dateStr)
-        const pad = (n) => n.toString().padStart(2, '0')
-        const jj = pad(date.getDate())
-        const mm = pad(date.getMonth() + 1)
-        const aaaa = date.getFullYear()
-        const hh = pad(date.getHours())
-        const min = pad(date.getMinutes())
-        return `${jj}/${mm}/${aaaa} à ${hh}:${min}`
-      }
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} à ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      };
 
-      return `Du ${format(this.localEvent.start_at)} au ${format(this.localEvent.end_at)}`
+      return `Du ${format(startStr)} au ${format(endStr)}`;
     },
     async loadEvent() {
       this.localEvent = {
@@ -200,3 +196,75 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.event-card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--ion-color-border);
+  box-shadow: none;
+  background: var(--ion-card-background);
+}
+
+.cover {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.35));
+}
+
+.event-header {
+  padding-bottom: 8px;
+}
+
+.structure-chip {
+  --border-radius: 999px;
+}
+
+.event-title {
+  margin-top: 8px;
+  letter-spacing: -0.2px;
+}
+
+.event-meta {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--ion-color-step-500);
+}
+
+.meta-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-icon {
+  font-size: 16px;
+  color: var(--ion-color-primary);
+  opacity: 0.9;
+}
+
+.event-content {
+  padding-top: 0;
+  color: var(--ion-text-color);
+}
+
+.event-cta {
+  margin: 0 8px 10px;
+  align-self: flex-start;
+}
+</style>

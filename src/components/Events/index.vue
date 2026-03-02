@@ -1,80 +1,133 @@
 <template>
-  <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-  <ion-content>
-    <eventsShow v-for="event in items" :key="event.id" :event="event" />
+  <ion-page>
+    <ion-content class="events-content">
+      <ion-refresher slot="fixed" @ionRefresh="handleRefresh">
+        <ion-refresher-content pulling-text="Tire pour rafraîchir" refreshing-spinner="crescent" />
+      </ion-refresher>
 
-    <ion-button expand="block" color="primary" class="ion-margin" @click="load()" :loading="this.loading"
-      v-if="!this.endOfFeed">
-      VOIR PLUS
-    </ion-button>
-    <ion-button expand="block" color="secondary" v-else disabled class="ion-margin">Il n'y a plus rien a voir
-      !</ion-button>
+      <div class="events-shell">
+        <eventsShow v-for="event in items" :key="event.id" :event="event" />
 
-  </ion-content>
+        <div class="load-more">
+          <ion-button v-if="!endOfFeed" expand="block" class="load-btn" :disabled="loading" @click="load"
+            color="primary">
+            <ion-spinner v-if="loading" name="crescent" class="btn-spinner" />
+            <span v-else>Voir plus</span>
+          </ion-button>
+
+          <ion-item v-else lines="none" class="end-state">
+            <ion-label>Il n’y a plus rien à voir.</ion-label>
+          </ion-item>
+        </div>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 
 <script>
-
-import { mapGetters } from "vuex";
-import { IonContent, IonButton, IonRefresher, IonRefresherContent } from '@ionic/vue';
+import { mapGetters } from 'vuex';
+import {
+  IonPage,
+  IonContent,
+  IonButton,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonItem,
+  IonLabel,
+} from '@ionic/vue';
 import eventsShow from './show.vue';
 
 export default {
-  name: "EventsIndex",
-  components: { eventsShow, IonContent, IonButton, IonRefresher, IonRefresherContent },
+  name: 'EventsIndex',
+  components: {
+    eventsShow,
+    IonPage,
+    IonContent,
+    IonButton,
+    IonRefresher,
+    IonRefresherContent,
+    IonSpinner,
+    IonItem,
+    IonLabel,
+  },
   computed: {
     ...mapGetters('eventsStore', {
       items: 'getItems',
+      // idéalement: endOfFeed vient du store
+      storeEndOfFeed: 'getEndOfFeed',
     }),
-  },
-
-  methods: {
-    handleRefresh: function (event) {
-      this.$store.dispatch('eventsStore/getItems');
-      setTimeout(() => {
-        event.detail.complete();
-      }, 2000);
-    },
-    load() {
-      this.loading = true;
-      this.$store.dispatch('eventsStore/getItems').then(() => {
-        this.loading = false;
-      });
-    },
-    getAvatar: function (id) {
-      let base_url =
-        process.env.NODE_ENV === "production"
-          ? "https://app.addfrance.fr"
-          : "http://localhost:3000";
-      return base_url + '/logos/' + id + '.png';
+    endOfFeed() {
+      return this.storeEndOfFeed ?? false;
     },
   },
-
-  mounted() {
-    this.load();
-  },
-
   data() {
     return {
       loading: false,
-      endOfFeed: false,
-      events: [],
     };
+  },
+  async mounted() {
+    await this.load();
+  },
+  methods: {
+    async handleRefresh(ev) {
+      try {
+        // si ton store supporte un reset/refresh, fais-le
+        await this.$store.dispatch('eventsStore/getItems', { reset: true });
+      } finally {
+        ev.detail.complete();
+      }
+    },
+    async load() {
+      if (this.loading || this.endOfFeed) return;
+
+      this.loading = true;
+      try {
+        await this.$store.dispatch('eventsStore/getItems');
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-ion-card-title {
-  --color: #001521;
+.events-content {
+  --background: var(--ion-background-color);
 }
 
-@media (prefers-color-scheme: dark) {
-  ion-card-title {
-    --color: #f8f9fa;
-  }
+.events-shell {
+  padding: 12px 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.load-more {
+  margin-top: 8px;
+}
+
+.load-btn {
+  --border-radius: 16px;
+  height: 44px;
+}
+
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.end-state {
+  --background: transparent;
+  border: 1px solid var(--ion-color-border);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.end-state ion-label {
+  color: var(--ion-color-step-500);
+  padding: 10px 0;
 }
 </style>

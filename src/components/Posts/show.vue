@@ -1,44 +1,52 @@
 <template>
-  <ion-list v-if="this.localPost.id === null">
+  <ion-list v-if="localPost.id === null" class="skeleton-list">
     <ion-list-header>
-      <ion-skeleton-text :animated="true" style="width: 80px"></ion-skeleton-text>
+      <ion-skeleton-text :animated="true" style="width: 120px"></ion-skeleton-text>
     </ion-list-header>
-    <ion-item>
+    <ion-item lines="none">
       <ion-thumbnail slot="start">
         <ion-skeleton-text :animated="true"></ion-skeleton-text>
       </ion-thumbnail>
       <ion-label>
-        <h3>
-          <ion-skeleton-text :animated="true" style="width: 80%;"></ion-skeleton-text>
-        </h3>
-        <p>
-          <ion-skeleton-text :animated="true" style="width: 60%;"></ion-skeleton-text>
-        </p>
-        <p>
-          <ion-skeleton-text :animated="true" style="width: 30%;"></ion-skeleton-text>
-        </p>
+        <h3><ion-skeleton-text :animated="true" style="width: 85%;"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text :animated="true" style="width: 65%;"></ion-skeleton-text></p>
+        <p><ion-skeleton-text :animated="true" style="width: 35%;"></ion-skeleton-text></p>
       </ion-label>
     </ion-item>
   </ion-list>
-  <ion-card v-else>
-    <img alt="Image" :src="localPost.images[0]" v-if="localPost.images.length > 0" />
-    <ion-card-header>
-      <ion-card-subtitle>
-        <ion-chip>
+
+  <ion-card v-else class="post-card">
+    <!-- Cover -->
+    <div class="cover" v-if="localPost.images?.length">
+      <img :src="localPost.images[0]" alt="Image" />
+      <div class="cover-gradient"></div>
+    </div>
+
+    <ion-card-header class="post-header">
+      <div class="chip-row">
+        <ion-chip class="structure-chip" color="primary">
           <ion-avatar>
-            <img :src="getAvatar(localPost.structure_id)" width="20" alt="avatar" />
+            <img :src="getAvatar(localPost.structure?.id ?? localPost.structure_id)" alt="avatar" />
           </ion-avatar>
-          <ion-label>{{ localPost.structure.name }}</ion-label>
+          <ion-label class="chip-label">{{ localPost.structure?.name }}</ion-label>
         </ion-chip>
-      </ion-card-subtitle>
-      <ion-card-title>{{ localPost.title }}</ion-card-title>
+
+        <ion-note class="date" color="medium">{{ displayDate(localPost.published_at || localPost.updated_at)
+        }}</ion-note>
+      </div>
+
+      <ion-card-title class="post-title">{{ localPost.title }}</ion-card-title>
     </ion-card-header>
-    <ion-card-content v-html="localPost.content"></ion-card-content>
-    <ion-card-content>
-      <ion-row v-if="localPost?.attachments">
-        <ion-col v-for="(attachment, index) in localPost?.attachments" :key="index" size="6">
-          <ion-button :href="attachment" target="_blank" size="small" expand="block">
-            Pièce jointe {{ index + 1 }}
+
+    <!-- Content -->
+    <ion-card-content class="post-content" v-html="localPost.content"></ion-card-content>
+
+    <!-- Attachments -->
+    <ion-card-content v-if="localPost.attachments?.length" class="attachments">
+      <ion-row>
+        <ion-col v-for="(attachment, index) in localPost.attachments" :key="index" size="12" size-md="6">
+          <ion-button :href="attachment" target="_blank" size="small" expand="block" fill="outline" class="attach-btn">
+            {{ attachmentLabel(attachment, index) }}
           </ion-button>
         </ion-col>
       </ion-row>
@@ -47,7 +55,24 @@
 </template>
 
 <script>
-import { IonCard, IonItem, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonChip, IonAvatar, IonLabel, IonRow, IonCol, IonButton, IonSkeletonText, IonList, IonListHeader, IonThumbnail } from '@ionic/vue';
+import {
+  IonCard,
+  IonItem,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonChip,
+  IonAvatar,
+  IonLabel,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonSkeletonText,
+  IonList,
+  IonListHeader,
+  IonThumbnail,
+  IonNote,
+} from '@ionic/vue';
 import axios from 'axios';
 
 export default {
@@ -58,7 +83,6 @@ export default {
     IonListHeader,
     IonCardContent,
     IonCardHeader,
-    IonCardSubtitle,
     IonCardTitle,
     IonChip,
     IonAvatar,
@@ -69,57 +93,10 @@ export default {
     IonThumbnail,
     IonItem,
     IonSkeletonText,
+    IonNote,
   },
   props: {
-    post: {
-      type: Object,
-      default: () => ({})
-    },
-  },
-  methods: {
-    getAvatar: function (id) {
-      let base_url =
-        process.env.NODE_ENV === "production"
-          ? "https://app.addfrance.fr"
-          : "http://localhost:3000";
-      return base_url + '/logos/' + id + '.png' + '?cache=' + new Date().getTime();
-    },
-    async loadPost() {
-      this.localPost = {
-        id: null,
-        title: '',
-        content: '',
-        images: [],
-        attachments: [],
-        structure_id: null,
-        structure: {
-          name: ''
-        },
-      };
-      // Si post props est vide, on recupere le paramètre ID de l'URL
-      if (!this.post || Object.keys(this.post).length === 0) {
-        const postId = this.$route.params.id;
-        if (postId) {
-          let base_url =
-            process.env.NODE_ENV === "production"
-              ? "https://app.addfrance.fr"
-              : "http://localhost:3000";
-          const response = await axios.get(`${base_url}/api/posts/${postId}`);
-          this.localPost = response.data.post;
-        }
-      } else {
-        this.localPost = this.post;
-      }
-    }
-  },
-  async mounted() {
-    // Appel de la méthode pour charger le post
-    await this.loadPost();
-  },
-  watch: {
-    '$route.params.id'() {
-      this.loadPost(); // Re-fetch ou autre
-    }
+    post: { type: Object, default: () => ({}) },
   },
   data() {
     return {
@@ -130,11 +107,149 @@ export default {
         images: [],
         attachments: [],
         structure_id: null,
-        structure: {
-          name: ''
-        },
+        structure: { id: null, name: '' },
+        published_at: null,
+        updated_at: null,
       },
+      avatarCacheKey: 'v1', // change à la mise à jour logo si besoin, pas à chaque rendu
     };
+  },
+  methods: {
+    baseUrl() {
+      return process.env.NODE_ENV === "production"
+        ? "https://app.addfrance.fr"
+        : "http://localhost:3000";
+    },
+    getAvatar(id) {
+      if (!id) return '';
+      return `${this.baseUrl()}/logos/${id}.png?cache=${this.avatarCacheKey}`;
+    },
+    displayDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const pad = (n) => n.toString().padStart(2, '0');
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+    },
+    attachmentLabel(url, index) {
+      try {
+        const clean = url.split('?')[0];
+        const name = decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1));
+        // si rails redirect => nom pas utile, donc fallback
+        return name && name.length < 40 ? name : `Pièce jointe ${index + 1}`;
+      } catch {
+        return `Pièce jointe ${index + 1}`;
+      }
+    },
+    async loadPost() {
+      // reset skeleton
+      this.localPost.id = null;
+
+      if (!this.post || Object.keys(this.post).length === 0) {
+        const postId = this.$route.params.id;
+        if (postId) {
+          const response = await axios.get(`${this.baseUrl()}/api/posts/${postId}`);
+          this.localPost = response.data.post;
+        }
+      } else {
+        this.localPost = this.post;
+      }
+    }
+  },
+  async mounted() {
+    await this.loadPost();
+  },
+  watch: {
+    '$route.params.id'() {
+      this.loadPost();
+    }
   },
 };
 </script>
+
+<style scoped>
+.post-card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--ion-color-border);
+  box-shadow: none;
+  background: var(--ion-card-background);
+  margin: 10px;
+}
+
+.cover {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+}
+
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 25%, rgba(0, 0, 0, 0.35));
+}
+
+.post-header {
+  padding-bottom: 8px;
+}
+
+.chip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.structure-chip {
+  --border-radius: 999px;
+}
+
+.chip-label {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date {
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--ion-color-step-500);
+}
+
+.post-title {
+  margin-top: 10px;
+  font-size: 18px;
+  letter-spacing: -0.2px;
+}
+
+/* Rendu HTML propre */
+.post-content {
+  padding-top: 0;
+  color: var(--ion-text-color);
+}
+
+.post-content :deep(p) {
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.post-content :deep(a) {
+  color: var(--ion-color-primary);
+  text-decoration: none;
+}
+
+.attachments {
+  padding-top: 6px;
+}
+
+.attach-btn {
+  --border-radius: 14px;
+}
+</style>

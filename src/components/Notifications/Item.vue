@@ -1,30 +1,30 @@
 <template>
-  <ion-item detail="false" :button="true" @click="$emit('click', notification)"
-    :color="notification.read ? 'medium' : 'primary'">
-    <ion-icon aria-hidden="true" :icon="getIcon" slot="start"></ion-icon>
-    <ion-label>
-      <strong>{{ notification.notifiable?.title }}</strong>
-      <ion-text>{{ notification.sender?.name }}</ion-text><br>
-      <ion-note color="medium" class="ion-text-wrap" :v-html="getContent(notification)">
-      </ion-note>
+  <ion-item class="notif-item" detail="false" :button="true" :class="{ unread: !notification.read }"
+    @click="$emit('click', notification)" lines="none">
+    <ion-icon aria-hidden="true" :icon="getIcon" slot="start" class="notif-icon"></ion-icon>
+
+    <ion-label class="notif-label">
+      <div class="title">{{ notification.notifiable?.title }}</div>
+      <div class="sender">{{ notification.sender?.name }}</div>
+
+      <ion-note class="content ion-text-wrap" color="info" v-html="getContent(notification)" />
     </ion-label>
-    <div class="metadata-end-wrapper" slot="end">
-      <ion-note color="medium">{{ getTimeAgo }}</ion-note>
-      <ion-icon color="medium" :icon="chevronForward"></ion-icon>
+
+    <div class="meta" slot="end">
+      <ion-note class="time" color="medium">{{ getTimeAgo }}</ion-note>
+      <ion-icon class="chev" color="medium" :icon="chevronForward"></ion-icon>
     </div>
   </ion-item>
 </template>
 
 <script>
 import { chevronForward, newspaperOutline, calendarOutline } from 'ionicons/icons'
-import { IonItem, IonLabel, IonText, IonNote, IonIcon } from '@ionic/vue'
+import { IonLabel, IonNote, IonIcon } from '@ionic/vue'
 
 export default {
   name: 'NotificationItem',
   components: {
-    IonItem,
     IonLabel,
-    IonText,
     IonNote,
     IonIcon
   },
@@ -98,14 +98,63 @@ export default {
 </script>
 
 <style scoped>
-ion-label strong {
-  display: block;
-  max-width: calc(100% - 60px);
+.notif-item {
+  --background: transparent;
+  --min-height: 64px;
+  margin: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--ion-color-border);
+  overflow: hidden;
+}
+
+/* Unread = liseré + fond un poil plus clair */
+.notif-item.unread {
+  --background: rgba(121, 138, 244, 0.08);
+  border: 1px solid rgba(121, 138, 244, 0.22);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
+}
+
+/* Icon */
+.notif-icon {
+  font-size: 20px;
+  opacity: 0.9;
+}
+
+/* Texte */
+.notif-label .title {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-ion-label ion-note {
-  font-size: 0.9rem;
+.notif-label .sender {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.notif-label .content {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* Meta à droite */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.chev {
+  font-size: 16px;
+  opacity: 0.7;
 }
 </style>

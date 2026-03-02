@@ -9,7 +9,7 @@
             </ion-card-header>
 
             <ion-card-content>
-                <ion-button expand="block" @click="$router.push({ name: 'Home' })">Retour</ion-button>
+                <ion-button expand="block" @click="$router.push({ name: 'Home' })" color="primary">Retour</ion-button>
             </ion-card-content>
         </ion-card>
 
@@ -27,7 +27,8 @@
             </ion-card-content>
         </ion-card>
 
-        <ion-button expand="block" @click="doRefresh()" class="ion-margin">Rafraichir la liste</ion-button>
+        <ion-button expand="block" @click="doRefresh()" class="ion-margin" color="primary">Rafraichir la
+            liste</ion-button>
 
     </ion-content>
 </template>
