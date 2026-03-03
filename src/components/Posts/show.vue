@@ -232,7 +232,7 @@ export default {
 /* Rendu HTML propre */
 .post-content {
   padding-top: 0;
-  color: var(--ion-text-color);
+  /* color: var(--ion-text-color); */
 }
 
 .post-content :deep(p) {

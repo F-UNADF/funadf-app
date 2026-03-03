@@ -1,0 +1,4 @@
+ion-card-title {
+  --color: var(--ion-text-color);
+  color: var(--ion-text-color);
+}

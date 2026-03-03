@@ -19,6 +19,8 @@ PODS:
     - Capacitor
   - CapacitorKeyboard (6.0.2):
     - Capacitor
+  - CapacitorSplashScreen (6.0.4):
+    - Capacitor
   - CapacitorStatusBar (6.0.1):
     - Capacitor
   - CapawesomeCapacitorBadge (6.0.0):
@@ -140,6 +142,7 @@ DEPENDENCIES:
   - "CapacitorFirebaseMessaging (from `../../node_modules/@capacitor-firebase/messaging`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorBadge (from `../../node_modules/@capawesome/capacitor-badge`)"
   - Firebase/Core
@@ -182,6 +185,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/haptics"
   CapacitorKeyboard:
     :path: "../../node_modules/@capacitor/keyboard"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
   CapawesomeCapacitorBadge:
@@ -198,6 +203,7 @@ SPEC CHECKSUMS:
   CapacitorFirebaseMessaging: 3b4ff762b42ad3137c911a96ec06bf8bfd6fb122
   CapacitorHaptics: fe689ade56ef20ec9b041a753c6da70c5d8ec9a9
   CapacitorKeyboard: 2700f9b18687be021e28b5a09b59eb151a46d5e0
+  CapacitorSplashScreen: f65292695df7d7b24a22954a6cfbaecadd1718a4
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
   CapawesomeCapacitorBadge: 3d0f281ad8e4a4f8db8c3d88b7622a7f4c413342
   Firebase: d99ac19b909cd2c548339c2241ecd0d1599ab02e
@@ -213,6 +219,6 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: 5903df17b4a3c9ab0bc6f47eea34a18d2b338d99
+PODFILE CHECKSUM: 287787c0239496708023929b9c1bf8416b342ea9
 
 COCOAPODS: 1.15.2

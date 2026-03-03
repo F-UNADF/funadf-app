@@ -31,7 +31,7 @@
                             </ion-button>
                         </ion-item>
 
-                        <ion-button class="login-btn" shape="round" expand="block"
+                        <ion-button class="login-btn" shape="round" expand="block" color="primary"
                             :disabled="loading || !credential.email || !credential.password" @click="login">
                             <ion-spinner v-if="loading" name="crescent" class="btn-spinner" />
                             <span v-else>Connexion</span>

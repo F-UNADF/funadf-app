@@ -295,15 +295,44 @@ export default {
                 // console.error('Erreur lors de la mise à jour de la notification', error)
             }
         },
+        ensureSystemListener() {
+            if (this.systemMql) return;
+
+            this.systemMql = window.matchMedia('(prefers-color-scheme: dark)');
+
+            this.onSystemThemeChange = (e) => {
+                // Ne réagit que si l’utilisateur est en mode system
+                if (this.theme !== 'system') return;
+
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            };
+
+            // Safari iOS ancien: addListener / removeListener
+            if (this.systemMql.addEventListener) {
+                this.systemMql.addEventListener('change', this.onSystemThemeChange);
+            } else {
+                this.systemMql.addListener(this.onSystemThemeChange);
+            }
+        },
+
         applyTheme(theme) {
             const root = document.documentElement;
 
-            if (theme === 'system') {
-                root.removeAttribute('data-theme');
-            } else {
-                root.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                root.setAttribute('data-theme', 'dark');
+                return;
             }
+
+            if (theme === 'light') {
+                root.setAttribute('data-theme', 'light');
+                return;
+            }
+
+            // theme === 'system'
+            this.ensureSystemListener();
+            root.setAttribute('data-theme', this.systemMql.matches ? 'dark' : 'light');
         },
+
         onThemeChange(ev) {
             const theme = ev.detail.value;
             this.theme = theme;
@@ -318,6 +347,8 @@ export default {
             app_version: "1.3.0",
             refreshInterval: null,
             theme: localStorage.getItem('theme') || 'system',
+            systemMql: null,
+            onSystemThemeChange: null,
         };
     },
     beforeMount: function () {
@@ -326,6 +357,16 @@ export default {
         }
         this.$store.dispatch('sessionStore/fetchUser');
         this.$store.dispatch('notificationsStore/getNotifications');
+
+        if (!this.systemMql || !this.onSystemThemeChange) return;
+
+        if (this.systemMql.removeEventListener) {
+            this.systemMql.removeEventListener('change', this.onSystemThemeChange);
+        } else {
+            this.systemMql.removeListener(this.onSystemThemeChange);
+        }
+        this.systemMql = null;
+        this.onSystemThemeChange = null;
     },
     async mounted() {
         this.applyTheme(this.theme);
