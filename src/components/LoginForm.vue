@@ -140,7 +140,7 @@ export default {
     justify-content: flex-start;
     padding: 24px;
     max-width: 420px;
-    margin: 0 auto;
+    margin: 10% auto 0;
     gap: 16px;
 }
 
@@ -196,11 +196,9 @@ export default {
     backdrop-filter: blur(10px);
 }
 
-@media (prefers-color-scheme: dark) {
-    .login-card {
-        background: rgba(17, 23, 65, 0.72);
-        border: 1px solid rgba(27, 36, 86, 0.9);
-    }
+html[data-theme="dark"] .login-card {
+    background: rgba(17, 23, 65, 0.72);
+    border: 1px solid rgba(27, 36, 86, 0.9);
 }
 
 .login-card-content {
