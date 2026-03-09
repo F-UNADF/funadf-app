@@ -25,7 +25,7 @@ import { IonContent, IonList, IonItem, IonAvatar, IonLabel, IonSearchbar, IonHea
 import axios from 'axios';
 
 export default {
-    name: "VotesIndex",
+    name: "SearchIndex",
     components: {
         IonContent,
         IonList,
