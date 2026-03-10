@@ -1,155 +1,197 @@
 <template>
-    <ion-card class="ion-margin-bottom ion-padding-top">
+    <div class="user-show-content">
+        <ion-card class="user-card ion-margin-bottom">
+            <div class="avatar">
+                <img class="avatar-img" :src="avatarUrl" :alt="`Avatar ${user.lastname} ${user.firstname}`" />
+            </div>
 
-        <div class="avatar">
-            <ion-img :src=getAvatar :alt="'Avatar' + user.lastname + ' ' + user.firstname"></ion-img>
-        </div>
+            <ion-card-title class="ion-text-center ion-margin-bottom user-title">
+                {{ user.lastname }} {{ user.firstname }}
+            </ion-card-title>
 
-        <ion-card-title class="ion-text-center ion-margin-bottom">
-            {{ user.lastname }} {{ user.firstname }}
-        </ion-card-title>
+            <ion-grid>
+                <ion-row class="ion-justify-content-center">
+                    <ion-col size="4">
+                        <ion-chip color="primary" class="info-chip">
+                            <ion-icon :icon="idCard" />
+                            <ion-label>{{ getUserId(user.id) }}</ion-label>
+                        </ion-chip>
+                    </ion-col>
 
+                    <ion-col size="8">
+                        <ion-chip color="primary" class="info-chip">
+                            <ion-icon :icon="bookmark" />
+                            <ion-label>{{ user.level }}</ion-label>
+                        </ion-chip>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
 
-        <ion-grid>
-            <ion-row class="ion-justify-content-center">
-                <ion-col size="4">
-                    <ion-chip color="primary">
-                        <ion-icon :icon="idCard"></ion-icon>
-                        <ion-label>{{ getUserId(user.id) }}</ion-label>
-                    </ion-chip>
-                </ion-col>
-                <ion-col size="8">
-                    <ion-chip color="primary">
-                        <ion-icon :icon="bookmark"></ion-icon>
-                        <ion-label>{{ user.level }}</ion-label>
-                    </ion-chip>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
+            <ion-list lines="full">
+                <ion-item v-if="user.email">
+                    <ion-icon slot="start" :icon="mail" />
+                    <a :href="`mailto:${user.email}`">{{ user.email }}</a>
+                </ion-item>
 
+                <ion-item v-if="user.phone_1">
+                    <ion-icon slot="start" :icon="call" />
+                    <a :href="`tel:${user.phone_1}`">{{ user.phone_1 }}</a>
+                </ion-item>
 
-        <ion-list lines="full">
-            <ion-item v-if="!!user.email">
-                <ion-icon slot="start" :icon="mail"></ion-icon>
-                <a :href="'mailto:' + user.email">
-                    {{ user.email }}
-                </a>
-            </ion-item>
-            <ion-item v-if="!!user.phone_1">
-                <ion-icon slot="start" :icon="call"></ion-icon>
-                <a :href="'tel:' + user.phone_1">
-                    {{ user.phone_1 }}
-                </a>
-            </ion-item>
-            <ion-item v-if="!!user.town">
-                <ion-icon slot="start" :icon="location"></ion-icon>
-                {{ user.town }}
-            </ion-item>
-        </ion-list>
-    </ion-card>
+                <ion-item v-if="user.town">
+                    <ion-icon slot="start" :icon="location" />
+                    {{ user.town }}
+                </ion-item>
+            </ion-list>
+        </ion-card>
 
-    <ion-card v-if="!!church">
-        <!-- STRUCUTRE -->
-        <ion-card-header>
-            <ion-card-title>{{ church.name }}</ion-card-title>
-        </ion-card-header>
-        <ion-list lines="full">
-            <ion-item>
-                <ion-icon slot="start" :icon="location"></ion-icon>
-                {{ church.town }}
-            </ion-item>
-            <ion-item v-if="!!church.email">
-                <ion-icon slot="start" :icon="mail"></ion-icon>
-                <a :href="'mailto:' + church.email">
-                    {{ church.email }}
-                </a>
-            </ion-item>
+        <ion-card v-if="church" class="church-card">
+            <ion-card-header>
+                <ion-card-title>{{ church.name }}</ion-card-title>
+            </ion-card-header>
 
-            <ion-item v-if="!!church.phone_1">
-                <ion-icon slot="start" :icon="call"></ion-icon>
-                <a :href="'tel:' + church.phone_1">
-                    {{ church.phone_1 }}
-                </a>
-            </ion-item>
-        </ion-list>
-    </ion-card>
+            <ion-list lines="full">
+                <ion-item v-if="church.town">
+                    <ion-icon slot="start" :icon="location" />
+                    {{ church.town }}
+                </ion-item>
 
-    <ion-fab v-if="this.canEdit === true" slot="fixed" vertical="bottom" horizontal="end"
-        @click="this.$router.push('user/edit');">
-        <ion-fab-button color="danger">
-            <i class="material-icons">edit</i>
-        </ion-fab-button>
-    </ion-fab>
+                <ion-item v-if="church.email">
+                    <ion-icon slot="start" :icon="mail" />
+                    <a :href="`mailto:${church.email}`">{{ church.email }}</a>
+                </ion-item>
+
+                <ion-item v-if="church.phone_1">
+                    <ion-icon slot="start" :icon="call" />
+                    <a :href="`tel:${church.phone_1}`">{{ church.phone_1 }}</a>
+                </ion-item>
+            </ion-list>
+        </ion-card>
+
+        <ion-fab v-if="canEdit" slot="fixed" vertical="bottom" horizontal="end" @click="goToEdit">
+            <ion-fab-button color="danger">
+                <i class="material-icons">edit</i>
+            </ion-fab-button>
+        </ion-fab>
+    </div>
 </template>
 
 <script>
-import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonImg, IonLabel, IonList, IonItem, IonFab, IonFabButton, IonRow, IonCol, IonGrid, IonIcon } from '@ionic/vue';
+import {
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonChip,
+    IonLabel,
+    IonList,
+    IonItem,
+    IonFab,
+    IonFabButton,
+    IonRow,
+    IonCol,
+    IonGrid,
+    IonIcon,
+} from '@ionic/vue';
 import { mail, call, location, idCard, bookmark } from 'ionicons/icons';
 
 export default {
-    name: "UserShowComponent",
+    name: 'UserShowComponent',
     components: {
         IonCard,
         IonCardHeader,
         IonCardTitle,
         IonChip,
-        IonImg,
         IonList,
         IonItem,
         IonLabel,
         IonFab,
-        IonRow,
         IonFabButton,
+        IonRow,
         IonCol,
         IonGrid,
-        IonIcon
+        IonIcon,
     },
     props: {
-        user: Object,
-        church: Object,
+        user: {
+            type: Object,
+            required: true,
+        },
+        church: {
+            type: Object,
+            default: null,
+        },
         canEdit: {
             type: Boolean,
-            default: true
-        }
+            default: true,
+        },
+    },
+    data() {
+        return {
+            avatarCacheKey: 'v1',
+        };
     },
     computed: {
-        getAvatar() {
-            let base_url =
-                process.env.NODE_ENV === "production"
-                    ? "https://app.addfrance.fr"
-                    : "http://localhost:3000";
+        avatarUrl() {
+            const baseUrl =
+                process.env.NODE_ENV === 'production'
+                    ? 'https://app.addfrance.fr'
+                    : 'http://localhost:3000';
 
-            let user_id = this.user.id;
-            return base_url + '/avatars/' + user_id + '.png' + '?cache=' + new Date().getTime();
+            return `${baseUrl}/avatars/${this.user.id}.png?cache=${this.avatarCacheKey}`;
         },
     },
     methods: {
         getUserId(id) {
-            return id.toString().padStart(5, '0');
-        }
+            return String(id).padStart(5, '0');
+        },
+        goToEdit() {
+            this.$router.push('/user/edit');
+        },
     },
     setup() {
         return { mail, call, location, idCard, bookmark };
-    }
+    },
 };
 </script>
 
 <style scoped>
+.user-show-content {
+    --background: var(--ion-background-color);
+}
+
+.user-card,
+.church-card {
+    background: var(--ion-card-background);
+}
+
 .avatar {
     text-align: center;
     min-height: 25vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 20px;
 }
 
-.avatar ion-img {
+.avatar-img {
     display: block;
-    width: 75%;
-    margin: 0 auto 30px;
-    border-radius: 100%;
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    margin: 0 auto 20px;
+    border-radius: 999px;
     overflow: hidden;
-    padding: 0;
+    border: 1px solid var(--ion-color-border);
+    background: var(--ion-card-background);
+}
+
+.user-title {
+    color: var(--ion-text-color);
+}
+
+.info-chip {
+    width: 100%;
+    justify-content: center;
 }
 
 a {

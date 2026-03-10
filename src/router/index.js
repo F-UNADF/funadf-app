@@ -77,6 +77,11 @@ const routes = [
     path: '/posts/:id',
     name: 'PostsShow',
     component: () => import("../components/Posts/show"),
+  },
+  {
+    path: '/cotisations',
+    name: 'Cotisations',
+    component: () => import("../pages/cotisations.vue"),
   }
 ]
 

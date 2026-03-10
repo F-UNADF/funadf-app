@@ -3,7 +3,7 @@
         <ion-button fill="clear" @click="goBack">
             <i class="material-icons">arrow_back</i>
         </ion-button>
-        <user-show :user="searchedUser" v-if="searchedUser" :canEdit="false"></user-show>
+        <user-show v-if="searchedUser" :user="searchedUser" :church="searchedChurch" :canEdit="false" />
         <church-show :church="searchedChurch" :members="structureMembers" v-if="searchedChurch"></church-show>
         <association-show :association="searchedAssociation" :members="structureMembers"
             v-if="searchedAssociation"></association-show>
@@ -46,8 +46,8 @@ export default {
 
             let base_url =
                 process.env.NODE_ENV === "production"
-                    ? "https://add-fnadf.fr"
-                    : "http://app.localhost:3000";
+                    ? 'https://app.addfrance.fr'
+                    : 'http://localhost:3000';
 
             let endpoint = base_url + '/api/' + this.type.toLowerCase() + '/' + this.id;
 

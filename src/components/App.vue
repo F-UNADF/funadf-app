@@ -56,6 +56,10 @@
                             <ion-icon slot="start" :icon="thumbsUp"></ion-icon>
                             <ion-label>Votes</ion-label>
                         </ion-item>
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/cotisations')">
+                            <ion-icon slot="start" :icon="cashOutline"></ion-icon>
+                            <ion-label>Cotisations</ion-label>
+                        </ion-item>
                         <ion-item lines="none" class="menu-item theme-item">
                             <ion-segment :value="theme" @ionChange="onThemeChange($event)" class="theme-segment">
                                 <ion-segment-button value="system">
@@ -145,7 +149,7 @@ import {
     IonButton,
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
-import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard } from "ionicons/icons";
+import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard, cashOutline } from "ionicons/icons";
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { Badge } from '@capawesome/capacitor-badge';
 import { isPlatform } from '@ionic/vue';
@@ -392,7 +396,19 @@ export default {
         await Badge.set({ count: this.unreadNotifications });
     },
     setup() {
-        return { notificationsOutline, newspaper, logInOutline, search, arrowBack, folderOpen, thumbsUp, personCircle, calendarNumber, idCard };
+        return {
+            notificationsOutline,
+            newspaper,
+            logInOutline,
+            search,
+            arrowBack,
+            folderOpen,
+            thumbsUp,
+            personCircle,
+            calendarNumber,
+            idCard,
+            cashOutline,
+        };
     },
 };
 </script>

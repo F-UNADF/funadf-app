@@ -18,8 +18,9 @@
   <ion-card v-else class="post-card">
     <!-- Cover -->
     <div class="cover" v-if="localPost.images?.length">
-      <img :src="localPost.images[0]" alt="Image" />
-      <div class="cover-gradient"></div>
+      <div class="cover-bg" :style="{ backgroundImage: `url(${localPost.images[0]})` }"></div>
+
+      <img :src="localPost.images[0]" alt="Image" class="cover-img" />
     </div>
 
     <ion-card-header class="post-header">
@@ -32,7 +33,7 @@
         </ion-chip>
 
         <ion-note class="date" color="medium">{{ displayDate(localPost.published_at || localPost.updated_at)
-        }}</ion-note>
+          }}</ion-note>
       </div>
 
       <ion-card-title class="post-title">{{ localPost.title }}</ion-card-title>
@@ -178,21 +179,31 @@ export default {
 
 .cover {
   position: relative;
-  height: 170px;
+  height: 200px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.cover-gradient {
+/* image floutée derrière */
+.cover-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 25%, rgba(0, 0, 0, 0.35));
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px);
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+/* image nette */
+.cover-img {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .post-header {
