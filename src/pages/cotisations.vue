@@ -154,9 +154,6 @@
 <script setup>
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonCard,
   IonCardHeader,
@@ -165,6 +162,8 @@ import {
   IonCardContent,
   IonButton,
 } from '@ionic/vue';
+
+const name = 'CotisationsPage';
 
 const links = {
   national2025: 'https://tinyurl.com/mrcrawxu',
