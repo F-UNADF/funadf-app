@@ -136,6 +136,9 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     padding: 24px;
+    /* Pas d'ion-header sur cette page : on réserve la zone des barres système (edge-to-edge Android 15+ / encoche iOS) */
+    padding-top: calc(24px + var(--ion-safe-area-top, 0px));
+    padding-bottom: calc(24px + var(--ion-safe-area-bottom, 0px));
     max-width: 420px;
     margin: 10% auto 0;
     gap: 16px;

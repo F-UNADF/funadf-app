@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
 
     namespace = 'funadf.app'
+    compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "funadf.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        compileSdkVersion rootProject.ext.compileSdkVersion
         versionCode 15
         versionName "1.5.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

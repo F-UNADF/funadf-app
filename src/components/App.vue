@@ -156,7 +156,7 @@ import {
 import { mapGetters } from "vuex";
 import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard, cashOutline } from "ionicons/icons";
 import { FirebaseMessaging, Importance, Visibility } from '@capacitor-firebase/messaging';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 import { Badge } from '@capawesome/capacitor-badge';
 import { isPlatform } from '@ionic/vue';
 import NotificationItem from "./Notifications/Item.vue";
@@ -365,6 +365,7 @@ export default {
                 if (this.theme !== 'system') return;
 
                 document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+                this.syncSystemBars(e.matches);
             };
 
             // Safari iOS ancien: addListener / removeListener
@@ -374,22 +375,32 @@ export default {
                 this.systemMql.addListener(this.onSystemThemeChange);
             }
         },
+        // Edge-to-edge (Android 15+) : les barres système sont transparentes au-dessus de l'app,
+        // la couleur des icônes doit donc suivre le thème de l'app (pas seulement celui du téléphone).
+        // Dark = icônes claires (fond sombre), Light = icônes sombres (fond clair).
+        syncSystemBars(isDark) {
+            if (!Capacitor.isNativePlatform()) return;
+            SystemBars.setStyle({ style: isDark ? SystemBarsStyle.Dark : SystemBarsStyle.Light }).catch(() => {});
+        },
         applyTheme(theme) {
             const root = document.documentElement;
 
             if (theme === 'dark') {
                 root.setAttribute('data-theme', 'dark');
+                this.syncSystemBars(true);
                 return;
             }
 
             if (theme === 'light') {
                 root.setAttribute('data-theme', 'light');
+                this.syncSystemBars(false);
                 return;
             }
 
             // theme === 'system'
             this.ensureSystemListener();
             root.setAttribute('data-theme', this.systemMql.matches ? 'dark' : 'light');
+            this.syncSystemBars(this.systemMql.matches);
         },
         onThemeChange(ev) {
             const theme = ev.detail.value;
