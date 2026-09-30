@@ -26,21 +26,15 @@ const config: CapacitorConfig = {
       persist: true,
       autoClear: false
     },
+    // Splash natif (logo sur dégradé, ou sur bleu marine en mode sombre) masqué par
+    // src/main.js dès que le loader animé de public/index.html est à l'écran.
     SplashScreen: {
-      launchShowDuration: 3000,
-      launchAutoHide: true,
-      launchFadeOutDuration: 3000,
+      launchAutoHide: false,
+      launchFadeOutDuration: 250,
       backgroundColor: "#251a7a",
       androidSplashResourceName: "splash",
       androidScaleType: "CENTER_CROP",
-      showSpinner: true,
-      androidSpinnerStyle: "large",
-      iosSpinnerStyle: "small",
-      spinnerColor: "#999999",
-      splashFullScreen: true,
-      splashImmersive: true,
-      layoutName: "launch_screen",
-      useDialog: true,
+      showSpinner: false,
     },
   },
   android: {

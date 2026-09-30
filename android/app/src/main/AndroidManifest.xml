@@ -31,6 +31,7 @@
         <!-- Firebase : ces meta-data doivent être dans <application> pour être lues -->
         <!-- Canal utilisé par FCM quand le backend n'envoie pas de channel_id (créé au lancement via FirebaseMessaging.createChannel) -->
         <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="default" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_notification" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
     </application>
 

@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store/index";
 
 import { IonicVue } from "@ionic/vue";
+import { SplashScreen } from "@capacitor/splash-screen";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css";
@@ -34,6 +35,24 @@ const app = createApp(App)
   .use(store)
   .use(router);
 
+// Le loader HTML (public/index.html) est déjà affiché : on retire le splash natif
+// pour qu'il prenne le relais sans coupure.
+SplashScreen.hide({ fadeOutDuration: 250 }).catch(() => {});
+
+// Durée minimale d'affichage du loader, pour éviter un flash au démarrage.
+const LOADER_MIN_MS = 900;
+
+function hideAppLoader() {
+  const loader = document.getElementById("app-loader");
+  if (!loader) return;
+  const wait = Math.max(0, LOADER_MIN_MS - performance.now());
+  setTimeout(() => {
+    loader.classList.add("is-done");
+    setTimeout(() => loader.remove(), 500);
+  }, wait);
+}
+
 router.isReady().then(() => {
   app.mount("#app");
+  requestAnimationFrame(hideAppLoader);
 });

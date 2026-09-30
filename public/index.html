@@ -16,9 +16,105 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="FNADF / UNADF - Application des Assemblées de Dieu" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  <!-- Loader de démarrage : prend le relais du splash natif (mêmes couleurs, même logo)
+       jusqu'au montage de l'app Vue, puis disparaît en fondu (voir src/main.js). -->
+  <style>
+    #app-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      background: linear-gradient(135deg, #6e85c6 0%, #a57ca4 50%, #ec5048 100%);
+      transition: opacity .45s ease, visibility .45s ease;
+    }
+
+    #app-loader.is-done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #app-loader.is-done .app-loader__logo {
+      transform: scale(1.08);
+    }
+
+    .app-loader__logo {
+      width: min(62vw, 280px);
+      height: auto;
+      overflow: visible;
+      transition: transform .45s ease;
+      animation: app-loader-breathe 2.4s ease-in-out infinite;
+    }
+
+    .app-loader__plus {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: app-loader-spin 1.6s cubic-bezier(.65, 0, .35, 1) infinite;
+    }
+
+    .app-loader__bar {
+      position: relative;
+      width: 120px;
+      height: 3px;
+      border-radius: 3px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .app-loader__bar::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      border-radius: 3px;
+      background: #fff;
+      animation: app-loader-slide 1.2s ease-in-out infinite;
+    }
+
+    @keyframes app-loader-breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    @keyframes app-loader-spin {
+      0%, 30% { transform: rotate(0deg); }
+      70%, 100% { transform: rotate(180deg); }
+    }
+
+    @keyframes app-loader-slide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #app-loader { background: #251a7a; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .app-loader__logo,
+      .app-loader__plus,
+      .app-loader__bar::after { animation-duration: 0s; animation-iteration-count: 1; }
+    }
+  </style>
 </head>
 
 <body>
+  <div id="app-loader" role="progressbar" aria-label="Chargement de l'application">
+    <svg class="app-loader__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 407.81 144.25" fill="#fff" aria-hidden="true">
+      <path d="M49.48,44.76C20.38,44.76,0,64.99,0,93.31c0,32.6,23.64,50.1,47.14,50.1,4.22,0,8.21-.63,11.98-1.87v-22.25c-4.85,1.46-9.77,2.17-14.78,2.02-10.81,0-22.56-10.84-22.56-27.23,0-16.39,11.32-26.66,27.38-26.66,16.06,0,26.92,12.24,26.92,23.29v52.69h22.25v-53.21c0-21.63-19.76-45.43-48.86-45.43Z"/>
+      <path d="M193.69,97.45c0,11.57-12.26,23.89-27.1,23.89-16.64,0-26.96-12.04-26.96-25.91,0-16.4,9.99-28.49,25.37-28.49,4.61,0,6.8.46,11.42,2.02v-21.68h0c-4.09-1.72-8.48-2.55-13.23-2.39-22.41,0-45.94,18.18-45.94,51.08,0,29.69,22.75,47.43,50.53,47.43s48.14-21.62,48.14-46.33V.25h-22.24v97.2Z"/>
+      <path d="M274.64.81h-38v102.59h22.31V24.3c0-1.1.91-1.99,2.01-1.96l16.75-.05c25.36,0,47.95,23.6,47.95,49.83s-21.96,51.01-47.41,51.01l-41.61-.18v21.31h41.99c31.85,0,68.2-28.64,68.2-72.15C346.83,31.25,313.99.81,274.64.81Z"/>
+      <polygon class="app-loader__plus" points="391.31 16.49 391.31 0 379.32 0 379.32 16.49 362.83 16.49 362.83 28.48 379.32 28.48 379.32 44.97 391.31 44.97 391.31 28.48 407.81 28.48 407.81 16.49 391.31 16.49"/>
+    </svg>
+    <div class="app-loader__bar"></div>
+  </div>
   <div id="app"></div>
 </body>
 

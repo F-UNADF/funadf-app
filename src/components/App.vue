@@ -205,8 +205,9 @@ export default {
         }
     },
     methods: {
-        async presentToast(message, color = "success") {
+        async presentToast(message, color = "success", header = undefined) {
             const toast = await toastController.create({
+                header: header,
                 message: message,
                 duration: 3000,
                 cssClass: "custom-toast",
@@ -265,6 +266,19 @@ export default {
                 });
             } catch (error) {
                 // console.error('Impossible d\'écouter les tokens Firebase', error);
+            }
+
+            // Notification reçue app ouverte : iOS l'affiche lui-même (presentationOptions),
+            // Android non → on l'affiche en toast. Dans les deux cas on rafraîchit la cloche.
+            try {
+                this.receivedListener = await FirebaseMessaging.addListener('notificationReceived', ({ notification }) => {
+                    this.$store.dispatch('notificationsStore/getNotifications');
+                    if (isPlatform('android') && (notification.title || notification.body)) {
+                        this.presentToast(notification.body || '', 'primary', notification.title);
+                    }
+                });
+            } catch (error) {
+                // console.error('Impossible d\'écouter les notifications Firebase', error);
             }
 
             try {
@@ -422,6 +436,7 @@ export default {
             sentPushKey: null,
             pushRetryTimeout: null,
             tokenListener: null,
+            receivedListener: null,
         };
     },
     beforeMount: function () {
@@ -436,6 +451,10 @@ export default {
         if (this.tokenListener) {
             this.tokenListener.remove();
             this.tokenListener = null;
+        }
+        if (this.receivedListener) {
+            this.receivedListener.remove();
+            this.receivedListener = null;
         }
 
         if (!this.systemMql || !this.onSystemThemeChange) return;

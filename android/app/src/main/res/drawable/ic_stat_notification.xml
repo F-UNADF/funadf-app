@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Petite icône des notifications (barre d'état) : monogramme « D+ » du logo ADD+,
+     blanc monochrome comme l'exige Android (la couleur d'accent est appliquée par le système). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <group
+        android:scaleX="0.11684"
+        android:scaleY="0.11684"
+        android:translateX="-25.649"
+        android:translateY="3.574">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M274.64,0.81h-38v102.59h22.31V24.3c0,-1.1 0.91,-1.99 2.01,-1.96l16.75,-0.05c25.36,0 47.95,23.6 47.95,49.83s-21.96,51.01 -47.41,51.01l-41.61,-0.18v21.31h41.99c31.85,0 68.2,-28.64 68.2,-72.15C346.83,31.25 313.99,0.81 274.64,0.81Z" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M391.31,16.49V0H379.32V16.49H362.83V28.48H379.32V44.97H391.31V28.48H407.81V16.49Z" />
+    </group>
+</vector>
