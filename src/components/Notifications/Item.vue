@@ -6,8 +6,6 @@
     <ion-label class="notif-label">
       <div class="title">{{ notification.notifiable?.title }}</div>
       <div class="sender">{{ notification.sender?.name }}</div>
-
-      <ion-note class="content ion-text-wrap" color="info" v-html="getContent(notification)" />
     </ion-label>
 
     <div class="meta" slot="end">
@@ -85,7 +83,7 @@ export default {
   methods: {
     getContent(notification) {
       if (notification.notifiable_type === 'Post') {
-        return `Nouveau post de <strong>${notification.notifiable?.structure?.name}</strong> : ${notification.notifiable?.title}`;
+        return `Nouveau post de <strong>${notification.sender?.name}</strong> : ${notification.notifiable?.title}`;
       }
     },
   },

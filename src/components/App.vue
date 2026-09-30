@@ -89,6 +89,11 @@
                 </ion-toolbar>
             </ion-header>
             <ion-content>
+                <ion-item class="notif-item" detail="false" :button="true" @click="readAll()" lines="none">
+                    <ion-label class="notif-label">
+                        <div class="title">Tout marquer comme lu</div>
+                    </ion-label>
+                </ion-item>
                 <notification-item v-for="notification in notifications" :key="notification.id"
                     :notification="notification" @click="goToNotification(notification)" />
             </ion-content>
@@ -150,7 +155,8 @@ import {
 } from "@ionic/vue";
 import { mapGetters } from "vuex";
 import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard, cashOutline } from "ionicons/icons";
-import { FirebaseMessaging } from '@capacitor-firebase/messaging';
+import { FirebaseMessaging, Importance, Visibility } from '@capacitor-firebase/messaging';
+import { Capacitor } from '@capacitor/core';
 import { Badge } from '@capawesome/capacitor-badge';
 import { isPlatform } from '@ionic/vue';
 import NotificationItem from "./Notifications/Item.vue";
@@ -242,7 +248,7 @@ export default {
             } else if (notification.notifiable_type === 'Event') {
                 this.$router.push({ name: 'EventsShow', params: { id: notification.notifiable_id } });
             } else if (notification.notifiable_type === 'VoteCampaign') {
-                this.$router.push({ name: 'VotesShow', params: { campaign_id: notification.notifiable_id } });
+                this.$router.push({ name: 'VoteShow', params: { campaign_id: notification.notifiable_id } });
             }
             this.closeEndMenu();
             // Marquer la notification comme lue
@@ -251,39 +257,76 @@ export default {
         routeTo(route) {
             this.$router.push(route);
         },
-        async initFirebaseToken() {
-            const localToken = localStorage.getItem('firebase_token');
-            if (localToken) {
-                this.waitForUserAndSendToken(localToken);
-                return;
+        async initPushNotifications() {
+            // 1. On écoute les rafraîchissements de token AVANT toute autre chose
+            try {
+                this.tokenListener = await FirebaseMessaging.addListener('tokenReceived', ({ token }) => {
+                    this.setPushToken(token);
+                });
+            } catch (error) {
+                // console.error('Impossible d\'écouter les tokens Firebase', error);
             }
 
             try {
-                const permission = await FirebaseMessaging.requestPermissions();
-                if (permission.receive === 'granted') {
-                    const { token } = await FirebaseMessaging.getToken();
-
-                    if (token) {
-                        localStorage.setItem('firebase_token', token);
-                        this.waitForUserAndSendToken(token);
-                    }
+                // 2. Vérification / demande de la permission (Android 13+ et iOS)
+                let permission = await FirebaseMessaging.checkPermissions();
+                if (permission.receive !== 'granted' && permission.receive !== 'denied') {
+                    permission = await FirebaseMessaging.requestPermissions();
                 }
+                if (permission.receive !== 'granted') {
+                    return;
+                }
+
+                // Canal par défaut Android (les notifications envoyées sans channel_id y arrivent)
+                if (isPlatform('android')) {
+                    await FirebaseMessaging.createChannel({
+                        id: 'default',
+                        name: 'Notifications',
+                        description: 'Notifications ADD+',
+                        importance: Importance.High,
+                        visibility: Visibility.Public,
+                        vibration: true,
+                    });
+                }
+
+                // 3. On redemande le token à chaque lancement : le localStorage n'est qu'un cache
+                const { token } = await FirebaseMessaging.getToken();
+                this.setPushToken(token);
             } catch (error) {
                 // console.error('Erreur lors de l\'initialisation de Firebase Messaging', error);
             }
         },
-        waitForUserAndSendToken(token, retries = 20) {
+        setPushToken(token) {
+            if (!token) return;
+            this.pushToken = token;
+            localStorage.setItem('firebase_token', token);
+            this.sendPushToken();
+        },
+        async sendPushToken() {
             const userId = this.$store.state.sessionStore.user?.id;
+            const token = this.pushToken;
 
-            if (userId) {
-                const payload = {
+            // Pas encore connecté : le watcher sur l'utilisateur relancera l'envoi après le login
+            if (!token || !userId) return;
+
+            // Évite de renvoyer le même token pour le même utilisateur dans la session
+            const key = `${userId}:${token}`;
+            if (this.sentPushKey === key) return;
+            this.sentPushKey = key;
+
+            try {
+                await this.$store.dispatch('sessionStore/storeDeviceToken', {
                     token: token,
                     user_id: userId,
                     platform: 'mobile',
-                };
-                this.$store.dispatch('sessionStore/storeDeviceToken', payload);
-            } else if (retries > 0) {
-                setTimeout(() => this.waitForUserAndSendToken(token, retries - 1), 1000);
+                });
+            } catch (error) {
+                // Échec réseau : on réessaiera plus tard
+                if (this.sentPushKey === key) {
+                    this.sentPushKey = null;
+                }
+                clearTimeout(this.pushRetryTimeout);
+                this.pushRetryTimeout = setTimeout(() => this.sendPushToken(), 30000);
             }
         },
         async markAsRead(notif) {
@@ -297,6 +340,19 @@ export default {
                 this.$store.dispatch('notificationsStore/getNotifications'); // Rafraîchir les notifications
             } catch (error) {
                 // console.error('Erreur lors de la mise à jour de la notification', error)
+            }
+        },
+        async readAll() {
+            let base_url =
+                process.env.NODE_ENV === "production"
+                    ? "https://app.addfrance.fr"
+                    : "http://localhost:3000";
+            try {
+                await axios.patch(`${base_url}/api/notifications/mark_all_as_read`);
+                await Badge.clear();
+                this.$store.dispatch('notificationsStore/getNotifications'); // Rafraîchir les notifications
+            } catch (error) {
+                // console.error('Erreur lors de la mise à jour des notifications', error)
             }
         },
         ensureSystemListener() {
@@ -318,7 +374,6 @@ export default {
                 this.systemMql.addListener(this.onSystemThemeChange);
             }
         },
-
         applyTheme(theme) {
             const root = document.documentElement;
 
@@ -336,7 +391,6 @@ export default {
             this.ensureSystemListener();
             root.setAttribute('data-theme', this.systemMql.matches ? 'dark' : 'light');
         },
-
         onThemeChange(ev) {
             const theme = ev.detail.value;
             this.theme = theme;
@@ -353,6 +407,10 @@ export default {
             theme: localStorage.getItem('theme') || 'system',
             systemMql: null,
             onSystemThemeChange: null,
+            pushToken: null,
+            sentPushKey: null,
+            pushRetryTimeout: null,
+            tokenListener: null,
         };
     },
     beforeMount: function () {
@@ -361,6 +419,13 @@ export default {
         }
         this.$store.dispatch('sessionStore/fetchUser');
         this.$store.dispatch('notificationsStore/getNotifications');
+    },
+    beforeUnmount: function () {
+        clearTimeout(this.pushRetryTimeout);
+        if (this.tokenListener) {
+            this.tokenListener.remove();
+            this.tokenListener = null;
+        }
 
         if (!this.systemMql || !this.onSystemThemeChange) return;
 
@@ -375,12 +440,13 @@ export default {
     async mounted() {
         this.applyTheme(this.theme);
 
-        if (isPlatform('ios')) {
-            await this.initFirebaseToken();
-            FirebaseMessaging.onTokenRefresh(({ token }) => {
-                localStorage.setItem('firebase_token', token);
-                this.waitForUserAndSendToken(token);
-            });
+        if (Capacitor.isNativePlatform()) {
+            // Envoie le token dès qu'un utilisateur est connecté (y compris après un login plus tard)
+            this.$watch(
+                () => this.$store.state.sessionStore.user?.id,
+                () => this.sendPushToken()
+            );
+            await this.initPushNotifications();
         }
         this.refreshInterval = setInterval(() => {
             this.$store.dispatch('notificationsStore/getNotifications');

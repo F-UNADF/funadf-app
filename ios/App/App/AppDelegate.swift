@@ -1,10 +1,9 @@
 import UIKit
 import Capacitor
 import FirebaseCore
-import FirebaseMessaging
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
@@ -12,26 +11,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Override point for customization after application launch.
         FirebaseApp.configure()
 
-        if #available(iOS 14.0, *) {
-            UNUserNotificationCenter.current()
-                .requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-                    print("Permission granted: \(granted)")
-                    if let error = error {
-                        print("Erreur d'autorisation: \(error.localizedDescription)")
-                    }
-                    if granted {
-                        DispatchQueue.main.async {
-                            UIApplication.shared.registerForRemoteNotifications()
-                        }
-                    }
-                }
-        }
-
-        UNUserNotificationCenter.current().delegate = self
-        Messaging.messaging().delegate = self
-
-        application.registerForRemoteNotifications()
-
+        // Les permissions, l'enregistrement APNs et les delegates (Messaging / UNUserNotificationCenter)
+        // sont gérés par le plugin @capacitor-firebase/messaging : ne pas les redéfinir ici.
 
         return true
     }
@@ -44,16 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
-    }
-
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         NotificationCenter.default.post(name: Notification.Name.init("didReceiveRemoteNotification"), object: completionHandler, userInfo: userInfo)
-    }
-
-    @objc func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("Firebase Token: \(String(describing: fcmToken))")
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -89,10 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Feel free to add additional processing here, but if you want the App API to support
         // tracking app url opens, make sure to keep this call
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
-    }
-
-    @objc func requestPermissions(_ call: CAPPluginCall) {
-
     }
 
 }

@@ -71,7 +71,9 @@
 
             <div class="region-grid">
               <div v-for="region in regions" :key="region" class="region-chip">
-                {{ region }}
+                <a :href="`mailto:${region.email}`" class="region-link">
+                  {{ region.name }}
+                </a>
               </div>
             </div>
           </ion-card-content>
@@ -151,6 +153,12 @@
   </ion-page>
 </template>
 
+<script>
+export default {
+  name: "CotisationsPage"
+}
+</script>
+
 <script setup>
 import {
   IonPage,
@@ -163,8 +171,6 @@ import {
   IonButton,
 } from '@ionic/vue';
 
-const name = 'CotisationsPage';
-
 const links = {
   national2025: 'https://tinyurl.com/mrcrawxu',
   national2026: 'https://tinyurl.com/3eemmunb',
@@ -175,18 +181,54 @@ const links = {
 const entraideIban = 'FR76 1027 8079 4900 0204 7510 123';
 
 const regions = [
-  'Aquitaine',
-  'Bretagne',
-  'Centre',
-  'Grand-Est',
-  'Hauts-de-France',
-  'Languedoc-Roussillon',
-  'Midi-Pyrénées',
-  'Normandie',
-  'Provence-Alpes-Côte d’Azur-Corse',
-  'Paris Île-de-France',
-  'Rhône-Alpes-Bourgogne',
-  'Val de Loire',
+  {
+    name: 'Aquitaine',
+    email: 'sec.aquitaine@addfrance.fr',
+  },
+  {
+    name: 'Bretagne',
+    email: 'sec.bretagne@addfrance.fr',
+  },
+  {
+    name: 'Centre',
+    email: 'sec.centre@addfrance.fr',
+  },
+  {
+    name: 'Grand-Est',
+    email: 'sec.est@addfrance.fr',
+  },
+  {
+    name: 'Hauts-de-France',
+    email: 'sec.hdf@addfrance.fr',
+  },
+  {
+    name: 'Languedoc-Roussillon',
+    email: 'sec.languedoc@addfrance.fr',
+  },
+  {
+    name: 'Midi-Pyrénées',
+    email: 'sec.midipyrenees@addfrance.fr',
+  },
+  {
+    name: 'Normandie',
+    email: 'sec.normandie@addfrance.fr',
+  },
+  {
+    name: 'Provence-Alpes-Côte d’Azur-Corse',
+    email: 'sec.pacacorse@addfrance.fr',
+  },
+  {
+    name: 'Paris Île-de-France',
+    email: 'sec.parisidf@addfrance.fr',
+  },
+  {
+    name: 'Rhône-Alpes-Bourgogne',
+    email: 'sec.rab@addfrance.fr',
+  },
+  {
+    name: 'Val de Loire',
+    email: 'sec.valdeloire@addfrance.fr',
+  },
 ];
 
 function openLink(url) {
@@ -303,6 +345,21 @@ function openLink(url) {
   border-radius: 16px;
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+.region-link {
+  color: var(--ion-color-primary);
+  text-decoration: none;
+  cursor: pointer;
+
+  padding: 10px 12px;
+  display: block;
+
+  border-radius: 14px;
+  transition: background-color 0.2s;
+
+  border: 1px solid var(--ion-color-primary);
+  text-align: center;
 }
 
 .tarif-list {
