@@ -22,40 +22,33 @@
             <ion-card class="profile-card" color="transparent">
                 <ion-card-content class="profile-card-content">
                     <ion-item class="field" lines="none">
-                        <ion-label position="stacked">Nom</ion-label>
-                        <ion-input v-model="editedUser.lastname" />
+                        <ion-input label="Nom" label-placement="stacked" v-model="editedUser.lastname" />
                     </ion-item>
 
                     <ion-item class="field" lines="none">
-                        <ion-label position="stacked">Prénom</ion-label>
-                        <ion-input v-model="editedUser.firstname" />
+                        <ion-input label="Prénom" label-placement="stacked" v-model="editedUser.firstname" />
                     </ion-item>
 
                     <ion-item class="field" lines="none">
-                        <ion-label position="stacked">Adresse</ion-label>
-                        <ion-input v-model="editedUser.address_1" />
+                        <ion-input label="Adresse" label-placement="stacked" v-model="editedUser.address_1" />
                     </ion-item>
 
                     <div class="row">
                         <ion-item class="field half" lines="none">
-                            <ion-label position="stacked">Code postal</ion-label>
-                            <ion-input inputmode="numeric" v-model="editedUser.zipcode" />
+                            <ion-input label="Code postal" label-placement="stacked" inputmode="numeric" v-model="editedUser.zipcode" />
                         </ion-item>
 
                         <ion-item class="field half" lines="none">
-                            <ion-label position="stacked">Ville</ion-label>
-                            <ion-input v-model="editedUser.town" />
+                            <ion-input label="Ville" label-placement="stacked" v-model="editedUser.town" />
                         </ion-item>
                     </div>
 
                     <ion-item class="field" lines="none">
-                        <ion-label position="stacked">Téléphone</ion-label>
-                        <ion-input inputmode="tel" v-model="editedUser.phone_1" />
+                        <ion-input label="Téléphone" label-placement="stacked" inputmode="tel" v-model="editedUser.phone_1" />
                     </ion-item>
 
                     <ion-item class="field" lines="none">
-                        <ion-label position="stacked">Date de naissance</ion-label>
-                        <ion-input type="date" v-model="editedUser.birthdate" />
+                        <ion-input label="Date de naissance" label-placement="stacked" type="date" v-model="editedUser.birthdate" />
                     </ion-item>
                 </ion-card-content>
             </ion-card>
@@ -81,7 +74,6 @@ import {
     IonCard,
     IonCardContent,
     IonInput,
-    IonLabel,
     IonButton,
     IonItem,
     IonSpinner,
@@ -97,7 +89,6 @@ export default {
         IonCard,
         IonCardContent,
         IonInput,
-        IonLabel,
         IonButton,
         IonItem,
         IonSpinner,
@@ -266,7 +257,8 @@ export default {
     --min-height: 48px;
 }
 
-.field ion-label {
+/* ion-input est "scoped" (pas de shadow DOM) : on cible directement le libellé */
+.field ion-input :deep(.label-text-wrapper) {
     color: var(--ion-color-step-500);
     font-size: 13px;
 }

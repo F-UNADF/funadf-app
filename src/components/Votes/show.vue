@@ -19,10 +19,9 @@
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'neutral'">
               <ion-item v-for="choice in ['Oui', 'Non', 'Neutre']" v-bind:key="choice">
-                <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
+                <ion-checkbox justify="start" label-placement="end" @ion-change="updateResult(result, choice)"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
-                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
-                <ion-label>{{ choice }}</ion-label>
+                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)">{{ choice }}</ion-checkbox>
               </ion-item>
               <ion-item v-if="result.max_choices > 1">
                 <ion-label color="warning">
@@ -33,10 +32,9 @@
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'binary'">
               <ion-item v-for="choice in ['Oui', 'Non']" v-bind:key="choice">
-                <ion-checkbox color="light" @ion-change="updateResult(result, choice)" slot="start"
+                <ion-checkbox color="light" justify="start" label-placement="end" @ion-change="updateResult(result, choice)"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
-                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
-                <ion-label>{{ choice }}</ion-label>
+                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)">{{ choice }}</ion-checkbox>
               </ion-item>
 
               <ion-item v-if="result.max_choices > 1">
@@ -48,16 +46,15 @@
 
             <div v-if="getMotionKind(result.motion_id) === 'free'">
               <ion-item>
-                <ion-input v-model="result.vote" placeholder="Reponse libre"></ion-input>
+                <ion-input v-model="result.vote" aria-label="Réponse libre" placeholder="Reponse libre"></ion-input>
               </ion-item>
             </div>
 
             <ion-list v-if="getMotionKind(result.motion_id) === 'choices'">
               <ion-item v-for="choice in result.choices.split(',')" v-bind:key="choice">
-                <ion-checkbox @ion-change="updateResult(result, choice)" slot="start"
+                <ion-checkbox justify="start" label-placement="end" @ion-change="updateResult(result, choice)"
                   :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
-                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)"></ion-checkbox>
-                <ion-label>{{ choice }}</ion-label>
+                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)">{{ choice }}</ion-checkbox>
               </ion-item>
             </ion-list>
 
@@ -81,12 +78,11 @@
       <ion-card-content v-if="this.present">
         <div v-for="voter in this.editVoters" :key="voter.resource_id">
           <ion-item v-if="voter.has_voted === null || voter.has_voted === 0">
-            <ion-checkbox slot="start" v-model="voter.selected"></ion-checkbox>
-            <ion-label>
+            <ion-checkbox justify="start" label-placement="end" v-model="voter.selected">
               {{ voter.name }}
               <small v-if="!voter.is_consultative">(Vote comptabilisé)</small>
               <small v-if="voter.is_consultative">(Vote consultatif)</small>
-            </ion-label>
+            </ion-checkbox>
           </ion-item>
           <ion-item v-else>
             <ion-label color="warning">
@@ -233,7 +229,7 @@ ion-radio-group>ion-item.neutre {
 
 ion-checkbox {
   --size: 32px;
-  --background-checked: #015486;
+  --checkbox-background-checked: #015486;
 }
 
 ion-checkbox::part(container) {
@@ -244,7 +240,7 @@ ion-checkbox::part(container) {
 
 @media (prefers-color-scheme: dark) {
   ion-checkbox {
-    --background-checked: #f5f5f5;
+    --checkbox-background-checked: #f5f5f5;
   }
 
   ion-checkbox::part(container) {

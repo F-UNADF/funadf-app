@@ -13,22 +13,21 @@
                 <ion-card class="login-card" color="transparent">
                     <ion-card-content class="login-card-content">
                         <ion-item class="field" lines="none">
-                            <ion-label position="floating">Email</ion-label>
-                            <ion-input v-model="credential.email" name="email" type="email" inputmode="email"
+                            <ion-input v-model="credential.email" label="Email" label-placement="floating"
+                                name="email" type="email" inputmode="email"
                                 spellcheck="false" autocapitalize="off" autocomplete="email" :disabled="loading"
                                 @keydown.enter="login" />
                         </ion-item>
 
                         <ion-item class="field" lines="none">
-                            <ion-label position="floating">Mot de passe</ion-label>
-
-                            <ion-input v-model="credential.password" :type="showPassword ? 'text' : 'password'"
-                                autocomplete="current-password" :disabled="loading" @keydown.enter="login" />
-
-                            <ion-button slot="end" fill="clear" size="small" class="toggle-pass" :disabled="loading"
-                                @click="togglePassword">
-                                <ion-icon :icon="showPassword ? eyeOffOutline : eyeOutline" />
-                            </ion-button>
+                            <ion-input v-model="credential.password" label="Mot de passe" label-placement="floating"
+                                :type="showPassword ? 'text' : 'password'"
+                                autocomplete="current-password" :disabled="loading" @keydown.enter="login">
+                                <ion-button slot="end" fill="clear" size="small" class="toggle-pass" :disabled="loading"
+                                    aria-label="Afficher le mot de passe" @click="togglePassword">
+                                    <ion-icon slot="icon-only" :icon="showPassword ? eyeOffOutline : eyeOutline" />
+                                </ion-button>
+                            </ion-input>
                         </ion-item>
 
                         <ion-button class="login-btn" shape="round" expand="block" color="primary"
@@ -51,7 +50,6 @@
 import {
     IonPage,
     IonContent,
-    IonLabel,
     IonInput,
     IonButton,
     IonCard,
@@ -68,7 +66,6 @@ export default {
     components: {
         IonPage,
         IonContent,
-        IonLabel,
         IonInput,
         IonButton,
         IonCard,
@@ -224,7 +221,8 @@ html[data-theme="dark"] .login-card {
 }
 
 /* Make floating label feel nicer */
-.field ion-label {
+/* ion-input est "scoped" (pas de shadow DOM) : on cible directement le libellé */
+.field ion-input :deep(.label-text-wrapper) {
     margin: 0;
     color: var(--ion-color-step-500);
 }

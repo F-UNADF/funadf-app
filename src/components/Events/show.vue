@@ -22,8 +22,9 @@
   </ion-list>
   <ion-card v-else class="event-card">
     <div class="cover" v-if="localEvent.images?.length">
-      <img :src="localEvent.images[0]" alt="Illustration" />
-      <div class="cover-gradient"></div>
+      <div class="cover-bg" :style="{ backgroundImage: `url(${localEvent.images[0]})` }"></div>
+
+      <img :src="localEvent.images[0]" alt="Image" class="cover-img" />
     </div>
 
     <ion-card-header class="event-header">
@@ -72,7 +73,7 @@
 import { IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonAvatar, IonLabel, IonRow, IonCol, IonButton, IonSkeletonText, IonList, IonListHeader, IonItem, IonThumbnail } from '@ionic/vue';
 import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
-import { CapacitorCalendar } from 'capacitor-calendar';
+import { CapacitorCalendar } from '@ebarooni/capacitor-calendar';
 import { calendar, bookmark, calendarNumber } from 'ionicons/icons';
 
 export default {
@@ -113,15 +114,23 @@ export default {
       if (!Capacitor.isNativePlatform()) return;
 
       try {
-        const result = await CapacitorCalendar.getAvailableCalendars();
-        if (!result?.availableCalendars?.length) return;
+        // iOS : l'accès en écriture seule suffit pour créer un événement (iOS 17+).
+        // Android : le plugin lit la liste des calendriers pour trouver celui par défaut,
+        // il faut donc READ_CALENDAR + WRITE_CALENDAR.
+        const { result: permission } = Capacitor.getPlatform() === 'ios'
+          ? await CapacitorCalendar.requestWriteOnlyCalendarAccess()
+          : await CapacitorCalendar.requestFullCalendarAccess();
+        if (permission !== 'granted') {
+          this.$root.presentToast('Autorisez l\'accès au calendrier dans les réglages', 'warning');
+          return;
+        }
 
         await CapacitorCalendar.createEvent({
           title: event.title,
           startDate: new Date(event.start_at).getTime(),
           endDate: new Date(event.end_at).getTime(),
           location: event.location || '',
-          notes: event.description || '',
+          description: event.description || '',
         });
 
         this.$root.presentToast('Événement ajouté à votre calendrier', 'success');
@@ -208,15 +217,31 @@ export default {
 
 .cover {
   position: relative;
-  height: 160px;
+  height: 200px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+/* image floutée derrière */
+.cover-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px);
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+/* image nette */
+.cover-img {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .cover-gradient {
