@@ -17,8 +17,28 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Signature release : clé d'importation Play hors du dépôt (~/.android-keys/addplus-upload.jks),
+    // mot de passe lu dans le trousseau macOS (service « addplus-android-upload-keystore »).
+    // Sans la clé (autre machine, CI), le build release reste simplement non signé.
+    def uploadKeystore = file("${System.getProperty('user.home')}/.android-keys/addplus-upload.jks")
+    if (uploadKeystore.exists()) {
+        signingConfigs {
+            release {
+                def keystorePassword = providers.exec {
+                    commandLine 'security', 'find-generic-password', '-s', 'addplus-android-upload-keystore', '-a', 'upload', '-w'
+                }.standardOutput.asText.get().trim()
+                storeFile uploadKeystore
+                storePassword keystorePassword
+                keyAlias 'upload'
+                keyPassword keystorePassword
+            }
+        }
+    }
     buildTypes {
         release {
+            if (uploadKeystore.exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
