@@ -1,133 +1,141 @@
 <template>
-  <ion-page>
-    <ion-content class="events-content">
-      <ion-refresher slot="fixed" @ionRefresh="handleRefresh">
-        <ion-refresher-content pulling-text="Tire pour rafraîchir" refreshing-spinner="crescent" />
-      </ion-refresher>
+  <ion-refresher slot="fixed" @ionRefresh="handleRefresh">
+    <ion-refresher-content pulling-text="Tirez pour actualiser" refreshing-spinner="crescent" />
+  </ion-refresher>
 
-      <div class="events-shell">
-        <eventsShow v-for="event in items" :key="event.id" :event="event" />
+  <div class="app-screen">
+    <h1 class="app-title">Agenda</h1>
 
-        <div class="load-more">
-          <ion-button v-if="!endOfFeed" expand="block" class="load-btn" :disabled="loading" @click="load"
-            color="primary">
-            <ion-spinner v-if="loading" name="crescent" class="btn-spinner" />
-            <span v-else>Voir plus</span>
-          </ion-button>
+    <list-skeleton v-if="status === 'loading' && items.length === 0" variant="event" :count="3" />
 
-          <ion-item v-else lines="none" class="end-state">
-            <ion-label>Il n’y a plus rien à voir.</ion-label>
-          </ion-item>
+    <screen-state v-else-if="status === 'error' && items.length === 0" kind="error" @action="reload" />
+
+    <screen-state v-else-if="items.length === 0" :icon="calendarOutline" title="Aucun événement à venir"
+      text="Les rencontres, conventions et formations qui vous concernent apparaîtront ici." action="Actualiser"
+      @action="reload" />
+
+    <template v-else>
+      <section v-for="group in groups" :key="group.key" class="month">
+        <h2 class="app-section-title month-title">{{ group.label }}</h2>
+        <div class="app-stack">
+          <event-card v-for="event in group.events" :key="event.id" :event="event" />
         </div>
-      </div>
-    </ion-content>
-  </ion-page>
+      </section>
+    </template>
+
+    <ion-infinite-scroll :disabled="items.length === 0 || endOfFeed || status === 'error'" @ionInfinite="loadMore">
+      <ion-infinite-scroll-content loading-spinner="crescent" />
+    </ion-infinite-scroll>
+
+    <div v-if="items.length > 0 && status === 'error'" class="list-end">
+      <ion-button fill="clear" @click="loadMore()">Charger la suite</ion-button>
+    </div>
+  </div>
 </template>
 
-
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 import {
-  IonPage,
-  IonContent,
   IonButton,
   IonRefresher,
   IonRefresherContent,
-  IonSpinner,
-  IonItem,
-  IonLabel,
-} from '@ionic/vue';
-import eventsShow from './show.vue';
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+} from "@ionic/vue";
+import { calendarOutline } from "ionicons/icons";
+import EventCard from "./EventCard.vue";
+import ScreenState from "../Common/ScreenState.vue";
+import ListSkeleton from "../Common/ListSkeleton.vue";
+import { tapLight } from "@/utils/haptics";
 
 export default {
-  name: 'EventsIndex',
+  name: "EventsIndex",
   components: {
-    eventsShow,
-    IonPage,
-    IonContent,
+    EventCard,
+    ScreenState,
+    ListSkeleton,
     IonButton,
     IonRefresher,
     IonRefresherContent,
-    IonSpinner,
-    IonItem,
-    IonLabel,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
   },
   computed: {
-    ...mapGetters('eventsStore', {
-      items: 'getItems',
-      // idéalement: endOfFeed vient du store
-      storeEndOfFeed: 'getEndOfFeed',
+    ...mapGetters("eventsStore", {
+      storeItems: "getItems",
+      endOfFeed: "getEndOfFeed",
     }),
-    endOfFeed() {
-      return this.storeEndOfFeed ?? false;
+    items() {
+      return Array.isArray(this.storeItems) ? this.storeItems : [];
+    },
+    // Regroupement par mois : « Octobre 2026 »
+    groups() {
+      const groups = [];
+      this.items.forEach((event) => {
+        const d = new Date(event.start_at);
+        const key = `${d.getFullYear()}-${d.getMonth()}`;
+        let group = groups.find((g) => g.key === key);
+        if (!group) {
+          const label = d.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+          group = { key, label: label.charAt(0).toUpperCase() + label.slice(1), events: [] };
+          groups.push(group);
+        }
+        group.events.push(event);
+      });
+      return groups;
     },
   },
   data() {
     return {
-      loading: false,
+      status: "loading",
     };
   },
-  async mounted() {
-    await this.load();
-  },
   methods: {
+    async reload() {
+      this.status = "loading";
+      try {
+        await this.$store.dispatch("eventsStore/getItems");
+        this.status = "ready";
+      } catch (e) {
+        this.status = "error";
+      }
+    },
     async handleRefresh(ev) {
+      await this.reload();
+      ev.target.complete();
+      if (this.status === "ready") tapLight();
+    },
+    async loadMore(ev) {
       try {
-        // si ton store supporte un reset/refresh, fais-le
-        await this.$store.dispatch('eventsStore/getItems', { reset: true });
+        await this.$store.dispatch("eventsStore/loadMore");
+        this.status = "ready";
+      } catch (e) {
+        this.status = "error";
       } finally {
-        ev.detail.complete();
+        if (ev && ev.target) ev.target.complete();
       }
     },
-    async load() {
-      if (this.loading || this.endOfFeed) return;
-
-      this.loading = true;
-      try {
-        await this.$store.dispatch('eventsStore/getItems');
-      } finally {
-        this.loading = false;
-      }
-    },
+  },
+  setup() {
+    return { calendarOutline };
+  },
+  mounted() {
+    if (localStorage.getItem("token") === null) {
+      this.$router.push({ name: "Login", replace: true });
+      return;
+    }
+    this.reload();
   },
 };
 </script>
 
 <style scoped>
-.events-content {
-  --background: var(--ion-background-color);
+.month:first-of-type .month-title {
+  margin-top: 0;
 }
 
-.events-shell {
-  padding: 12px 12px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.load-more {
-  margin-top: 8px;
-}
-
-.load-btn {
-  --border-radius: 16px;
-  height: 44px;
-}
-
-.btn-spinner {
-  width: 18px;
-  height: 18px;
-}
-
-.end-state {
-  --background: transparent;
-  border: 1px solid var(--ion-color-border);
-  border-radius: 14px;
+.list-end {
+  margin-top: 20px;
   text-align: center;
-}
-
-.end-state ion-label {
-  color: var(--ion-color-step-500);
-  padding: 10px 0;
 }
 </style>

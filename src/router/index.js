@@ -82,6 +82,11 @@ const routes = [
     path: '/cotisations',
     name: 'CotisationsPage',
     component: () => import("../pages/cotisationsPage.vue"),
+  },
+  {
+    path: '/parametres',
+    name: 'SettingsPage',
+    component: () => import("../pages/settingsPage.vue"),
   }
 ]
 

@@ -1,306 +1,207 @@
 <template>
-    <ion-page class="profile-page">
-        <ion-content :fullscreen="true" class="profile-content">
-            <!-- Header / avatar -->
-            <div class="profile-hero">
-                <div class="avatar-wrap">
-                    <img class="avatar" :src="takenPicture ? takenPicture : getAvatar" alt="Avatar" />
-                    <ion-button class="avatar-btn" size="small" shape="round" fill="solid" @click="takePicture">
-                        Changer
-                    </ion-button>
-                </div>
+  <div class="app-screen edit-screen">
+    <h1 class="app-title">Modifier mon profil</h1>
 
-                <div class="profile-title">
-                    <div class="name">
-                        {{ editedUser.firstname || 'Prénom' }} {{ editedUser.lastname || 'Nom' }}
-                    </div>
-                    <div class="subtitle">Ton profil public</div>
-                </div>
-            </div>
+    <div class="photo-block">
+      <app-avatar :src="takenPicture || avatarUrl" :name="fullName" :alt="`Photo de ${fullName}`" :size="96" />
+      <ion-button fill="clear" class="photo-btn" :disabled="uploading" @click="takePicture">
+        <ion-spinner v-if="uploading" slot="start" name="crescent" />
+        <ion-icon v-else slot="start" :icon="cameraOutline" aria-hidden="true" />
+        Changer la photo
+      </ion-button>
+    </div>
 
-            <!-- Form card -->
-            <ion-card class="profile-card" color="transparent">
-                <ion-card-content class="profile-card-content">
-                    <ion-item class="field" lines="none">
-                        <ion-input label="Nom" label-placement="stacked" v-model="editedUser.lastname" />
-                    </ion-item>
+    <h2 class="app-section-title">Identité</h2>
+    <ion-list class="app-inset-list">
+      <ion-item>
+        <ion-input v-model="editedUser.firstname" label="Prénom" label-placement="stacked" autocomplete="given-name"
+          autocapitalize="words" enterkeyhint="next" />
+      </ion-item>
+      <ion-item>
+        <ion-input v-model="editedUser.lastname" label="Nom" label-placement="stacked" autocomplete="family-name"
+          autocapitalize="words" enterkeyhint="next" />
+      </ion-item>
+      <ion-item>
+        <ion-input v-model="editedUser.birthdate" label="Date de naissance" label-placement="stacked" type="date"
+          autocomplete="bday" />
+      </ion-item>
+    </ion-list>
 
-                    <ion-item class="field" lines="none">
-                        <ion-input label="Prénom" label-placement="stacked" v-model="editedUser.firstname" />
-                    </ion-item>
+    <h2 class="app-section-title">Coordonnées</h2>
+    <ion-list class="app-inset-list">
+      <ion-item>
+        <ion-input v-model="editedUser.phone_1" label="Téléphone" label-placement="stacked" type="tel" inputmode="tel"
+          autocomplete="tel" enterkeyhint="next" />
+      </ion-item>
+      <ion-item>
+        <ion-input v-model="editedUser.address_1" label="Adresse" label-placement="stacked"
+          autocomplete="street-address" enterkeyhint="next" />
+      </ion-item>
+      <ion-item>
+        <ion-input v-model="editedUser.zipcode" label="Code postal" label-placement="stacked" inputmode="numeric"
+          autocomplete="postal-code" maxlength="5" enterkeyhint="next" :class="{ 'ion-invalid ion-touched': zipInvalid }"
+          error-text="Le code postal compte 5 chiffres." />
+      </ion-item>
+      <ion-item>
+        <ion-input v-model="editedUser.town" label="Ville" label-placement="stacked" autocomplete="address-level2"
+          autocapitalize="words" enterkeyhint="done" />
+      </ion-item>
+    </ion-list>
 
-                    <ion-item class="field" lines="none">
-                        <ion-input label="Adresse" label-placement="stacked" v-model="editedUser.address_1" />
-                    </ion-item>
-
-                    <div class="row">
-                        <ion-item class="field half" lines="none">
-                            <ion-input label="Code postal" label-placement="stacked" inputmode="numeric" v-model="editedUser.zipcode" />
-                        </ion-item>
-
-                        <ion-item class="field half" lines="none">
-                            <ion-input label="Ville" label-placement="stacked" v-model="editedUser.town" />
-                        </ion-item>
-                    </div>
-
-                    <ion-item class="field" lines="none">
-                        <ion-input label="Téléphone" label-placement="stacked" inputmode="tel" v-model="editedUser.phone_1" />
-                    </ion-item>
-
-                    <ion-item class="field" lines="none">
-                        <ion-input label="Date de naissance" label-placement="stacked" type="date" v-model="editedUser.birthdate" />
-                    </ion-item>
-                </ion-card-content>
-            </ion-card>
-
-            <!-- Spacer for fixed button -->
-            <div class="bottom-spacer"></div>
-        </ion-content>
-
-        <!-- Fixed save button -->
-        <div class="save-bar">
-            <ion-button expand="block" shape="round" class="save-btn" :disabled="saving" @click="saveUser">
-                <ion-spinner v-if="saving" name="crescent" class="btn-spinner" />
-                <span v-else>Enregistrer</span>
-            </ion-button>
-        </div>
-    </ion-page>
+    <div class="app-action-bar">
+      <ion-button expand="block" :disabled="saving || zipInvalid" @click="saveUser">
+        <ion-spinner v-if="saving" name="crescent" />
+        <span v-else>Enregistrer</span>
+      </ion-button>
+    </div>
+  </div>
 </template>
 
 <script>
-import {
-    IonPage,
-    IonContent,
-    IonCard,
-    IonCardContent,
-    IonInput,
-    IonButton,
-    IonItem,
-    IonSpinner,
-} from '@ionic/vue';
-import { mapGetters } from 'vuex';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { IonList, IonItem, IonInput, IonButton, IonIcon, IonSpinner } from "@ionic/vue";
+import { cameraOutline } from "ionicons/icons";
+import { mapGetters } from "vuex";
+import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
+import AppAvatar from "../Common/AppAvatar.vue";
+import { BASE_URL } from "@/utils/format";
+import { success } from "@/utils/haptics";
 
 export default {
-    name: 'UserShowComponent',
-    components: {
-        IonPage,
-        IonContent,
-        IonCard,
-        IonCardContent,
-        IonInput,
-        IonButton,
-        IonItem,
-        IonSpinner,
+  name: "UserEditComponent",
+  components: { IonList, IonItem, IonInput, IonButton, IonIcon, IonSpinner, AppAvatar },
+  data() {
+    return {
+      editedUser: {},
+      takenPicture: null,
+      cache: Date.now(),
+      saving: false,
+      uploading: false,
+    };
+  },
+  computed: {
+    ...mapGetters("sessionStore", {
+      user: "getUser",
+    }),
+    fullName() {
+      return [this.editedUser.firstname, this.editedUser.lastname].filter(Boolean).join(" ");
     },
-    computed: {
-        ...mapGetters('sessionStore', {
-            user: 'getUser',
-            token: 'getToken',
-        }),
-        getAvatar() {
-            let base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://app.addfrance.fr';
-            return `${base_url}/avatars/${this.user.id}.png?cache=${this.cache}`;
-        },
+    avatarUrl() {
+      return this.user && this.user.id ? `${BASE_URL}/avatars/${this.user.id}.png?cache=${this.cache}` : "";
     },
-    data() {
-        return {
-            editedUser: {},
-            takenPicture: null,
-            cache: Date.now(),
-            saving: false,
-        };
+    zipInvalid() {
+      const zip = (this.editedUser.zipcode || "").toString().trim();
+      return zip !== "" && !/^\d{5}$/.test(zip);
     },
-    watch: {
-        user: {
-            handler() {
-                this.editedUser = JSON.parse(JSON.stringify(this.user));
-            },
-            deep: true,
-            immediate: true,
-        },
+  },
+  watch: {
+    user: {
+      handler() {
+        this.editedUser = JSON.parse(JSON.stringify(this.user || {}));
+      },
+      deep: true,
+      immediate: true,
     },
-    beforeCreate() {
-        this.$store.dispatch('sessionStore/fetchUser');
+  },
+  created() {
+    if (null === localStorage.getItem("token")) {
+      this.$router.push({ name: "Login", replace: true });
+      return;
+    }
+    this.$store.dispatch("sessionStore/fetchUser");
+  },
+  methods: {
+    async saveUser() {
+      if (this.saving) return;
+      this.saving = true;
 
-        if (this.token === null) {
-            this.$router.push({ name: 'Login', replace: true });
-        }
+      try {
+        const formData = new FormData();
+        formData.append("user[user][lastname]", this.editedUser.lastname ?? "");
+        formData.append("user[user][firstname]", this.editedUser.firstname ?? "");
+        formData.append("user[user][address_1]", this.editedUser.address_1 ?? "");
+        formData.append("user[user][zipcode]", this.editedUser.zipcode ?? "");
+        formData.append("user[user][town]", this.editedUser.town ?? "");
+        formData.append("user[user][phone_1]", this.editedUser.phone_1 ?? "");
+        formData.append("user[user][birthdate]", this.editedUser.birthdate ?? "");
+
+        await this.$store.dispatch("usersStore/save", { id: this.editedUser.id, payload: formData });
+        await this.$store.dispatch("sessionStore/fetchUser");
+
+        success();
+        this.$root.presentToast("Profil enregistré");
+        this.$router.push("/user");
+      } catch (e) {
+        this.$root.presentToast("Le profil n’a pas été enregistré. Vérifiez votre connexion et réessayez.", "danger");
+      } finally {
+        this.saving = false;
+      }
     },
-    methods: {
-        async saveUser() {
-            if (this.saving) return;
-            this.saving = true;
 
-            try {
-                const formData = new FormData();
-                formData.append('user[user][lastname]', this.editedUser.lastname ?? '');
-                formData.append('user[user][firstname]', this.editedUser.firstname ?? '');
-                formData.append('user[user][address_1]', this.editedUser.address_1 ?? '');
-                formData.append('user[user][zipcode]', this.editedUser.zipcode ?? '');
-                formData.append('user[user][town]', this.editedUser.town ?? '');
-                formData.append('user[user][phone_1]', this.editedUser.phone_1 ?? '');
-                formData.append('user[user][birthdate]', this.editedUser.birthdate ?? '');
+    async takePicture() {
+      let image;
+      try {
+        image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: true,
+          source: CameraSource.Prompt,
+          resultType: CameraResultType.Uri,
+          promptLabelHeader: "Photo de profil",
+          promptLabelPhoto: "Choisir dans la galerie",
+          promptLabelPicture: "Prendre une photo",
+          promptLabelCancel: "Annuler",
+        });
+      } catch (e) {
+        // Annulation par l'utilisateur ou accès refusé : rien à faire
+        return;
+      }
 
-                await this.$store.dispatch('usersStore/save', { id: this.editedUser.id, payload: formData });
-
-                this.$root.presentToast('Votre profil a été mis à jour !');
-                this.$router.push('/user');
-            } finally {
-                this.saving = false;
-            }
-        },
-
-        async takePicture() {
-            const image = await Camera.getPhoto({
-                quality: 90,
-                allowEditing: true,
-                source: CameraSource.Prompt,
-                resultType: CameraResultType.Uri,
-
-                promptLabelHeader: 'Photo de profil',
-                promptLabelPhoto: 'Prendre une photo',
-                promptLabelPicture: 'Choisir dans la galerie',
-                promptLabelCancel: 'Annuler',
-            });
-
-            // Preview
-            this.takenPicture = image.webPath;
-
-            // Upload
-            const blob = await fetch(image.webPath).then((r) => r.blob());
-
-            const formData = new FormData();
-            formData.append('user[user][avatar]', blob, 'photo.jpg');
-
-            await this.$store.dispatch('usersStore/save', { id: this.user.id, payload: formData });
-            this.$root.presentToast('Votre avatar a été mis à jour !');
-            this.cache = Date.now();
-        },
+      this.takenPicture = image.webPath;
+      this.uploading = true;
+      try {
+        const blob = await fetch(image.webPath).then((r) => r.blob());
+        const formData = new FormData();
+        formData.append("user[user][avatar]", blob, "photo.jpg");
+        await this.$store.dispatch("usersStore/save", { id: this.user.id, payload: formData });
+        this.cache = Date.now();
+        success();
+        this.$root.presentToast("Photo mise à jour");
+      } catch (e) {
+        this.takenPicture = null;
+        this.$root.presentToast("La photo n’a pas été envoyée. Réessayez.", "danger");
+      } finally {
+        this.uploading = false;
+      }
     },
+  },
+  setup() {
+    return { cameraOutline };
+  },
 };
 </script>
 
 <style scoped>
-.profile-content {
-    --background: var(--ion-background-color);
+.edit-screen {
+  padding-bottom: 0;
 }
 
-.profile-hero {
-    padding: 18px 18px 10px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+.photo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
-.avatar-wrap {
-    position: relative;
-    width: 82px;
-    height: 82px;
-    flex: 0 0 auto;
+.photo-btn {
+  min-height: 44px;
+  font-weight: 600;
 }
 
-.avatar {
-    width: 82px;
-    height: 82px;
-    border-radius: 22px;
-    object-fit: cover;
-    border: 1px solid var(--ion-color-border);
-    background: var(--ion-card-background);
+.app-action-bar {
+  margin-top: 24px;
 }
 
-.avatar-btn {
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 28px;
-    font-size: 12px;
-    --padding-start: 10px;
-    --padding-end: 10px;
-    --color: var(--ion-color-primary-contrast);
-}
-
-.profile-title .name {
-    font-weight: 800;
-    font-size: 18px;
-    color: var(--ion-text-color);
-    letter-spacing: -0.2px;
-}
-
-.profile-title .subtitle {
-    margin-top: 4px;
-    font-size: 13px;
-    color: var(--ion-color-step-500);
-}
-
-.profile-card {
-    margin: 10px 12px 0;
-    border-radius: 18px;
-    border: 1px solid var(--ion-color-border);
-    box-shadow: none;
-    background: var(--ion-card-background);
-}
-
-.profile-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px;
-}
-
-.field {
-    --background: transparent;
-    border: 1px solid var(--ion-color-border);
-    border-radius: 14px;
-    padding: 2px 10px;
-    --min-height: 48px;
-}
-
-/* ion-input est "scoped" (pas de shadow DOM) : on cible directement le libellé */
-.field ion-input :deep(.label-text-wrapper) {
-    color: var(--ion-color-step-500);
-    font-size: 13px;
-}
-
-.field ion-input {
-    --padding-top: 10px;
-    --padding-bottom: 10px;
-    font-size: 14px;
-}
-
-.row {
-    display: flex;
-    gap: 10px;
-}
-
-.half {
-    flex: 1;
-}
-
-/* espace pour le bouton fixe */
-.bottom-spacer {
-    height: 86px;
-}
-
-.save-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-    background: linear-gradient(to top, var(--ion-background-color), rgba(0, 0, 0, 0));
-    backdrop-filter: blur(10px);
-}
-
-.save-btn {
-    height: 46px;
-    --border-radius: 16px;
-    --color: var(--ion-color-primary-contrast);
-}
-
-.btn-spinner {
-    width: 18px;
-    height: 18px;
+.app-action-bar ion-button {
+  --border-radius: var(--app-radius-control);
+  font-weight: 600;
 }
 </style>

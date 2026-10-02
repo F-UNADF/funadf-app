@@ -1,201 +1,95 @@
 <template>
-    <div class="user-show-content">
-        <ion-card class="user-card ion-margin-bottom">
-            <div class="avatar">
-                <img class="avatar-img" :src="avatarUrl" :alt="`Avatar ${user.lastname} ${user.firstname}`" />
-            </div>
+  <profile-view :name="fullName" :avatar-src="avatarUrl" :pills="pills" :email="user.email || ''"
+    :phone="user.phone_1 || ''" :place="user.town || ''">
+    <template v-if="canEdit" #actions>
+      <ion-button fill="outline" size="default" class="edit-btn" @click="goToEdit">
+        <ion-icon slot="start" :icon="createOutline" aria-hidden="true" />
+        Modifier mon profil
+      </ion-button>
+    </template>
 
-            <ion-card-title class="ion-text-center ion-margin-bottom user-title">
-                {{ user.lastname }} {{ user.firstname }}
-            </ion-card-title>
-
-            <ion-grid>
-                <ion-row class="ion-justify-content-center">
-                    <ion-col size="4">
-                        <ion-chip color="primary" class="info-chip">
-                            <ion-icon :icon="idCard" />
-                            <ion-label>{{ getUserId(user.id) }}</ion-label>
-                        </ion-chip>
-                    </ion-col>
-
-                    <ion-col size="8">
-                        <ion-chip color="primary" class="info-chip">
-                            <ion-icon :icon="bookmark" />
-                            <ion-label>{{ user.level }}</ion-label>
-                        </ion-chip>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
-
-            <ion-list lines="full">
-                <ion-item v-if="user.email">
-                    <ion-icon slot="start" :icon="mail" />
-                    <a :href="`mailto:${user.email}`">{{ user.email }}</a>
-                </ion-item>
-
-                <ion-item v-if="user.phone_1">
-                    <ion-icon slot="start" :icon="call" />
-                    <a :href="`tel:${user.phone_1}`">{{ user.phone_1 }}</a>
-                </ion-item>
-
-                <ion-item v-if="user.town">
-                    <ion-icon slot="start" :icon="location" />
-                    {{ user.town }}
-                </ion-item>
-            </ion-list>
-        </ion-card>
-
-        <ion-card v-if="church" class="church-card">
-            <ion-card-header>
-                <ion-card-title>{{ church.name }}</ion-card-title>
-            </ion-card-header>
-
-            <ion-list lines="full">
-                <ion-item v-if="church.town">
-                    <ion-icon slot="start" :icon="location" />
-                    {{ church.town }}
-                </ion-item>
-
-                <ion-item v-if="church.email">
-                    <ion-icon slot="start" :icon="mail" />
-                    <a :href="`mailto:${church.email}`">{{ church.email }}</a>
-                </ion-item>
-
-                <ion-item v-if="church.phone_1">
-                    <ion-icon slot="start" :icon="call" />
-                    <a :href="`tel:${church.phone_1}`">{{ church.phone_1 }}</a>
-                </ion-item>
-            </ion-list>
-        </ion-card>
-
-        <ion-fab v-if="canEdit" slot="fixed" vertical="bottom" horizontal="end" @click="goToEdit">
-            <ion-fab-button color="danger">
-                <i class="material-icons">edit</i>
-            </ion-fab-button>
-        </ion-fab>
-    </div>
+    <template v-if="church && churchName">
+      <h2 class="app-section-title">Église</h2>
+      <ion-list class="app-inset-list">
+        <ion-item :button="!!churchId" :detail="!!churchId" @click="goToChurch">
+          <ion-icon slot="start" :icon="homeOutline" aria-hidden="true" />
+          <ion-label class="ion-text-wrap">
+            <span class="church-name">{{ churchName }}</span>
+            <p v-if="church.town">{{ church.town }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </template>
+  </profile-view>
 </template>
 
 <script>
-import {
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonChip,
-    IonLabel,
-    IonList,
-    IonItem,
-    IonFab,
-    IonFabButton,
-    IonRow,
-    IonCol,
-    IonGrid,
-    IonIcon,
-} from '@ionic/vue';
-import { mail, call, location, idCard, bookmark } from 'ionicons/icons';
+import { IonButton, IonIcon, IonList, IonItem, IonLabel } from "@ionic/vue";
+import { createOutline, homeOutline } from "ionicons/icons";
+import ProfileView from "../Common/ProfileView.vue";
+import { BASE_URL } from "@/utils/format";
 
 export default {
-    name: 'UserShowComponent',
-    components: {
-        IonCard,
-        IonCardHeader,
-        IonCardTitle,
-        IonChip,
-        IonList,
-        IonItem,
-        IonLabel,
-        IonFab,
-        IonFabButton,
-        IonRow,
-        IonCol,
-        IonGrid,
-        IonIcon,
+  name: "UserShowComponent",
+  components: { IonButton, IonIcon, IonList, IonItem, IonLabel, ProfileView },
+  props: {
+    user: { type: Object, required: true },
+    church: { type: Object, default: null },
+    canEdit: { type: Boolean, default: true },
+  },
+  computed: {
+    fullName() {
+      return [this.user.firstname, this.user.lastname].filter(Boolean).join(" ");
     },
-    props: {
-        user: {
-            type: Object,
-            required: true,
-        },
-        church: {
-            type: Object,
-            default: null,
-        },
-        canEdit: {
-            type: Boolean,
-            default: true,
-        },
+    avatarUrl() {
+      return this.user.id ? `${BASE_URL}/avatars/${this.user.id}.png?cache=v1` : "";
     },
-    data() {
-        return {
-            avatarCacheKey: 'v1',
-        };
+    pills() {
+      const out = [];
+      if (this.user.level) out.push(this.user.level);
+      if (this.user.id) out.push(`N° ${String(this.user.id).padStart(5, "0")}`);
+      return out;
     },
-    computed: {
-        avatarUrl() {
-            const baseUrl =
-                process.env.NODE_ENV === 'production'
-                    ? 'https://app.addfrance.fr'
-                    : 'http://localhost:3000';
-
-            return `${baseUrl}/avatars/${this.user.id}.png?cache=${this.avatarCacheKey}`;
-        },
+    // Profil : la phase en cours (church_id) ; annuaire : l'église (id)
+    churchId() {
+      return this.church && (this.church.church_id || this.church.id);
     },
-    methods: {
-        getUserId(id) {
-            return String(id).padStart(5, '0');
-        },
-        goToEdit() {
-            this.$router.push('/user/edit');
-        },
+    churchName() {
+      return this.church && this.church.name;
     },
-    setup() {
-        return { mail, call, location, idCard, bookmark };
+  },
+  methods: {
+    goToEdit() {
+      this.$router.push("/user/edit");
     },
+    goToChurch() {
+      if (this.churchId) this.$router.push(`/annuaire/churches/${this.churchId}`);
+    },
+  },
+  setup() {
+    return { createOutline, homeOutline };
+  },
 };
 </script>
 
 <style scoped>
-.user-show-content {
-    --background: var(--ion-background-color);
+.edit-btn {
+  margin-top: 16px;
+  min-height: 44px;
+  --border-radius: var(--app-radius-control);
+  font-weight: 600;
 }
 
-.user-card,
-.church-card {
-    background: var(--ion-card-background);
+ion-item ion-icon[slot="start"] {
+  color: var(--ion-color-primary);
+  margin-inline-end: 16px;
 }
 
-.avatar {
-    text-align: center;
-    min-height: 25vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 20px;
+.church-name {
+  font-weight: 600;
 }
 
-.avatar-img {
-    display: block;
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    margin: 0 auto 20px;
-    border-radius: 999px;
-    overflow: hidden;
-    border: 1px solid var(--ion-color-border);
-    background: var(--ion-card-background);
-}
-
-.user-title {
-    color: var(--ion-text-color);
-}
-
-.info-chip {
-    width: 100%;
-    justify-content: center;
-}
-
-a {
-    color: var(--ion-color-primary);
-    text-decoration: none;
+ion-label p {
+  color: var(--app-text-muted);
 }
 </style>

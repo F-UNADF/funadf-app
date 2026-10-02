@@ -1,436 +1,281 @@
 <template>
-  <ion-page>
-    <ion-content fullscreen class="cotisations-page">
-      <div class="hero">
-        <div class="hero-overlay">
-          <p class="hero-kicker">Assemblées de Dieu</p>
-          <h1>Cotisations annuelles</h1>
-          <p class="hero-text">
-            Cette page centralise toutes les informations relatives aux cotisations annuelles
-            au sein des Assemblées de Dieu.
-          </p>
+  <div class="app-screen">
+    <h1 class="app-title">Cotisations</h1>
+    <p class="app-subtitle">Montants et moyens de paiement des cotisations annuelles des Assemblées de Dieu.</p>
+
+    <!-- Pastorales : la plus fréquente, en premier -->
+    <ion-card class="fee-card">
+      <h2 class="fee-title">Cotisation pastorale</h2>
+      <p class="fee-text">
+        Obligatoire pour les pasteurs de l’UNADF, elle ouvre le droit de vote pour l’année en cours.
+      </p>
+
+      <ul class="tariffs">
+        <li v-for="t in tariffs" :key="t.label" class="tariff">
+          <div>
+            <span class="tariff-label">{{ t.label }}</span>
+            <span class="tariff-detail">{{ t.detail }}</span>
+          </div>
+          <strong class="tariff-amount">{{ t.amount }}</strong>
+        </li>
+      </ul>
+
+      <div class="pay-buttons">
+        <ion-button expand="block" @click="openLink(links.pastoral2026)">
+          Payer la cotisation 2026
+          <ion-icon slot="end" :icon="openOutline" aria-hidden="true" />
+        </ion-button>
+        <ion-button expand="block" fill="outline" @click="openLink(links.pastoral2025)">
+          Payer la cotisation 2025
+          <ion-icon slot="end" :icon="openOutline" aria-hidden="true" />
+        </ion-button>
+      </div>
+      <p class="pay-note">Paiement sécurisé sur HelloAsso.</p>
+    </ion-card>
+
+    <ion-card class="fee-card">
+      <h2 class="fee-title">Cotisation nationale des associations cultuelles</h2>
+      <p class="fee-text">
+        <strong>13,50&nbsp;€ par PAFRC</strong>, personne adulte fréquentant régulièrement le culte.
+        Elle se règle par virement bancaire ou sur HelloAsso.
+      </p>
+      <div class="pay-buttons">
+        <ion-button expand="block" @click="openLink(links.national2026)">
+          Payer la cotisation 2026
+          <ion-icon slot="end" :icon="openOutline" aria-hidden="true" />
+        </ion-button>
+        <ion-button expand="block" fill="outline" @click="openLink(links.national2025)">
+          Payer la cotisation 2025
+          <ion-icon slot="end" :icon="openOutline" aria-hidden="true" />
+        </ion-button>
+      </div>
+    </ion-card>
+
+    <ion-card class="fee-card">
+      <h2 class="fee-title">Entraide pastorale</h2>
+      <p class="fee-text">
+        <strong>50&nbsp;€ par an</strong> pour soutenir les familles pastorales qui traversent des difficultés.
+        À régler par virement :
+      </p>
+      <div class="iban">
+        <div class="iban-text">
+          <span class="iban-label">IBAN</span>
+          <span class="iban-value">{{ entraideIban }}</span>
         </div>
+        <ion-button fill="clear" class="copy-btn" aria-label="Copier l’IBAN" @click="copyIban">
+          <ion-icon slot="icon-only" :icon="copied ? checkmarkOutline : copyOutline" />
+        </ion-button>
       </div>
+    </ion-card>
 
-      <div class="page-container">
-        <ion-card class="glass-card">
-          <ion-card-header>
-            <ion-card-subtitle>UNADF</ion-card-subtitle>
-            <ion-card-title>
-              Cotisations nationales des associations cultuelles
-            </ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
-            <p class="section-text">
-              La cotisation nationale est calculée à raison de
-              <strong>13,50 € par PAFRC</strong>
-              <span class="muted">(personne adulte fréquentant régulièrement le culte)</span>.
-            </p>
-
-            <div class="info-block">
-              <h3>Modes de règlement</h3>
-
-              <div class="payment-box">
-                <div class="payment-row">
-                  <span class="payment-label">Virement bancaire</span>
-                  <span class="payment-value">via le RIB ci-dessous</span>
-                </div>
-
-                <div class="payment-row payment-links">
-                  <span class="payment-label">HelloAsso</span>
-                  <div class="button-group">
-                    <ion-button fill="solid" color="primary" size="default" @click="openLink(links.national2025)">
-                      Cotisation 2025
-                    </ion-button>
-
-                    <ion-button fill="solid" color="primary" size="default" @click="openLink(links.national2026)">
-                      Cotisation 2026
-                    </ion-button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ion-card-content>
-        </ion-card>
-
-        <ion-card class="glass-card">
-          <ion-card-header>
-            <ion-card-subtitle>Églises</ion-card-subtitle>
-            <ion-card-title>Cotisations régionales</ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
-            <p class="section-text">
-              Le montant de ces cotisations varie selon la région où se situe votre assemblée.
-            </p>
-
-            <p class="section-text">
-              Pour toute information complémentaire, veuillez contacter le trésorier de votre région :
-            </p>
-
-            <div class="region-grid">
-              <div v-for="region in regions" :key="region" class="region-chip">
-                <a :href="`mailto:${region.email}`" class="region-link">
-                  {{ region.name }}
-                </a>
-              </div>
-            </div>
-          </ion-card-content>
-        </ion-card>
-
-        <ion-card class="glass-card">
-          <ion-card-header>
-            <ion-card-subtitle>Pasteurs</ion-card-subtitle>
-            <ion-card-title>Cotisations pastorales</ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
-            <p class="section-text">
-              Les cotisations pastorales à l’UNADF sont
-              <strong>obligatoires</strong>
-              et ouvrent droit au vote pour l’année en cours.
-            </p>
-
-            <div class="tarif-list">
-              <div class="tarif-item">
-                <div>
-                  <h3>Pasteurs reconnus</h3>
-                  <p>AEM et APE</p>
-                </div>
-                <strong>30 €</strong>
-              </div>
-
-              <div class="tarif-item">
-                <div>
-                  <h3>Pasteurs en formation</h3>
-                  <p>Stagiaires, PP1, PP2</p>
-                </div>
-                <strong>25 €</strong>
-              </div>
-
-              <div class="tarif-item">
-                <div>
-                  <h3>Pasteurs retraités</h3>
-                  <p>Jusqu’à 80 ans</p>
-                </div>
-                <strong>15 €</strong>
-              </div>
-            </div>
-
-            <div class="button-group button-group-spaced">
-              <ion-button fill="solid" color="primary" @click="openLink(links.pastoral2025)">
-                Cotisation 2025
-              </ion-button>
-
-              <ion-button fill="solid" color="primary" @click="openLink(links.pastoral2026)">
-                Cotisation 2026
-              </ion-button>
-            </div>
-          </ion-card-content>
-        </ion-card>
-
-        <ion-card class="glass-card highlight-card">
-          <ion-card-header>
-            <ion-card-subtitle>Soutien fraternel</ion-card-subtitle>
-            <ion-card-title>Cotisation à l’entraide pastorale</ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
-            <p class="section-text">
-              Cette cotisation, d’un montant de <strong>50 € par an</strong>,
-              contribue au soutien des familles pastorales traversant des difficultés.
-            </p>
-
-            <div class="rib-box">
-              <span class="rib-label">Virement bancaire</span>
-              <code class="rib-value">{{ entraideIban }}</code>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
-    </ion-content>
-  </ion-page>
+    <h2 class="app-section-title">Cotisations régionales</h2>
+    <p class="region-hint">
+      Leur montant dépend de la région de votre assemblée. Écrivez au secrétariat de votre région pour en savoir plus.
+    </p>
+    <ion-list class="app-inset-list">
+      <ion-item v-for="region in regions" :key="region.email" :href="`mailto:${region.email}`" :detail="false">
+        <ion-label class="ion-text-wrap">
+          {{ region.name }}
+          <p>{{ region.email }}</p>
+        </ion-label>
+        <ion-icon slot="end" :icon="mailOutline" class="mail-icon" aria-hidden="true" />
+      </ion-item>
+    </ion-list>
+  </div>
 </template>
 
 <script>
+import { IonCard, IonButton, IonIcon, IonList, IonItem, IonLabel } from "@ionic/vue";
+import { openOutline, copyOutline, checkmarkOutline, mailOutline } from "ionicons/icons";
+import { Browser } from "@capacitor/browser";
+import { tapLight } from "@/utils/haptics";
+
 export default {
-  name: "CotisationsPage"
-}
-</script>
-
-<script setup>
-import {
-  IonPage,
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonButton,
-} from '@ionic/vue';
-
-const links = {
-  national2025: 'https://tinyurl.com/mrcrawxu',
-  national2026: 'https://tinyurl.com/3eemmunb',
-  pastoral2025: 'https://tinyurl.com/f6779xpf',
-  pastoral2026: 'https://tinyurl.com/338u452x',
+  name: "CotisationsPage",
+  components: { IonCard, IonButton, IonIcon, IonList, IonItem, IonLabel },
+  data() {
+    return {
+      copied: false,
+      links: {
+        national2025: "https://tinyurl.com/mrcrawxu",
+        national2026: "https://tinyurl.com/3eemmunb",
+        pastoral2025: "https://tinyurl.com/f6779xpf",
+        pastoral2026: "https://tinyurl.com/338u452x",
+      },
+      entraideIban: "FR76 1027 8079 4900 0204 7510 123",
+      tariffs: [
+        { label: "Pasteurs reconnus", detail: "AEM et APE", amount: "30 €" },
+        { label: "Pasteurs en formation", detail: "Stagiaires, PP1, PP2", amount: "25 €" },
+        { label: "Pasteurs retraités", detail: "Jusqu’à 80 ans", amount: "15 €" },
+      ],
+      regions: [
+        { name: "Aquitaine", email: "sec.aquitaine@addfrance.fr" },
+        { name: "Bretagne", email: "sec.bretagne@addfrance.fr" },
+        { name: "Centre", email: "sec.centre@addfrance.fr" },
+        { name: "Grand-Est", email: "sec.est@addfrance.fr" },
+        { name: "Hauts-de-France", email: "sec.hdf@addfrance.fr" },
+        { name: "Languedoc-Roussillon", email: "sec.languedoc@addfrance.fr" },
+        { name: "Midi-Pyrénées", email: "sec.midipyrenees@addfrance.fr" },
+        { name: "Normandie", email: "sec.normandie@addfrance.fr" },
+        { name: "Provence-Alpes-Côte d’Azur-Corse", email: "sec.pacacorse@addfrance.fr" },
+        { name: "Paris Île-de-France", email: "sec.parisidf@addfrance.fr" },
+        { name: "Rhône-Alpes-Bourgogne", email: "sec.rab@addfrance.fr" },
+        { name: "Val de Loire", email: "sec.valdeloire@addfrance.fr" },
+      ],
+    };
+  },
+  methods: {
+    openLink(url) {
+      Browser.open({ url }).catch(() => window.open(url, "_blank", "noopener,noreferrer"));
+    },
+    async copyIban() {
+      const value = this.entraideIban.replace(/\s/g, "");
+      try {
+        await navigator.clipboard.writeText(value);
+        this.copied = true;
+        tapLight();
+        this.$root.presentToast("IBAN copié", "success");
+        setTimeout(() => (this.copied = false), 2000);
+      } catch (e) {
+        this.$root.presentToast("Copie impossible : sélectionnez l’IBAN à la main.", "warning");
+      }
+    },
+  },
+  setup() {
+    return { openOutline, copyOutline, checkmarkOutline, mailOutline };
+  },
 };
-
-const entraideIban = 'FR76 1027 8079 4900 0204 7510 123';
-
-const regions = [
-  {
-    name: 'Aquitaine',
-    email: 'sec.aquitaine@addfrance.fr',
-  },
-  {
-    name: 'Bretagne',
-    email: 'sec.bretagne@addfrance.fr',
-  },
-  {
-    name: 'Centre',
-    email: 'sec.centre@addfrance.fr',
-  },
-  {
-    name: 'Grand-Est',
-    email: 'sec.est@addfrance.fr',
-  },
-  {
-    name: 'Hauts-de-France',
-    email: 'sec.hdf@addfrance.fr',
-  },
-  {
-    name: 'Languedoc-Roussillon',
-    email: 'sec.languedoc@addfrance.fr',
-  },
-  {
-    name: 'Midi-Pyrénées',
-    email: 'sec.midipyrenees@addfrance.fr',
-  },
-  {
-    name: 'Normandie',
-    email: 'sec.normandie@addfrance.fr',
-  },
-  {
-    name: 'Provence-Alpes-Côte d’Azur-Corse',
-    email: 'sec.pacacorse@addfrance.fr',
-  },
-  {
-    name: 'Paris Île-de-France',
-    email: 'sec.parisidf@addfrance.fr',
-  },
-  {
-    name: 'Rhône-Alpes-Bourgogne',
-    email: 'sec.rab@addfrance.fr',
-  },
-  {
-    name: 'Val de Loire',
-    email: 'sec.valdeloire@addfrance.fr',
-  },
-];
-
-function openLink(url) {
-  window.open(url, '_blank', 'noopener,noreferrer');
-}
 </script>
 
 <style scoped>
-.hero {
-  position: relative;
-  min-height: 260px;
-  display: flex;
-  align-items: flex-end;
-  background: var(--app-brand-gradient);
-  padding: 24px 20px;
-  color: white;
-}
-
-.hero-overlay {
-  max-width: 760px;
-}
-
-.hero-kicker {
-  margin: 0 0 6px;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
-
-.hero h1 {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.hero-text {
-  margin-top: 12px;
-  font-size: 1rem;
-  line-height: 1.5;
-  opacity: 0.95;
-}
-
-.page-container {
-  padding: 18px 14px 32px;
-  max-width: 980px;
-  margin: 0 auto;
-}
-
-.glass-card {
-  margin: 0 0 18px;
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
-}
-
-.section-text {
-  margin: 0 0 14px;
-  line-height: 1.65;
-  font-size: 0.98rem;
-}
-
-.muted {
-  color: #64748b;
-}
-
-.info-block h3 {
+.fee-card {
   margin: 0 0 12px;
+  padding: 16px;
   font-size: 1rem;
 }
 
-.payment-box {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 14px;
-  border-radius: 18px;
-}
-
-.payment-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.payment-label {
-  font-size: 0.92rem;
+.fee-title {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+  line-height: 1.3;
   font-weight: 700;
+  color: var(--app-text);
 }
 
-.payment-value {
-  font-size: 0.95rem;
+.fee-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--app-text);
 }
 
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.tariffs {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-border);
 }
 
-.button-group-spaced {
-  margin-top: 18px;
-}
-
-.region-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.region-chip {
-  padding: 12px 14px;
-  border-radius: 16px;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.region-link {
-  color: var(--ion-color-primary);
-  text-decoration: none;
-  cursor: pointer;
-
-  padding: 10px 12px;
-  display: block;
-
-  border-radius: 14px;
-  transition: background-color 0.2s;
-
-  border: 1px solid var(--ion-color-primary);
-  text-align: center;
-}
-
-.tarif-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.tarif-item {
+.tariff {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
-  border-radius: 18px;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--app-border);
 }
 
-.tarif-item h3 {
-  margin: 0 0 4px;
-  font-size: 0.98rem;
+.tariff-label {
+  display: block;
+  font-weight: 600;
+  color: var(--app-text);
 }
 
-.tarif-item p {
-  margin: 0;
-  font-size: 0.9rem;
+.tariff-detail {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--app-text-muted);
 }
 
-.tarif-item strong {
+.tariff-amount {
+  font-size: 1.0625rem;
+  color: var(--app-text);
   white-space: nowrap;
-  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
 }
 
-.rib-box {
-  margin-top: 14px;
-  padding: 16px;
-  border-radius: 18px;
+.pay-buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 16px;
 }
 
-.rib-label {
-  font-size: 0.9rem;
-  opacity: 0.8;
+.pay-buttons ion-button {
+  margin: 0;
+  min-height: 48px;
+  --border-radius: var(--app-radius-control);
+  font-weight: 600;
 }
 
-.rib-value {
-  font-size: 0.98rem;
-  line-height: 1.6;
-  word-break: break-word;
-  white-space: normal;
+.pay-note {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--app-text-muted);
 }
 
-@media (min-width: 768px) {
-  .hero {
-    min-height: 320px;
-    padding: 32px 28px;
-  }
+.iban {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 6px 10px 14px;
+  border-radius: var(--app-radius-control);
+  background: var(--app-accent-soft);
+}
 
-  .hero h1 {
-    font-size: 2.6rem;
-  }
+.iban-text {
+  flex: 1;
+  min-width: 0;
+}
 
-  .hero-text {
-    font-size: 1.06rem;
-    max-width: 720px;
-  }
+.iban-label {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--app-text-muted);
+}
 
-  .page-container {
-    padding: 24px 20px 40px;
-  }
+.iban-value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--app-text);
+  font-variant-numeric: tabular-nums;
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+.copy-btn {
+  --color: var(--ion-color-primary);
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+}
+
+.region-hint {
+  margin: -4px 4px 10px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--app-text-muted);
+}
+
+ion-label p {
+  color: var(--app-text-muted);
+}
+
+.mail-icon {
+  color: var(--ion-color-primary);
+  font-size: 20px;
 }
 </style>

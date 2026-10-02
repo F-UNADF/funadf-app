@@ -1,16 +1,37 @@
+/* ==========================================================================
+   Thème ADD+ — jetons de couleur et de forme.
+   Toute couleur utilisée dans un composant passe par une variable d'ici,
+   avec sa valeur sombre dans :root[data-theme="dark"].
+   ========================================================================== */
 :root {
-   /* =========================
-     BRAND TOKENS (accents)
-     ========================= */
+   /* Marque */
    --app-navy: #251a7a;
    --app-night: #0f1053;
    --app-blue: #798af4;
    --app-blue-soft: #b0b9f9;
    --app-red: #ea514c;
+   --app-brand-gradient: linear-gradient(135deg, var(--app-navy) 0%,
+         var(--app-blue) 30%, var(--app-blue) 50%, var(--app-red) 100%);
 
-   /* =========================
-     IONIC: LIGHT (naturel)
-     ========================= */
+   /* Rôles (à utiliser dans les composants) */
+   --app-text: var(--ion-text-color);
+   /* texte secondaire : dates, sous-titres, aides (AA sur fond et surface) */
+   --app-text-muted: #5a5f7d;
+   --app-surface: var(--ion-card-background);
+   --app-border: #e3e4ee;
+   /* fond teinté discret : non lu, puce, tuile de date */
+   --app-accent-soft: rgba(37, 26, 122, 0.07);
+   /* texte posé sur --app-accent-soft */
+   --app-accent-ink: var(--app-navy);
+   --app-on-brand: #ffffff;
+   --app-scrim: rgba(15, 16, 83, 0.04);
+
+   /* Formes */
+   --app-radius-card: 16px;
+   --app-radius-control: 12px;
+   --app-gutter: 16px;
+
+   /* Ionic : couleurs */
    --ion-color-primary: var(--app-navy);
    --ion-color-primary-rgb: 37, 26, 122;
    --ion-color-primary-contrast: #ffffff;
@@ -19,105 +40,130 @@
    --ion-color-primary-tint: #3b2f8a;
 
    --ion-color-secondary: #4f5bd5;
-   /* secondaire sobre, pas “bleu bonbon” */
    --ion-color-secondary-rgb: 79, 91, 213;
    --ion-color-secondary-contrast: #ffffff;
    --ion-color-secondary-contrast-rgb: 255, 255, 255;
    --ion-color-secondary-shade: #4650bb;
    --ion-color-secondary-tint: #616cda;
 
-   /* Backgrounds */
-   --ion-background-color: #f6f7fb;
-   --ion-background-color-rgb: 246, 247, 251;
-
-   --ion-card-background: #ffffff;
-   --ion-item-background: #ffffff;
-   --ion-color-surface: #ffffff;
-
-   /* Text */
-   --ion-text-color: #0F1053;
-   /* quasi noir, lisible */
-   --ion-text-color-rgb: 15, 16, 83;
-   --ion-color-dark-text: #0F1053;
-
-   /* Borders / neutrals */
-   --ion-color-border: #e5e7eb;
-   --ion-color-border-rgb: 229, 231, 235;
-
-   /* Ionic “steps” (neutral gray scale) */
-   --ion-color-step-50: #f9fafb;
-   --ion-color-step-100: #f3f4f6;
-   --ion-color-step-150: #edeef2;
-   --ion-color-step-200: #e5e7eb;
-   --ion-color-step-300: #d1d5db;
-   --ion-color-step-400: #9ca3af;
-   --ion-color-step-500: #6b7280;
-   --ion-color-step-600: #4b5563;
-   --ion-color-step-700: #374151;
-   --ion-color-step-800: #1f2937;
-   --ion-color-step-900: #111827;
-
-   /* Ionic 8 : les "steps" sont séparés en fond / texte.
-      On les dérive de --ion-color-step-* pour garder le rendu Ionic 6
-      (fond = même valeur, texte = step 1000-N). Le mode sombre surcharge
-      --ion-color-step-* plus bas, ces alias suivent automatiquement. */
-   --ion-background-color-step-50: var(--ion-color-step-50);
-   --ion-background-color-step-100: var(--ion-color-step-100);
-   --ion-background-color-step-150: var(--ion-color-step-150);
-   --ion-background-color-step-200: var(--ion-color-step-200);
-   --ion-background-color-step-300: var(--ion-color-step-300);
-   --ion-background-color-step-400: var(--ion-color-step-400);
-   --ion-background-color-step-500: var(--ion-color-step-500);
-   --ion-background-color-step-600: var(--ion-color-step-600);
-   --ion-background-color-step-700: var(--ion-color-step-700);
-   --ion-background-color-step-800: var(--ion-color-step-800);
-   --ion-background-color-step-900: var(--ion-color-step-900);
-   --ion-text-color-step-950: var(--ion-color-step-50);
-   --ion-text-color-step-900: var(--ion-color-step-100);
-   --ion-text-color-step-850: var(--ion-color-step-150);
-   --ion-text-color-step-800: var(--ion-color-step-200);
-   --ion-text-color-step-700: var(--ion-color-step-300);
-   --ion-text-color-step-600: var(--ion-color-step-400);
-   --ion-text-color-step-500: var(--ion-color-step-500);
-   --ion-text-color-step-400: var(--ion-color-step-600);
-   --ion-text-color-step-300: var(--ion-color-step-700);
-   --ion-text-color-step-200: var(--ion-color-step-800);
-   --ion-text-color-step-100: var(--ion-color-step-900);
-
-   /* States */
-   --ion-color-success: #16a34a;
-   --ion-color-success-rgb: 22, 163, 74;
+   --ion-color-success: #15803d;
+   --ion-color-success-rgb: 21, 128, 61;
    --ion-color-success-contrast: #ffffff;
    --ion-color-success-contrast-rgb: 255, 255, 255;
+   --ion-color-success-shade: #127136;
+   --ion-color-success-tint: #2c8d50;
 
    --ion-color-warning: #f59e0b;
    --ion-color-warning-rgb: 245, 158, 11;
    --ion-color-warning-contrast: #111827;
    --ion-color-warning-contrast-rgb: 17, 24, 39;
+   --ion-color-warning-shade: #d88b0a;
+   --ion-color-warning-tint: #f6a823;
 
-   --ion-color-danger: #ef4444;
-   --ion-color-danger-rgb: 239, 68, 68;
+   /* rouge de marque assombri pour tenir AA (texte blanc dessus, ou texte rouge sur blanc) */
+   --ion-color-danger: #d0342f;
+   --ion-color-danger-rgb: 208, 52, 47;
    --ion-color-danger-contrast: #ffffff;
    --ion-color-danger-contrast-rgb: 255, 255, 255;
+   --ion-color-danger-shade: #b72e29;
+   --ion-color-danger-tint: #d54844;
 
-   --app-brand-gradient: linear-gradient(135deg, var(--app-navy) 0%,
-         var(--app-blue) 30%, var(--app-blue) 50%, var(--app-red) 100%);
+   --ion-color-medium: #5a5f7d;
+   --ion-color-medium-rgb: 90, 95, 125;
+   --ion-color-medium-contrast: #ffffff;
+   --ion-color-medium-contrast-rgb: 255, 255, 255;
+   --ion-color-medium-shade: #4f546e;
+   --ion-color-medium-tint: #6b6f8a;
+
+   /* Ionic : fonds et texte */
+   --ion-background-color: #f6f7fb;
+   --ion-background-color-rgb: 246, 247, 251;
+   --ion-card-background: #ffffff;
+   --ion-item-background: #ffffff;
+   --ion-color-surface: #ffffff;
+   --ion-text-color: #0f1053;
+   --ion-text-color-rgb: 15, 16, 83;
+   --ion-color-dark-text: #0f1053;
+   --ion-color-border: var(--app-border);
+   --ion-color-border-rgb: 227, 228, 238;
+   --ion-border-color: var(--app-border);
+   --ion-item-border-color: var(--app-border);
+   --ion-toolbar-background: var(--ion-background-color);
+   --ion-tab-bar-background: var(--ion-card-background);
+   --ion-tab-bar-border-color: var(--app-border);
+
+   /* Ionic 8 : paliers fond → texte (background-step) et texte → fond (text-step).
+      Générés par mélange de #ffffff et de --ion-text-color. */
+   --ion-background-color-step-50: #f3f3f6;
+   --ion-background-color-step-100: #e7e7ee;
+   --ion-background-color-step-150: #dbdbe5;
+   --ion-background-color-step-200: #cfcfdd;
+   --ion-background-color-step-250: #c3c3d4;
+   --ion-background-color-step-300: #b7b7cb;
+   --ion-background-color-step-350: #ababc3;
+   --ion-background-color-step-400: #9f9fba;
+   --ion-background-color-step-450: #9393b2;
+   --ion-background-color-step-500: #8788a9;
+   --ion-background-color-step-550: #7b7ca0;
+   --ion-background-color-step-600: #6f7098;
+   --ion-background-color-step-650: #63648f;
+   --ion-background-color-step-700: #575887;
+   --ion-background-color-step-750: #4b4c7e;
+   --ion-background-color-step-800: #3f4075;
+   --ion-background-color-step-850: #33346d;
+   --ion-background-color-step-900: #272864;
+   --ion-background-color-step-950: #1b1c5c;
+   --ion-text-color-step-50: #1b1c5c;
+   --ion-text-color-step-100: #272864;
+   --ion-text-color-step-150: #33346d;
+   --ion-text-color-step-200: #3f4075;
+   --ion-text-color-step-250: #4b4c7e;
+   --ion-text-color-step-300: #575887;
+   --ion-text-color-step-350: #63648f;
+   --ion-text-color-step-400: #6f7098;
+   --ion-text-color-step-450: #7b7ca0;
+   --ion-text-color-step-500: #8788a9;
+   --ion-text-color-step-550: #9393b2;
+   --ion-text-color-step-600: #9f9fba;
+   --ion-text-color-step-650: #ababc3;
+   --ion-text-color-step-700: #b7b7cb;
+   --ion-text-color-step-750: #c3c3d4;
+   --ion-text-color-step-800: #cfcfdd;
+   --ion-text-color-step-850: #dbdbe5;
+   --ion-text-color-step-900: #e7e7ee;
+   --ion-text-color-step-950: #f3f3f6;
+
+   /* Anciens noms Ionic 6 encore lus par du code : alias des paliers ci-dessus */
+   --ion-color-step-50: var(--ion-background-color-step-50);
+   --ion-color-step-100: var(--ion-background-color-step-100);
+   --ion-color-step-150: var(--ion-background-color-step-150);
+   --ion-color-step-200: var(--ion-background-color-step-200);
+   --ion-color-step-300: var(--ion-background-color-step-300);
+   --ion-color-step-400: var(--ion-background-color-step-400);
+   --ion-color-step-500: var(--ion-background-color-step-500);
+   --ion-color-step-600: var(--ion-background-color-step-600);
+   --ion-color-step-700: var(--ion-background-color-step-700);
+   --ion-color-step-800: var(--ion-background-color-step-800);
+   --ion-color-step-900: var(--ion-background-color-step-900);
 }
 
-/* =========================
-   IONIC: DARK (bleu nuit, pas noir)
-   ========================= */
+/* ==========================================================================
+   Sombre : bleu nuit, jamais noir
+   ========================================================================== */
 :root[data-theme="dark"] {
-   /* Dark primary = bleu clair */
+   --app-text-muted: #a4abd3;
+   --app-border: #252e66;
+   --app-accent-soft: rgba(121, 138, 244, 0.14);
+   --app-accent-ink: var(--app-blue-soft);
+   --app-scrim: rgba(0, 0, 0, 0.2);
+
    --ion-color-primary: var(--app-blue);
    --ion-color-primary-rgb: 121, 138, 244;
    --ion-color-primary-contrast: #0b1020;
-   /* encre sombre */
    --ion-color-primary-contrast-rgb: 11, 16, 32;
    --ion-color-primary-shade: #6a79d7;
    --ion-color-primary-tint: #8797f5;
 
-   /* Secondary: navy (utile pour badges/outlined) */
    --ion-color-secondary: var(--app-navy);
    --ion-color-secondary-rgb: 37, 26, 122;
    --ion-color-secondary-contrast: #eef2ff;
@@ -125,51 +171,82 @@
    --ion-color-secondary-shade: #20166e;
    --ion-color-secondary-tint: #3b2f8a;
 
-   /* Backgrounds (bleu nuit) */
-   --ion-background-color: #0b0f2a;
-   --ion-background-color-rgb: 11, 15, 42;
-
-   /* Surfaces: un cran plus claires que le fond */
-   --ion-card-background: #111741;
-   --ion-item-background: #111741;
-   --ion-color-surface: #0f153a;
-   --ion-card-color: #f5f5f5;
-
-   /* Text */
-   --ion-text-color: #e7eaf3;
-   --ion-text-color-rgb: 231, 234, 243;
-   --ion-color-dark-text: #e7eaf3;
-
-   /* Borders / neutrals */
-   --ion-color-border: #1b2456;
-   --ion-color-border-rgb: 27, 36, 86;
-
-   /* Ionic “steps” (dark neutral, bleuté) */
-   --ion-color-step-50: #eef2ff;
-   --ion-color-step-100: #dde3ff;
-   --ion-color-step-150: #c7d0ff;
-   --ion-color-step-200: #aab6ff;
-   --ion-color-step-300: #7f8cff;
-   --ion-color-step-400: #6671c9;
-   --ion-color-step-500: #505a9f;
-   --ion-color-step-600: #3b447a;
-   --ion-color-step-700: #252d58;
-   --ion-color-step-800: #161c40;
-   --ion-color-step-900: #0b0f2a;
-
-   /* States (un peu adoucis) */
    --ion-color-success: #34d399;
    --ion-color-success-rgb: 52, 211, 153;
    --ion-color-success-contrast: #0b1020;
    --ion-color-success-contrast-rgb: 11, 16, 32;
+   --ion-color-success-shade: #2eba87;
+   --ion-color-success-tint: #48d7a3;
 
    --ion-color-warning: #fbbf24;
    --ion-color-warning-rgb: 251, 191, 36;
    --ion-color-warning-contrast: #0b1020;
    --ion-color-warning-contrast-rgb: 11, 16, 32;
+   --ion-color-warning-shade: #dda820;
+   --ion-color-warning-tint: #fbc53a;
 
    --ion-color-danger: #fb7185;
    --ion-color-danger-rgb: 251, 113, 133;
    --ion-color-danger-contrast: #0b1020;
    --ion-color-danger-contrast-rgb: 11, 16, 32;
+   --ion-color-danger-shade: #dd6375;
+   --ion-color-danger-tint: #fb7f91;
+
+   --ion-color-medium: #a4abd3;
+   --ion-color-medium-rgb: 164, 171, 211;
+   --ion-color-medium-contrast: #0b1020;
+   --ion-color-medium-contrast-rgb: 11, 16, 32;
+   --ion-color-medium-shade: #9096ba;
+   --ion-color-medium-tint: #adb3d7;
+
+   --ion-background-color: #0b0f2a;
+   --ion-background-color-rgb: 11, 15, 42;
+   --ion-card-background: #111741;
+   --ion-item-background: #111741;
+   --ion-color-surface: #111741;
+   --ion-card-color: #e7eaf3;
+   --ion-text-color: #e7eaf3;
+   --ion-text-color-rgb: 231, 234, 243;
+   --ion-color-dark-text: #e7eaf3;
+   --ion-color-border-rgb: 37, 46, 102;
+
+   /* Paliers : mélange de #0b0f2a (fond) et #e7eaf3 (texte) */
+   --ion-background-color-step-50: #161a34;
+   --ion-background-color-step-100: #21253e;
+   --ion-background-color-step-150: #2c3048;
+   --ion-background-color-step-200: #373b52;
+   --ion-background-color-step-250: #42465c;
+   --ion-background-color-step-300: #4d5166;
+   --ion-background-color-step-350: #585c70;
+   --ion-background-color-step-400: #63677a;
+   --ion-background-color-step-450: #6e7284;
+   --ion-background-color-step-500: #797d8f;
+   --ion-background-color-step-550: #848799;
+   --ion-background-color-step-600: #8f92a3;
+   --ion-background-color-step-650: #9a9dad;
+   --ion-background-color-step-700: #a5a8b7;
+   --ion-background-color-step-750: #b0b3c1;
+   --ion-background-color-step-800: #bbbecb;
+   --ion-background-color-step-850: #c6c9d5;
+   --ion-background-color-step-900: #d1d4df;
+   --ion-background-color-step-950: #dcdfe9;
+   --ion-text-color-step-50: #dcdfe9;
+   --ion-text-color-step-100: #d1d4df;
+   --ion-text-color-step-150: #c6c9d5;
+   --ion-text-color-step-200: #bbbecb;
+   --ion-text-color-step-250: #b0b3c1;
+   --ion-text-color-step-300: #a5a8b7;
+   --ion-text-color-step-350: #9a9dad;
+   --ion-text-color-step-400: #8f92a3;
+   --ion-text-color-step-450: #848799;
+   --ion-text-color-step-500: #797d8f;
+   --ion-text-color-step-550: #6e7284;
+   --ion-text-color-step-600: #63677a;
+   --ion-text-color-step-650: #585c70;
+   --ion-text-color-step-700: #4d5166;
+   --ion-text-color-step-750: #42465c;
+   --ion-text-color-step-800: #373b52;
+   --ion-text-color-step-850: #2c3048;
+   --ion-text-color-step-900: #21253e;
+   --ion-text-color-step-950: #161a34;
 }

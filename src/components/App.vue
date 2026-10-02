@@ -1,19 +1,25 @@
 <template>
     <ion-page>
-        <ion-header v-if="loggedIn">
-            <ion-toolbar class="app-toolbar gradient-header">
+        <ion-header v-if="loggedIn" class="app-header">
+            <ion-toolbar class="app-toolbar">
                 <ion-buttons slot="start">
-                    <ion-menu-button></ion-menu-button>
+                    <!-- Écran de détail : retour ; écran principal : menu -->
+                    <ion-button v-if="isDetailRoute" class="toolbar-icon-btn" aria-label="Retour" @click="goBack()">
+                        <ion-icon slot="icon-only" :icon="backIcon" />
+                    </ion-button>
+                    <ion-menu-button v-else menu="start" aria-label="Ouvrir le menu"></ion-menu-button>
                 </ion-buttons>
                 <ion-title>
-                    <ion-img src="/assets/ADD-plus-Bicouleur.svg" class="add-logo"></ion-img>
+                    <img src="/assets/ADD-plus-Bicouleur.svg" alt="ADD+" class="add-logo" />
                 </ion-title>
                 <ion-buttons slot="end">
-                    <ion-button fill="clear" class="notif-button" @click="openEndMenu()">
-                        <ion-icon :icon="notificationsOutline" />
-                        <ion-badge v-if="unreadNotifications > 0" color="danger" class="notification-badge">
-                            {{ unreadNotifications }}
-                        </ion-badge>
+                    <ion-button class="toolbar-icon-btn notif-button" :aria-label="notifLabel" @click="openEndMenu()">
+                        <span class="bell">
+                            <ion-icon :icon="notificationsOutline" aria-hidden="true" />
+                            <ion-badge v-if="unreadNotifications > 0" class="notification-badge" aria-hidden="true">
+                                {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
+                            </ion-badge>
+                        </span>
                     </ion-button>
                 </ion-buttons>
             </ion-toolbar>
@@ -60,18 +66,9 @@
                             <ion-icon slot="start" :icon="cashOutline"></ion-icon>
                             <ion-label>Cotisations</ion-label>
                         </ion-item>
-                        <ion-item lines="none" class="menu-item theme-item">
-                            <ion-segment :value="theme" @ionChange="onThemeChange($event)" class="theme-segment">
-                                <ion-segment-button value="system">
-                                    <ion-label>Système</ion-label>
-                                </ion-segment-button>
-                                <ion-segment-button value="light">
-                                    <ion-label>Clair</ion-label>
-                                </ion-segment-button>
-                                <ion-segment-button value="dark">
-                                    <ion-label>Sombre</ion-label>
-                                </ion-segment-button>
-                            </ion-segment>
+                        <ion-item lines="none" class="menu-item" @click="routeTo('/parametres')">
+                            <ion-icon slot="start" :icon="settingsOutline"></ion-icon>
+                            <ion-label>Paramètres</ion-label>
                         </ion-item>
                         <ion-item lines="none" class="menu-item" color="danger" @click="logout()">
                             <ion-icon slot="start" :icon="logInOutline"></ion-icon>
@@ -82,46 +79,54 @@
             </ion-content>
         </ion-menu>
 
-        <ion-menu side="end" content-id="main-content" type="overlay">
-            <ion-header>
-                <ion-toolbar class="app-toolbar gradient-header">
+        <ion-menu side="end" menu-id="notifications" content-id="main-content" type="overlay" class="notif-menu">
+            <ion-header class="app-header">
+                <ion-toolbar class="app-toolbar">
                     <ion-title>Notifications</ion-title>
+                    <ion-buttons slot="end">
+                        <ion-button class="toolbar-icon-btn" aria-label="Fermer les notifications" @click="closeEndMenu()">
+                            <ion-icon slot="icon-only" :icon="closeIcon" />
+                        </ion-button>
+                    </ion-buttons>
                 </ion-toolbar>
             </ion-header>
-            <ion-content>
-                <ion-item class="notif-item" detail="false" :button="true" @click="readAll()" lines="none">
-                    <ion-label class="notif-label">
-                        <div class="title">Tout marquer comme lu</div>
-                    </ion-label>
-                </ion-item>
-                <notification-item v-for="notification in notifications" :key="notification.id"
-                    :notification="notification" @click="goToNotification(notification)" />
+            <ion-content class="notif-content">
+                <div v-if="unreadNotifications > 0" class="notif-actions">
+                    <span class="notif-count">{{ unreadNotifications }} non lue{{ unreadNotifications > 1 ? 's' : '' }}</span>
+                    <ion-button fill="clear" size="small" class="read-all" @click="readAll()">Tout marquer comme lu</ion-button>
+                </div>
+                <ion-list v-if="notificationList.length" class="notif-list" lines="full">
+                    <notification-item v-for="notification in notificationList" :key="notification.id"
+                        :notification="notification" @click="goToNotification(notification)" />
+                </ion-list>
+                <screen-state v-else :icon="notificationsOutline" title="Aucune notification"
+                    text="Les nouvelles actualités, les événements et les votes vous seront signalés ici." />
             </ion-content>
         </ion-menu>
 
-        <ion-content id="main-content">
+        <ion-content id="main-content" ref="mainContent">
             <router-view></router-view>
         </ion-content>
 
-        <!-- Tab bar -->
-        <ion-tab-bar v-if="this.loggedIn">
+        <!-- Barre d'onglets : les 4 destinations principales -->
+        <ion-tab-bar v-if="loggedIn" id="app-tab-bar">
             <ion-tab-button tab="feed" ref="feed" href="/feed">
-                <ion-icon :icon="newspaper"></ion-icon>
+                <ion-icon :icon="newspaper" aria-hidden="true"></ion-icon>
                 <ion-label>Actualités</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="documents" ref="documents" href="/documents">
-                <ion-icon :icon="folderOpen"></ion-icon>
+                <ion-icon :icon="folderOpen" aria-hidden="true"></ion-icon>
                 <ion-label>Documents</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="agenda" ref="agenda" href="/agenda">
-                <ion-icon :icon="calendarNumber"></ion-icon>
+                <ion-icon :icon="calendarNumber" aria-hidden="true"></ion-icon>
                 <ion-label>Agenda</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="votes" ref="votes" href="/votes">
-                <ion-icon :icon="thumbsUp"></ion-icon>
+                <ion-icon :icon="thumbsUp" aria-hidden="true"></ion-icon>
                 <ion-label>Votes</ion-label>
             </ion-tab-button>
 
@@ -146,21 +151,26 @@ import {
     IonTabBar,
     IonTabButton,
     IonMenuButton,
-    IonSegment,
-    IonSegmentButton,
     toastController,
-    IonImg,
     IonBadge,
     IonButton,
 } from "@ionic/vue";
+import { close, chevronBack, arrowBack as mdArrowBack } from "ionicons/icons";
+import ScreenState from "./Common/ScreenState.vue";
+
+// Écrans de détail : l'en-tête affiche « Retour » au lieu du menu
+const DETAIL_ROUTES = ["PostsShow", "EventsShow", "VoteShow", "SearchShow", "UserEdit"];
 import { mapGetters } from "vuex";
-import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard, cashOutline } from "ionicons/icons";
-import { FirebaseMessaging, Importance, Visibility } from '@capacitor-firebase/messaging';
-import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
+import { notificationsOutline, logInOutline, search, arrowBack, newspaper, folderOpen, thumbsUp, personCircle, calendarNumber, idCard, cashOutline, settingsOutline } from "ionicons/icons";
+import { FirebaseMessaging } from '@capacitor-firebase/messaging';
+import { Capacitor } from '@capacitor/core';
+import { initTheme } from '@/services/theme';
+import { initPush, sendToken as sendPushToken, unregisterOnLogout } from '@/services/push';
 import { Badge } from '@capawesome/capacitor-badge';
 import { isPlatform } from '@ionic/vue';
 import NotificationItem from "./Notifications/Item.vue";
 import axios from 'axios';
+import { provide, shallowRef } from 'vue';
 
 export default {
     name: "App",
@@ -180,12 +190,10 @@ export default {
         IonTabBar,
         IonTabButton,
         IonMenuButton,
-        IonImg,
         IonBadge,
         IonButton,
         NotificationItem,
-        IonSegment,
-        IonSegmentButton,
+        ScreenState,
     },
     computed: {
         ...mapGetters("sessionStore", {
@@ -195,7 +203,23 @@ export default {
             notifications: "getNotifications",
         }),
         loggedIn() {
-            return this.user.id !== 0;
+            return !!this.user && this.user.id !== 0;
+        },
+        closeIcon() {
+            return close;
+        },
+        isDetailRoute() {
+            return DETAIL_ROUTES.includes(this.$route.name);
+        },
+        backIcon() {
+            return isPlatform('ios') ? chevronBack : mdArrowBack;
+        },
+        notificationList() {
+            return Array.isArray(this.notifications) ? this.notifications : [];
+        },
+        notifLabel() {
+            const n = this.unreadNotifications;
+            return n > 0 ? `Notifications, ${n} non lue${n > 1 ? 's' : ''}` : 'Notifications';
         },
         unreadNotifications() {
             if (!this.notifications || !Array.isArray(this.notifications)) {
@@ -212,17 +236,24 @@ export default {
                 duration: 3000,
                 cssClass: "custom-toast",
                 color: color,
+                // au-dessus de la barre d'onglets plutôt que dessous
+                positionAnchor: this.loggedIn ? 'app-tab-bar' : undefined,
+                swipeGesture: 'vertical',
                 buttons: [
                     {
-                        text: "x",
+                        icon: close,
+                        side: 'end',
                         role: "cancel",
+                        htmlAttributes: { 'aria-label': 'Fermer' },
                     },
                 ],
             });
 
             await toast.present();
         },
-        logout() {
+        async logout() {
+            // Le téléphone cesse de recevoir les notifications du compte déconnecté
+            await unregisterOnLogout();
             this.$store.dispatch("sessionStore/logout").then(() => {
                 this.presentToast("Vous êtes déconnectés");
                 this.$router.go("/login");
@@ -241,7 +272,12 @@ export default {
             }
         },
         goBack() {
-            this.$router.go(-1);
+            // Ouvert depuis une notification sans historique : retour à l'accueil
+            if (window.history.state && window.history.state.back) {
+                this.$router.back();
+            } else {
+                this.$router.replace('/feed');
+            }
         },
         goToNotification(notification) {
             if (notification.notifiable_type === 'Post') {
@@ -259,20 +295,11 @@ export default {
             this.$router.push(route);
         },
         async initPushNotifications() {
-            // 1. On écoute les rafraîchissements de token AVANT toute autre chose
-            try {
-                this.tokenListener = await FirebaseMessaging.addListener('tokenReceived', ({ token }) => {
-                    this.setPushToken(token);
-                });
-            } catch (error) {
-                // console.error('Impossible d\'écouter les tokens Firebase', error);
-            }
-
             // Notification reçue app ouverte : iOS l'affiche lui-même (presentationOptions),
             // Android non → on l'affiche en toast. Dans les deux cas on rafraîchit la cloche.
             try {
                 this.receivedListener = await FirebaseMessaging.addListener('notificationReceived', ({ notification }) => {
-                    this.$store.dispatch('notificationsStore/getNotifications');
+                    this.$store.dispatch('notificationsStore/getNotifications').catch(() => {});
                     if (isPlatform('android') && (notification.title || notification.body)) {
                         this.presentToast(notification.body || '', 'primary', notification.title);
                     }
@@ -281,67 +308,9 @@ export default {
                 // console.error('Impossible d\'écouter les notifications Firebase', error);
             }
 
-            try {
-                // 2. Vérification / demande de la permission (Android 13+ et iOS)
-                let permission = await FirebaseMessaging.checkPermissions();
-                if (permission.receive !== 'granted' && permission.receive !== 'denied') {
-                    permission = await FirebaseMessaging.requestPermissions();
-                }
-                if (permission.receive !== 'granted') {
-                    return;
-                }
-
-                // Canal par défaut Android (les notifications envoyées sans channel_id y arrivent)
-                if (isPlatform('android')) {
-                    await FirebaseMessaging.createChannel({
-                        id: 'default',
-                        name: 'Notifications',
-                        description: 'Notifications ADD+',
-                        importance: Importance.High,
-                        visibility: Visibility.Public,
-                        vibration: true,
-                    });
-                }
-
-                // 3. On redemande le token à chaque lancement : le localStorage n'est qu'un cache
-                const { token } = await FirebaseMessaging.getToken();
-                this.setPushToken(token);
-            } catch (error) {
-                // console.error('Erreur lors de l\'initialisation de Firebase Messaging', error);
-            }
-        },
-        setPushToken(token) {
-            if (!token) return;
-            this.pushToken = token;
-            localStorage.setItem('firebase_token', token);
-            this.sendPushToken();
-        },
-        async sendPushToken() {
-            const userId = this.$store.state.sessionStore.user?.id;
-            const token = this.pushToken;
-
-            // Pas encore connecté : le watcher sur l'utilisateur relancera l'envoi après le login
-            if (!token || !userId) return;
-
-            // Évite de renvoyer le même token pour le même utilisateur dans la session
-            const key = `${userId}:${token}`;
-            if (this.sentPushKey === key) return;
-            this.sentPushKey = key;
-
-            try {
-                await this.$store.dispatch('sessionStore/storeDeviceToken', {
-                    token: token,
-                    user_id: userId,
-                    platform: 'mobile',
-                });
-            } catch (error) {
-                // Échec réseau : on réessaiera plus tard
-                if (this.sentPushKey === key) {
-                    this.sentPushKey = null;
-                }
-                clearTimeout(this.pushRetryTimeout);
-                this.pushRetryTimeout = setTimeout(() => this.sendPushToken(), 30000);
-            }
+            // Permission, canal Android et jeton : src/services/push.js
+            // (ne fait rien si l'utilisateur a coupé les notifications dans Paramètres).
+            await initPush();
         },
         async markAsRead(notif) {
             let base_url =
@@ -351,7 +320,7 @@ export default {
             try {
                 await axios.patch(`${base_url}/api/notifications/${notif.id}/mark_as_read`);
                 await Badge.decrease();
-                this.$store.dispatch('notificationsStore/getNotifications'); // Rafraîchir les notifications
+                this.$store.dispatch('notificationsStore/getNotifications').catch(() => {}); // Rafraîchir les notifications
             } catch (error) {
                 // console.error('Erreur lors de la mise à jour de la notification', error)
             }
@@ -364,63 +333,17 @@ export default {
             try {
                 await axios.patch(`${base_url}/api/notifications/mark_all_as_read`);
                 await Badge.clear();
-                this.$store.dispatch('notificationsStore/getNotifications'); // Rafraîchir les notifications
+                this.$store.dispatch('notificationsStore/getNotifications').catch(() => {}); // Rafraîchir les notifications
             } catch (error) {
                 // console.error('Erreur lors de la mise à jour des notifications', error)
             }
         },
-        ensureSystemListener() {
-            if (this.systemMql) return;
-
-            this.systemMql = window.matchMedia('(prefers-color-scheme: dark)');
-
-            this.onSystemThemeChange = (e) => {
-                // Ne réagit que si l’utilisateur est en mode system
-                if (this.theme !== 'system') return;
-
-                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-                this.syncSystemBars(e.matches);
-            };
-
-            // Safari iOS ancien: addListener / removeListener
-            if (this.systemMql.addEventListener) {
-                this.systemMql.addEventListener('change', this.onSystemThemeChange);
-            } else {
-                this.systemMql.addListener(this.onSystemThemeChange);
-            }
-        },
-        // Edge-to-edge (Android 15+) : les barres système sont transparentes au-dessus de l'app,
-        // la couleur des icônes doit donc suivre le thème de l'app (pas seulement celui du téléphone).
-        // Dark = icônes claires (fond sombre), Light = icônes sombres (fond clair).
-        syncSystemBars(isDark) {
-            if (!Capacitor.isNativePlatform()) return;
-            SystemBars.setStyle({ style: isDark ? SystemBarsStyle.Dark : SystemBarsStyle.Light }).catch(() => {});
-        },
-        applyTheme(theme) {
-            const root = document.documentElement;
-
-            if (theme === 'dark') {
-                root.setAttribute('data-theme', 'dark');
-                this.syncSystemBars(true);
-                return;
-            }
-
-            if (theme === 'light') {
-                root.setAttribute('data-theme', 'light');
-                this.syncSystemBars(false);
-                return;
-            }
-
-            // theme === 'system'
-            this.ensureSystemListener();
-            root.setAttribute('data-theme', this.systemMql.matches ? 'dark' : 'light');
-            this.syncSystemBars(this.systemMql.matches);
-        },
-        onThemeChange(ev) {
-            const theme = ev.detail.value;
-            this.theme = theme;
-            localStorage.setItem('theme', theme);
-            this.applyTheme(theme);
+    },
+    watch: {
+        // Un seul ion-content pour tous les écrans : on remonte en haut à chaque changement d'écran
+        '$route.path'() {
+            const content = this.$refs.mainContent && this.$refs.mainContent.$el;
+            if (content && content.scrollToTop) content.scrollToTop(0);
         },
     },
     data: function () {
@@ -429,13 +352,6 @@ export default {
             showToast: false,
             app_version: "1.3.0",
             refreshInterval: null,
-            theme: localStorage.getItem('theme') || 'system',
-            systemMql: null,
-            onSystemThemeChange: null,
-            pushToken: null,
-            sentPushKey: null,
-            pushRetryTimeout: null,
-            tokenListener: null,
             receivedListener: null,
         };
     },
@@ -444,42 +360,28 @@ export default {
             this.$router.push({ name: 'Login', replace: true });
         }
         this.$store.dispatch('sessionStore/fetchUser');
-        this.$store.dispatch('notificationsStore/getNotifications');
+        this.$store.dispatch('notificationsStore/getNotifications').catch(() => {});
     },
     beforeUnmount: function () {
-        clearTimeout(this.pushRetryTimeout);
-        if (this.tokenListener) {
-            this.tokenListener.remove();
-            this.tokenListener = null;
-        }
         if (this.receivedListener) {
             this.receivedListener.remove();
             this.receivedListener = null;
         }
-
-        if (!this.systemMql || !this.onSystemThemeChange) return;
-
-        if (this.systemMql.removeEventListener) {
-            this.systemMql.removeEventListener('change', this.onSystemThemeChange);
-        } else {
-            this.systemMql.removeListener(this.onSystemThemeChange);
-        }
-        this.systemMql = null;
-        this.onSystemThemeChange = null;
     },
     async mounted() {
-        this.applyTheme(this.theme);
+        // Thème (Système / Clair / Sombre) : choisi dans Paramètres, voir src/services/theme.js
+        initTheme();
 
         if (Capacitor.isNativePlatform()) {
             // Envoie le token dès qu'un utilisateur est connecté (y compris après un login plus tard)
             this.$watch(
                 () => this.$store.state.sessionStore.user?.id,
-                () => this.sendPushToken()
+                () => sendPushToken()
             );
             await this.initPushNotifications();
         }
         this.refreshInterval = setInterval(() => {
-            this.$store.dispatch('notificationsStore/getNotifications');
+            this.$store.dispatch('notificationsStore/getNotifications').catch(() => {});
         }, 60000); // 60000 ms = 1 minute
 
         // Demande permission badge
@@ -492,6 +394,17 @@ export default {
         await Badge.set({ count: this.unreadNotifications });
     },
     setup() {
+        // Ionic Vue 8 : un ion-tab-bar placé hors d'ion-tabs (notre cas : il est dans la
+        // coquille, sous le router-view) attend ces données, normalement fournies par
+        // ion-tabs. Sans elles, son montage plante et les boutons ne naviguent plus.
+        // hasRouterOutlet: true pour que chaque bouton pousse son href dans le routeur
+        // (comportement d'Ionic 6).
+        provide('tabBarData', shallowRef({
+            hasRouterOutlet: true,
+            _tabsWillChange: () => {},
+            _tabsDidChange: () => {},
+        }));
+
         return {
             notificationsOutline,
             newspaper,
@@ -504,81 +417,141 @@ export default {
             calendarNumber,
             idCard,
             cashOutline,
+            settingsOutline,
         };
     },
 };
 </script>
 
 <style>
+/* --- En-tête -------------------------------------------------------------- */
+.app-header {
+    box-shadow: none;
+}
+
+/* Filet discret plutôt que l'ombre Material sous l'en-tête */
+.app-header::after {
+    display: none;
+}
+
+.app-toolbar {
+    --background: var(--ion-background-color);
+    --border-width: 0 0 1px;
+    --border-color: var(--app-border);
+    --color: var(--app-text);
+}
+
 .add-logo {
     display: block;
+    height: 28px;
+    width: auto;
     margin: 0 auto;
-    max-width: 80px;
+}
+
+/* Boutons d'icône de l'en-tête : couleur du texte, cible de 44 px au moins */
+.app-toolbar ion-menu-button,
+.app-toolbar .toolbar-icon-btn {
+    --color: var(--app-text);
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.bell {
+    position: relative;
+    display: inline-flex;
+}
+
+.bell ion-icon {
+    font-size: 24px;
 }
 
 .notification-badge {
     position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: 10px;
+    top: -6px;
+    left: 12px;
+    min-width: 18px;
+    height: 18px;
+    padding: 2px 5px;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 14px;
+    --background: var(--ion-color-danger);
+    --color: var(--ion-color-danger-contrast);
+    /* détache la pastille de la cloche, quel que soit le fond */
+    box-shadow: 0 0 0 2px var(--ion-background-color);
 }
 
-.app-toolbar {
-    --border-width: 0;
-    --background: var(--ion-background-color);
-}
-
-ion-menu-button,
-ion-button {
-    --color: var(--ion-text-color);
-}
-
+/* --- Menu latéral --------------------------------------------------------- */
 .menu-item {
     --background: transparent;
     --border-radius: 12px;
-    margin: 4px 8px;
-    padding: 6px 8px;
-    transition: background 0.2s ease;
+    --min-height: 48px;
+    margin: 2px 8px;
 }
 
-.menu-item:hover {
-    --background: rgba(121, 138, 244, 0.08);
+.menu-item ion-icon[slot="start"] {
+    color: var(--ion-color-primary);
+}
+
+.menu-item.ion-color-danger ion-icon[slot="start"] {
+    color: inherit;
 }
 
 ion-menu ion-content {
-    --padding-start: 8px;
-    --padding-end: 8px;
+    --padding-start: 0;
+    --padding-end: 0;
 }
 
+/* --- Panneau des notifications ------------------------------------------- */
+.notif-content {
+    --background: var(--ion-background-color);
+}
+
+.notif-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 8px 4px 16px;
+}
+
+.notif-count {
+    font-size: 0.875rem;
+    color: var(--app-text-muted);
+}
+
+.read-all {
+    min-height: 44px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.notif-list {
+    padding: 0;
+    background: transparent;
+}
+
+/* --- Barre d'onglets ------------------------------------------------------- */
 ion-tab-bar {
-    --background: var(--ion-card-background);
-    border-top: 1px solid var(--ion-color-border);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+    --background: var(--ion-tab-bar-background);
+    --border: 1px solid var(--app-border);
 }
 
 ion-tab-button {
-    --color: var(--ion-color-step-500);
+    --color: var(--app-text-muted);
     --color-selected: var(--ion-color-primary);
+    min-height: 52px;
 }
 
-ion-tab-button.ion-selected ion-icon {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
+ion-tab-button ion-label {
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 
-.theme-item {
-    align-items: center;
-}
-
-.theme-segment {
-    max-width: 210px;
-}
-
-.theme-segment ion-segment-button {
-    min-width: 0;
-}
-
-.theme-segment ion-label {
-    font-size: 12px;
+/* --- Toasts --------------------------------------------------------------- */
+ion-toast.custom-toast {
+    --border-radius: var(--app-radius-control);
+    --max-width: 560px;
 }
 </style>
