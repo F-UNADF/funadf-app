@@ -1,4 +1,180 @@
+/* ==========================================================================
+   Motifs communs de l'app ADD+ (chargé globalement par src/main.js).
+   Les couleurs viennent toutes de src/theme/variables.css.
+   ========================================================================== */
+
 ion-card-title {
   --color: var(--ion-text-color);
   color: var(--ion-text-color);
+}
+
+/* Cartes : surface à filet, sans ombre portée, même rayon partout */
+ion-card {
+  --background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-card);
+  box-shadow: none;
+}
+
+/* Material 3 et iOS écrivent les boutons en casse normale */
+ion-button,
+ion-segment-button {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Boîtes de dialogue : surface franche, boutons en casse normale */
+ion-alert {
+  --background: var(--app-surface);
+}
+
+ion-alert .alert-button {
+  text-transform: none;
+  font-weight: 600;
+}
+
+ion-alert .alert-message {
+  color: var(--app-text-muted);
+}
+
+/* --- Écran : marge latérale et respiration en bas ----------------------- */
+.app-screen {
+  padding: 4px var(--app-gutter) 32px;
+}
+
+/* Grand titre d'écran (repris du grand titre iOS, aligné à gauche) */
+.app-title {
+  margin: 16px 0 16px;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--app-text);
+}
+
+.app-subtitle {
+  margin: -10px 0 16px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--app-text-muted);
+}
+
+.app-section-title {
+  margin: 24px 4px 8px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.app-muted {
+  color: var(--app-text-muted);
+}
+
+/* Pile de cartes à espacement régulier */
+.app-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-stack > ion-card {
+  margin: 0;
+}
+
+/* Liste groupée en encart (réglages iOS, listes Material) */
+.app-inset-list {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-card);
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.app-inset-list ion-item {
+  --background: var(--app-surface);
+  --min-height: 52px;
+}
+
+.app-inset-list ion-item:last-of-type {
+  --border-width: 0;
+  --inner-border-width: 0;
+}
+
+/* Puce de statut : texte + couleur, jamais la couleur seule */
+.app-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  background: var(--app-accent-soft);
+  color: var(--app-accent-ink);
+  white-space: nowrap;
+}
+
+.app-pill.is-success {
+  background: rgba(var(--ion-color-success-rgb), 0.14);
+  color: var(--ion-color-success);
+}
+
+.app-pill.is-danger {
+  background: rgba(var(--ion-color-danger-rgb), 0.12);
+  color: var(--ion-color-danger);
+}
+
+/* Contenu HTML venant du back-office (actualités, événements) */
+.app-rich-text {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--app-text);
+  overflow-wrap: anywhere;
+}
+
+.app-rich-text p {
+  margin: 0 0 10px;
+}
+
+.app-rich-text p:last-child {
+  margin-bottom: 0;
+}
+
+.app-rich-text a {
+  color: var(--ion-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.app-rich-text img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Bouton d'action collé en bas de l'écran, au-dessus de la barre d'onglets */
+.app-action-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 0 calc(-1 * var(--app-gutter));
+  padding: 12px var(--app-gutter);
+  background: var(--ion-background-color);
+  border-top: 1px solid var(--app-border);
+}
+
+.app-action-bar ion-button {
+  margin: 0;
+  min-height: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

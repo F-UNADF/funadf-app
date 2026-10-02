@@ -60,8 +60,14 @@ const actions = {
       const response = await axios.get(base_url + '/api/current_user');
       commit('setCurrentUser', response.data.user);
     } catch (error) {
-      commit('setCurrentUser', null);
+      // Hors ligne ou serveur indisponible : on garde l'utilisateur déjà connu.
+      // (Le mettre à null faisait planter la coquille, qui lit user.id.)
     }
+  },
+  // Oublie le jeton FCM côté serveur (désactivation des notifications, déconnexion).
+  // Un backend antérieur à l'action destroy répond 404 : l'appelant ignore l'erreur.
+  removeDeviceToken(_, token) {
+    return axios.delete(base_url + '/api/device_tokens/current', { params: { token } });
   },
   storeDeviceToken({ commit }, payload) {
     // Return a Promise

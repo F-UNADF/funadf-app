@@ -1,295 +1,63 @@
 <template>
-  <ion-list v-if="this.localEvent.id === null">
-    <ion-list-header>
-      <ion-skeleton-text :animated="true" style="width: 80px"></ion-skeleton-text>
-    </ion-list-header>
-    <ion-item>
-      <ion-thumbnail slot="start">
-        <ion-skeleton-text :animated="true"></ion-skeleton-text>
-      </ion-thumbnail>
-      <ion-label>
-        <h3>
-          <ion-skeleton-text :animated="true" style="width: 80%;"></ion-skeleton-text>
-        </h3>
-        <p>
-          <ion-skeleton-text :animated="true" style="width: 60%;"></ion-skeleton-text>
-        </p>
-        <p>
-          <ion-skeleton-text :animated="true" style="width: 30%;"></ion-skeleton-text>
-        </p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-  <ion-card v-else class="event-card">
-    <div class="cover" v-if="localEvent.images?.length">
-      <div class="cover-bg" :style="{ backgroundImage: `url(${localEvent.images[0]})` }"></div>
-
-      <img :src="localEvent.images[0]" alt="Image" class="cover-img" />
-    </div>
-
-    <ion-card-header class="event-header">
-      <ion-chip class="structure-chip" color="primary">
-        <ion-avatar>
-          <img :src="getAvatar(localEvent.structure?.id)" alt="avatar" />
-        </ion-avatar>
-        <ion-label>{{ localEvent.structure?.name }}</ion-label>
-      </ion-chip>
-
-      <ion-card-title class="event-title">{{ localEvent.title }}</ion-card-title>
-
-      <div class="event-meta">
-        <div class="meta-line">
-          <ion-icon :icon="calendar" class="meta-icon" />
-          <span>{{ displayDate(localEvent.start_at, localEvent.end_at) }}</span>
-        </div>
-
-        <div class="meta-line">
-          <ion-icon :icon="bookmark" class="meta-icon" />
-          <span>{{ localEvent.category?.name }}</span>
-        </div>
-      </div>
-    </ion-card-header>
-
-    <ion-card-content class="event-content" v-html="localEvent.description"></ion-card-content>
-
-    <ion-card-content v-if="localEvent.attachments?.length">
-      <ion-row>
-        <ion-col v-for="(attachment, index) in localEvent.attachments" :key="index" size="6">
-          <ion-button :href="attachment" target="_blank" size="small" expand="block" fill="outline">
-            Pièce {{ index + 1 }}
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-card-content>
-
-    <ion-button class="event-cta" size="small" shape="round" fill="clear" @click="addToCalendar(localEvent)">
-      <ion-icon slot="start" :icon="calendarNumber" />
-      Ajouter à mon calendrier
-    </ion-button>
-  </ion-card>
+  <!-- Détail d'un événement (/agenda/:id), ouvert depuis l'agenda ou une notification -->
+  <div class="app-screen event-screen">
+    <list-skeleton v-if="status === 'loading'" variant="event" :count="1" />
+    <screen-state v-else-if="status === 'error'" kind="error" title="Impossible d’afficher cet événement"
+      @action="loadEvent" />
+    <event-card v-else-if="localEvent" :event="localEvent" :full="true" />
+  </div>
 </template>
 
 <script>
-import { IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonAvatar, IonLabel, IonRow, IonCol, IonButton, IonSkeletonText, IonList, IonListHeader, IonItem, IonThumbnail } from '@ionic/vue';
-import axios from 'axios';
-import { Capacitor } from '@capacitor/core';
-import { CapacitorCalendar } from '@ebarooni/capacitor-calendar';
-import { calendar, bookmark, calendarNumber } from 'ionicons/icons';
+import axios from "axios";
+import EventCard from "./EventCard.vue";
+import ScreenState from "../Common/ScreenState.vue";
+import ListSkeleton from "../Common/ListSkeleton.vue";
+import { BASE_URL } from "@/utils/format";
 
 export default {
   name: "EventsShow",
-  components: {
-    IonIcon,
-    IonList,
-    IonListHeader,
-    IonItem,
-    IonThumbnail,
-    IonSkeletonText,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonChip,
-    IonAvatar,
-    IonLabel,
-    IonRow,
-    IonCol,
-    IonButton
-  },
-  props: {
-    event: {
-      type: Object,
-      default: () => ({})
-    },
-  },
-  methods: {
-    getAvatar: function (id) {
-      let base_url =
-        process.env.NODE_ENV === "production"
-          ? "https://app.addfrance.fr"
-          : "http://localhost:3000";
-      return base_url + '/logos/' + id + '.png' + '?cache=' + new Date().getTime();
-    },
-    async addToCalendar(event) {
-      if (!Capacitor.isNativePlatform()) return;
-
-      try {
-        // iOS : l'accès en écriture seule suffit pour créer un événement (iOS 17+).
-        // Android : le plugin lit la liste des calendriers pour trouver celui par défaut,
-        // il faut donc READ_CALENDAR + WRITE_CALENDAR.
-        const { result: permission } = Capacitor.getPlatform() === 'ios'
-          ? await CapacitorCalendar.requestWriteOnlyCalendarAccess()
-          : await CapacitorCalendar.requestFullCalendarAccess();
-        if (permission !== 'granted') {
-          this.$root.presentToast('Autorisez l\'accès au calendrier dans les réglages', 'warning');
-          return;
-        }
-
-        await CapacitorCalendar.createEvent({
-          title: event.title,
-          startDate: new Date(event.start_at).getTime(),
-          endDate: new Date(event.end_at).getTime(),
-          location: event.location || '',
-          description: event.description || '',
-        });
-
-        this.$root.presentToast('Événement ajouté à votre calendrier', 'success');
-      } catch (e) {
-        this.$root.presentToast('Un problème est survenu', 'warning');
-      }
-    },
-    displayDate(startStr, endStr) {
-      const format = (dateStr) => {
-        if (!dateStr) return '';
-        const date = new Date(dateStr);
-        const pad = (n) => n.toString().padStart(2, '0');
-        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} à ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-      };
-
-      return `Du ${format(startStr)} au ${format(endStr)}`;
-    },
-    async loadEvent() {
-      this.localEvent = {
-        id: null,
-        title: '',
-        content: '',
-        images: [],
-        attachments: [],
-        structure_id: null,
-        structure: {
-          name: ''
-        },
-      };
-      // Si post props est vide, on recupere le paramètre ID de l'URL
-      if (!this.event || Object.keys(this.event).length === 0) {
-        const eventId = this.$route.params.id;
-        if (eventId) {
-          let base_url =
-            process.env.NODE_ENV === "production"
-              ? "https://app.addfrance.fr"
-              : "http://localhost:3000";
-          const response = await axios.get(`${base_url}/api/events/${eventId}`);
-          this.localEvent = response.data.event;
-        }
-      } else {
-        this.localEvent = this.event;
-      }
-    }
-  },
-  async mounted() {
-    // Appel de la méthode pour charger le post
-    await this.loadEvent();
-  },
-  watch: {
-    '$route.params.id'() {
-      this.loadEvent(); // Re-fetch ou autre
-    }
-  },
-  setup() {
-    return { calendar, bookmark, calendarNumber };
-  },
+  components: { EventCard, ScreenState, ListSkeleton },
   data() {
     return {
-      localEvent: {
-        id: null,
-        title: '',
-        content: '',
-        images: [],
-        attachments: [],
-        structure_id: null,
-        structure: {
-          name: ''
-        },
-      },
+      localEvent: null,
+      status: "loading",
     };
+  },
+  methods: {
+    async loadEvent() {
+      const eventId = this.$route.params.id;
+      if (!eventId) return;
+      // Déjà dans la liste chargée : affichage immédiat
+      const known = (this.$store.getters["eventsStore/getItems"] || []).find((e) => String(e.id) === String(eventId));
+      if (known) {
+        this.localEvent = known;
+        this.status = "ready";
+        return;
+      }
+      this.status = "loading";
+      try {
+        const response = await axios.get(`${BASE_URL}/api/events/${eventId}`);
+        this.localEvent = response.data.event;
+        this.status = "ready";
+      } catch (e) {
+        this.status = "error";
+      }
+    },
+  },
+  mounted() {
+    this.loadEvent();
+  },
+  watch: {
+    "$route.params.id"(id) {
+      if (id) this.loadEvent();
+    },
   },
 };
 </script>
 
 <style scoped>
-.event-card {
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid var(--ion-color-border);
-  box-shadow: none;
-  background: var(--ion-card-background);
-}
-
-.cover {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* image floutée derrière */
-.cover-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: blur(10px);
-  transform: scale(1.2);
-  opacity: 1;
-}
-
-/* image nette */
-.cover-img {
-  position: relative;
-  z-index: 1;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.cover-gradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.35));
-}
-
-.event-header {
-  padding-bottom: 8px;
-}
-
-.structure-chip {
-  --border-radius: 999px;
-}
-
-.event-title {
-  margin-top: 8px;
-  letter-spacing: -0.2px;
-}
-
-.event-meta {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--ion-color-step-500);
-}
-
-.meta-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.meta-icon {
-  font-size: 16px;
-  color: var(--ion-color-primary);
-  opacity: 0.9;
-}
-
-.event-content {
-  padding-top: 0;
-  color: var(--ion-text-color);
-}
-
-.event-cta {
-  margin: 0 8px 10px;
-  align-self: flex-start;
+.event-screen {
+  padding-top: var(--app-gutter);
 }
 </style>

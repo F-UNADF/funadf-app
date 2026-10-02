@@ -1,78 +1,64 @@
 <template>
-    <ion-card color="primary">
-        <ion-card-header>
-            <div class="avatar">
-                <ion-img :src=getAvatar alt="Avatar Association"></ion-img>
-            </div>
-            <ion-card-title>{{ association.name }}</ion-card-title>
-            <ion-chip>
-                <i class="material-icons mr-3">account_box</i>
-                <ion-label>{{ association.id }}</ion-label>
-            </ion-chip>
-        </ion-card-header>
-        <ion-list lines="full">
-            <ion-item color="primary" v-if="!!association.email">
-                <i class="material-icons mr-3">mail</i>
-                <a href="mailto: {{ association.email }}" color="light">{{ association.email }}</a>
-            </ion-item>
-            <ion-item color="primary" v-if="!!association.phone">
-                <i class="material-icons mr-3">phone</i>
-                <a href="tel: {{ association.phone }}">{{ association.phone }}</a>
-            </ion-item>
-            <ion-item color="primary" v-if="!!association.town">
-                <i class="material-icons mr-3">location_on</i>
-                {{ association.town }}
-            </ion-item>
-        </ion-list>
-    </ion-card>
+  <profile-view :name="association.name || ''" :caption="caption" :avatar-src="logoUrl" square
+    :email="association.email || ''" :phone="association.phone_1 || association.phone || ''" :place="place">
+    <template v-if="president">
+      <h2 class="app-section-title">Président</h2>
+      <ion-list class="app-inset-list">
+        <ion-item button detail @click="goToMember(president)">
+          <app-avatar slot="start" :src="avatarOf(president.member_id)" :name="president.name" :size="40" />
+          <ion-label class="ion-text-wrap">
+            <span class="member-name">{{ president.name }}</span>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </template>
+  </profile-view>
 </template>
 
 <script>
-
-import { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem } from '@ionic/vue';
+import { IonList, IonItem, IonLabel } from "@ionic/vue";
+import ProfileView from "../Common/ProfileView.vue";
+import AppAvatar from "../Common/AppAvatar.vue";
+import { BASE_URL } from "@/utils/format";
 
 export default {
-    name: "AssociationShowComponent",
-    components: { IonCard, IonCardTitle, IonList, IonChip, IonCardHeader, IonLabel, IonItem },
-    props: {
-        association: Object,
+  name: "AssociationShowComponent",
+  components: { IonList, IonItem, IonLabel, ProfileView, AppAvatar },
+  props: {
+    association: { type: Object, required: true },
+    members: { type: Array, default: () => [] },
+  },
+  computed: {
+    caption() {
+      return this.association.id ? `Association n° ${this.association.id}` : "Association";
     },
-    computed: {
-        getAvatar() {
-            let base_url = 'https://app.addfrance.fr';
-            if (process.env.NODE_ENV === 'development') {
-                base_url = 'http://localhost:3000';
-            }
-            return base_url + '/logos/' + this.association.id + '.png';
-        },
+    place() {
+      return [this.association.zipcode, this.association.town].filter(Boolean).join(" ");
     },
+    logoUrl() {
+      return this.association.id ? `${BASE_URL}/logos/${this.association.id}.png` : "";
+    },
+    president() {
+      return (this.members || []).find((m) => m.role_name === "president");
+    },
+  },
+  methods: {
+    avatarOf(id) {
+      return `${BASE_URL}/avatars/${id}.png`;
+    },
+    goToMember(member) {
+      this.$router.push({ name: "SearchShow", params: { type: "users", id: member.member_id } });
+    },
+  },
 };
 </script>
 
 <style scoped>
-.avatar {
-    text-align: center;
-    min-height: 25vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.app-avatar[slot="start"] {
+  margin-inline-end: 14px;
 }
 
-.avatar ion-img {
-    display: block;
-    width: 75%;
-    margin: 0 auto 30px;
-    border-radius: 100%;
-    overflow: hidden;
-    padding: 0;
-}
-
-a {
-    color: #fff;
-    text-decoration: none;
-}
-
-.mr-3 {
-    margin-right: 10px;
+.member-name {
+  font-weight: 600;
 }
 </style>

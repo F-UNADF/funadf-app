@@ -54,9 +54,11 @@ const actions = {
       axios.get(base_url + '/api/feed?offset=' + state.offset, {}).then((res) => {
         commit('pushItems', res.data.posts);
         commit('setOffset', state.offset + 10);
+        commit('setEndOfFeed', res.data.posts.length < 10);
         commit('setLoading', false);
         resolve(res);
       }).catch((error) => {
+        commit('setLoading', false);
         reject(error, 2000);
       });
     });

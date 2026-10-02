@@ -1,263 +1,147 @@
 <template>
-    <ion-page>
-        <ion-header class="search-header">
-            <ion-toolbar class="search-toolbar">
-                <ion-searchbar class="directory-searchbar" animated placeholder="Ville, nom, code postal"
-                    v-model="search" debounce="500" />
-            </ion-toolbar>
-        </ion-header>
+  <div class="app-screen">
+    <h1 class="app-title">Annuaire</h1>
 
-        <ion-content class="search-content">
-            <div class="search-shell">
+    <ion-searchbar v-model="search" class="directory-search" placeholder="Nom, ville ou code postal" :debounce="400"
+      inputmode="search" enterkeyhint="search" autocapitalize="off" />
 
-                <div v-if="search.trim().length < 3" class="state-box">
-                    <div class="state-title">Commence ta recherche</div>
-                    <div class="state-text">Saisis au moins 3 caractères.</div>
-                </div>
+    <screen-state v-if="query.length < 3" :icon="peopleOutline" title="Trouver un pasteur ou une église"
+      text="Saisissez au moins trois lettres d’un nom, d’une ville ou d’un code postal." />
 
-                <div v-else-if="loading" class="results-list">
-                    <div v-for="n in 4" :key="n" class="result-card skeleton-card">
-                        <ion-avatar class="result-avatar">
-                            <ion-skeleton-text animated />
-                        </ion-avatar>
+    <list-skeleton v-else-if="loading" variant="row" :count="5" />
 
-                        <div class="result-body">
-                            <ion-skeleton-text animated style="width: 70%; height: 16px;" />
-                            <ion-skeleton-text animated style="width: 40%; height: 12px; margin-top: 8px;" />
-                        </div>
-                    </div>
-                </div>
+    <screen-state v-else-if="failed" kind="error" @action="searchItems" />
 
-                <div v-else-if="results.length === 0" class="state-box">
-                    <div class="state-title">Aucun résultat</div>
-                    <div class="state-text">Essaie un autre nom, une ville ou un code postal.</div>
-                </div>
+    <screen-state v-else-if="results.length === 0" :icon="searchOutline" title="Aucun résultat"
+      :text="`Rien ne correspond à « ${query} ». Essayez un autre nom, une ville ou un code postal.`" />
 
-                <div v-else class="results-list">
-                    <div v-for="result in results" :key="`${result.model_type}-${result.id}`" class="result-card"
-                        @click="goToResult(result)">
-                        <ion-avatar class="result-avatar">
-                            <img :src="result.photo_url || '/assets/avatar-placeholder.png'" :alt="result.name" />
-                        </ion-avatar>
-
-                        <div class="result-body">
-                            <div class="result-name">{{ result.name }}</div>
-                            <div class="result-subtitle">{{ result.model_type === 'users' ? 'Pasteur' :
-                                result.model_type === 'churches' ? 'Église' : 'Association' }}</div>
-                        </div>
-
-                        <div class="result-chevron">›</div>
-                    </div>
-                </div>
-
-            </div>
-        </ion-content>
-    </ion-page>
+    <template v-else>
+      <p class="result-count">{{ results.length }} résultat{{ results.length > 1 ? 's' : '' }}</p>
+      <ion-list class="app-inset-list">
+        <ion-item v-for="result in results" :key="`${result.model_type}-${result.id}`" button detail
+          @click="goToResult(result)">
+          <app-avatar slot="start" :src="result.photo_url" :name="result.name" :size="40"
+            :square="result.model_type !== 'users'" />
+          <ion-label class="ion-text-wrap">
+            <span class="result-name">{{ result.name }}</span>
+            <p>{{ subtitle(result) }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </template>
+  </div>
 </template>
 
 <script>
-import {
-    IonPage,
-    IonContent,
-    IonAvatar,
-    IonSearchbar,
-    IonHeader,
-    IonToolbar,
-    IonSkeletonText,
-} from '@ionic/vue';
-import axios from 'axios';
+import { IonSearchbar, IonList, IonItem, IonLabel } from "@ionic/vue";
+import { peopleOutline, searchOutline } from "ionicons/icons";
+import axios from "axios";
+import AppAvatar from "../Common/AppAvatar.vue";
+import ScreenState from "../Common/ScreenState.vue";
+import ListSkeleton from "../Common/ListSkeleton.vue";
+import { BASE_URL } from "@/utils/format";
+
+const TYPES = { users: "Pasteur", churches: "Église", associations: "Association" };
 
 export default {
-    name: 'SearchIndex',
-    components: {
-        IonPage,
-        IonContent,
-        IonAvatar,
-        IonSearchbar,
-        IonHeader,
-        IonToolbar,
-        IonSkeletonText,
+  name: "SearchIndex",
+  components: { IonSearchbar, IonList, IonItem, IonLabel, AppAvatar, ScreenState, ListSkeleton },
+  data() {
+    return {
+      search: "",
+      results: [],
+      loading: false,
+      failed: false,
+      lastQuery: "",
+    };
+  },
+  computed: {
+    query() {
+      return (this.search || "").trim();
     },
-    data() {
-        return {
-            search: '',
-            results: [],
-            loading: false,
-            lastQuery: '',
-        };
+  },
+  methods: {
+    subtitle(result) {
+      const type = TYPES[result.model_type] || "";
+      const place = [result.zipcode, result.town].filter(Boolean).join(" ");
+      return place ? `${type}, ${place}` : type;
     },
-    methods: {
-        baseUrl() {
-            return process.env.NODE_ENV === 'production'
-                ? 'https://app.addfrance.fr'
-                : 'http://localhost:3000';
-        },
-
-        goToResult(result) {
-            this.$router.push(`/annuaire/${result.model_type}/${result.id}`);
-        },
-
-        async searchItems() {
-            const query = (this.search || '').trim();
-
-            if (query.length < 3) {
-                this.results = [];
-                this.loading = false;
-                return;
-            }
-
-            sessionStorage.setItem('search', query);
-            this.lastQuery = query;
-            this.loading = true;
-
-            try {
-                const res = await axios.get(`${this.baseUrl()}/api/search`, {
-                    params: { query },
-                });
-
-                if (this.lastQuery === query) {
-                    this.results = Array.isArray(res.data) ? res.data : [];
-                }
-            } catch (e) {
-                if (this.lastQuery === query) {
-                    this.results = [];
-                }
-            } finally {
-                if (this.lastQuery === query) {
-                    this.loading = false;
-                }
-            }
-        },
+    goToResult(result) {
+      this.$router.push(`/annuaire/${result.model_type}/${result.id}`);
     },
-    watch: {
-        search() {
-            this.searchItems();
-        },
-    },
-    mounted() {
-        this.search = sessionStorage.getItem('search') || '';
+    async searchItems() {
+      const query = this.query;
+      if (query.length < 3) {
+        this.results = [];
+        this.loading = false;
+        this.failed = false;
+        return;
+      }
 
-        if (this.search.trim().length >= 3) {
-            this.searchItems();
+      sessionStorage.setItem("search", query);
+      this.lastQuery = query;
+      this.loading = true;
+      this.failed = false;
+
+      try {
+        const res = await axios.get(`${BASE_URL}/api/search`, { params: { query } });
+        if (this.lastQuery === query) {
+          this.results = Array.isArray(res.data) ? res.data : [];
         }
+      } catch (e) {
+        if (this.lastQuery === query) {
+          this.results = [];
+          this.failed = true;
+        }
+      } finally {
+        if (this.lastQuery === query) {
+          this.loading = false;
+        }
+      }
     },
+  },
+  watch: {
+    search() {
+      this.searchItems();
+    },
+  },
+  setup() {
+    return { peopleOutline, searchOutline };
+  },
+  mounted() {
+    // La dernière recherche est conservée au retour d'une fiche
+    this.search = sessionStorage.getItem("search") || "";
+  },
 };
 </script>
 
 <style scoped>
-.search-header {
-    box-shadow: none;
+.directory-search {
+  padding: 0 0 12px;
+  --border-radius: var(--app-radius-control);
+  --background: var(--app-surface);
+  --box-shadow: inset 0 0 0 1px var(--app-border);
+  --color: var(--app-text);
+  --placeholder-color: var(--app-text-muted);
+  --icon-color: var(--app-text-muted);
+  --clear-button-color: var(--app-text-muted);
 }
 
-.search-toolbar {
-    --background: var(--ion-background-color);
-    --border-width: 0;
-    padding: 8px 8px 0;
+.result-count {
+  margin: 0 4px 8px;
+  font-size: 0.875rem;
+  color: var(--app-text-muted);
 }
 
-.directory-searchbar {
-    --background: var(--ion-card-background);
-    --color: var(--ion-text-color);
-    --placeholder-color: var(--ion-color-step-500);
-    --icon-color: var(--ion-color-step-500);
-    --clear-button-color: var(--ion-color-step-500);
-    --box-shadow: none;
-    --border-radius: 16px;
-}
-
-.search-content {
-    --background: var(--ion-background-color);
-}
-
-.search-shell {
-    padding: 12px;
-}
-
-.results-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.result-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--ion-card-background);
-    border: 1px solid var(--ion-color-border);
-    border-radius: 18px;
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.result-card:active {
-    transform: scale(0.99);
-}
-
-.result-avatar {
-    width: 48px;
-    height: 48px;
-    flex: 0 0 auto;
-}
-
-.result-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.result-body {
-    min-width: 0;
-    flex: 1;
+.app-avatar[slot="start"] {
+  margin-inline-end: 14px;
 }
 
 .result-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--ion-text-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-weight: 600;
 }
 
-.result-subtitle {
-    margin-top: 4px;
-    font-size: 12px;
-    color: var(--ion-color-step-500);
-}
-
-.result-chevron {
-    font-size: 24px;
-    line-height: 1;
-    color: var(--ion-color-step-400);
-    flex: 0 0 auto;
-}
-
-.state-box {
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: var(--ion-color-step-500);
-    text-align: center;
-    padding: 24px;
-}
-
-.state-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ion-text-color);
-}
-
-.state-text {
-    margin-top: 6px;
-    font-size: 13px;
-    max-width: 260px;
-}
-
-.skeleton-card {
-    cursor: default;
+ion-label p {
+  color: var(--app-text-muted);
 }
 </style>

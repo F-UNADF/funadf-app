@@ -1,158 +1,142 @@
 <template>
-  <ion-item class="notif-item" detail="false" :button="true" :class="{ unread: !notification.read }"
-    @click="$emit('click', notification)" lines="none">
-    <ion-icon aria-hidden="true" :icon="getIcon" slot="start" class="notif-icon"></ion-icon>
+  <ion-item class="notif-item" :class="{ unread: !notification.read }" button :detail="false"
+    @click="$emit('click', notification)">
+    <div slot="start" class="notif-icon" aria-hidden="true">
+      <ion-icon :icon="icon" />
+    </div>
 
-    <ion-label class="notif-label">
-      <div class="title">{{ notification.notifiable?.title }}</div>
-      <div class="sender">{{ notification.sender?.name }}</div>
+    <ion-label class="ion-text-wrap">
+      <span class="notif-title">{{ title }}</span>
+      <p class="notif-meta">
+        <span v-if="!notification.read" class="visually-hidden">Non lue. </span>
+        {{ kindLabel }}<template v-if="sender"> de {{ sender }}</template>
+      </p>
     </ion-label>
 
-    <div class="meta" slot="end">
-      <ion-note class="time" color="medium">{{ getTimeAgo }}</ion-note>
-      <ion-icon class="chev" color="medium" :icon="chevronForward"></ion-icon>
+    <div slot="end" class="notif-end">
+      <time class="notif-time" :datetime="notification.created_at">{{ ago }}</time>
+      <span v-if="!notification.read" class="unread-dot" aria-hidden="true"></span>
     </div>
   </ion-item>
 </template>
 
 <script>
-import { chevronForward, newspaperOutline, calendarOutline } from 'ionicons/icons'
-import { IonLabel, IonNote, IonIcon } from '@ionic/vue'
+import { IonItem, IonLabel, IonIcon } from "@ionic/vue";
+import { newspaperOutline, calendarOutline, checkboxOutline, notificationsOutline } from "ionicons/icons";
+import { timeAgo } from "@/utils/format";
+
+const KINDS = {
+  Post: { icon: newspaperOutline, label: "Actualité" },
+  Event: { icon: calendarOutline, label: "Événement" },
+  VoteCampaign: { icon: checkboxOutline, label: "Vote" },
+};
 
 export default {
-  name: 'NotificationItem',
-  components: {
-    IonLabel,
-    IonNote,
-    IonIcon
-  },
+  name: "NotificationItem",
+  components: { IonItem, IonLabel, IonIcon },
   props: {
-    notification: {
-      type: Object,
-      required: true
-    }
+    notification: { type: Object, required: true },
   },
+  emits: ["click"],
   computed: {
-    getTimeAgo() {
-      let currentDate = new Date(new Date().toUTCString());
-      let date = new Date(this.notification.created_at);
-
-      let year = currentDate.getFullYear() - date.getFullYear();
-      let month = currentDate.getMonth() - date.getMonth();
-      let day = currentDate.getDate() - date.getDate();
-      let hour = currentDate.getHours() - date.getHours();
-      let minute = currentDate.getMinutes() - date.getMinutes();
-      let second = currentDate.getSeconds() - date.getSeconds();
-
-      let createdSecond = (year * 31556926) + (month * 2629746) + (day * 86400) + (hour * 3600) + (minute * 60) + second;
-
-      if (createdSecond >= 31556926) {
-        let yearAgo = Math.floor(createdSecond / 31556926);
-        return yearAgo + " a";
-      } else if (createdSecond >= 2629746) {
-        let monthAgo = Math.floor(createdSecond / 2629746);
-        return monthAgo + " m";
-      } else if (createdSecond >= 86400) {
-        let dayAgo = Math.floor(createdSecond / 86400);
-        return dayAgo + " j";
-      } else if (createdSecond >= 3600) {
-        let hourAgo = Math.floor(createdSecond / 3600);
-        return hourAgo + " h";
-      } else if (createdSecond >= 60) {
-        let minuteAgo = Math.floor(createdSecond / 60);
-        return minuteAgo + " min";
-      } else if (createdSecond < 60) {
-        return createdSecond + " s";
-      } else if (createdSecond < 0) {
-        return "0 s";
-      } else {
-        return "Maintenant";
-      }
+    kind() {
+      return KINDS[this.notification.notifiable_type] || { icon: notificationsOutline, label: "Notification" };
     },
-    getIcon() {
-      switch (this.notification.notifiable_type) {
-        case 'Post':
-          return newspaperOutline;
-        case 'Event':
-          return calendarOutline;
-        default:
-          return 'notifications-outline';
-      }
-    }
-  },
-  methods: {
-    getContent(notification) {
-      if (notification.notifiable_type === 'Post') {
-        return `Nouveau post de <strong>${notification.sender?.name}</strong> : ${notification.notifiable?.title}`;
-      }
+    icon() {
+      return this.kind.icon;
+    },
+    kindLabel() {
+      return this.kind.label;
+    },
+    // Actualités et événements ont un titre, les campagnes de vote un nom
+    title() {
+      const n = this.notification.notifiable || {};
+      return n.title || n.name || "Nouvelle notification";
+    },
+    sender() {
+      return this.notification.sender && this.notification.sender.name;
+    },
+    ago() {
+      return timeAgo(this.notification.created_at);
     },
   },
-  data() {
-    return {
-      chevronForward
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
 .notif-item {
-  --background: transparent;
-  --min-height: 64px;
-  margin: 8px 10px;
-  border-radius: 14px;
-  border: 1px solid var(--ion-color-border);
-  overflow: hidden;
+  --background: var(--ion-background-color);
+  --padding-start: 16px;
+  --inner-padding-end: 14px;
+  --min-height: 72px;
 }
 
-/* Unread = liseré + fond un poil plus clair */
 .notif-item.unread {
-  --background: rgba(121, 138, 244, 0.08);
-  border: 1px solid rgba(121, 138, 244, 0.22);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
+  --background: var(--app-accent-soft);
 }
 
-/* Icon */
 .notif-icon {
-  font-size: 20px;
-  opacity: 0.9;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-inline-end: 14px;
+  border-radius: 10px;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  color: var(--ion-color-primary);
+  font-size: 18px;
 }
 
-/* Texte */
-.notif-label .title {
-  font-weight: 700;
-  font-size: 14px;
-  white-space: nowrap;
+.notif-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--app-text);
 }
 
-.notif-label .sender {
-  font-size: 12px;
-  margin-top: 2px;
+.unread .notif-title {
+  font-weight: 700;
 }
 
-.notif-label .content {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  line-height: 1.35;
+.notif-meta {
+  margin-top: 3px;
+  font-size: 0.8125rem;
+  color: var(--app-text-muted);
 }
 
-/* Meta à droite */
-.meta {
+.notif-end {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 8px;
+  align-self: flex-start;
+  padding-top: 14px;
 }
 
-.time {
-  font-size: 11px;
+.notif-time {
+  font-size: 0.75rem;
+  color: var(--app-text-muted);
   white-space: nowrap;
 }
 
-.chev {
-  font-size: 16px;
-  opacity: 0.7;
+.unread-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--ion-color-danger);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 </style>

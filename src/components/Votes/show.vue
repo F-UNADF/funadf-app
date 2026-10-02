@@ -1,272 +1,383 @@
 <template>
-  <ion-content @swipeleft="goBack()">
-    <ion-card>
-      <ion-card-header text-center>
-        <h4 class="text-h5 font-weight-bold mb-4">
-          <span v-if="meeting" class="text-grey text-h6">Rassemblement : {{ meeting.name }}<br></span>
-          Structure : {{ structure.name }}<br>
-          <small>Campagne : {{ campaign.name }}</small>
-        </h4>
-      </ion-card-header>
+  <div class="app-screen vote-screen">
+    <list-skeleton v-if="status === 'loading'" variant="row" :count="5" />
 
-      <ion-card-content>
-        <form ref="vote">
-          <div class="motion ion-padding" v-for="result in this.editResult" :key="result.motion_id">
-            <ion-label position="stacked" style="font-size: 1.2em; text-align: center;">
-              {{ getMotionName(result.motion_id) }}
-            </ion-label>
+    <screen-state v-else-if="status === 'error'" kind="error" title="Impossible de charger ce vote" @action="load" />
 
+    <template v-else>
+      <header class="vote-header">
+        <h1 class="app-title">{{ campaign.name }}</h1>
+        <p class="app-subtitle">
+          {{ structure && structure.name }}<template v-if="meeting && meeting.name"> — {{ meeting.name }}</template>
+        </p>
+        <p v-if="campaign.description" class="vote-description">{{ campaign.description }}</p>
+      </header>
 
-            <ion-list v-if="getMotionKind(result.motion_id) === 'neutral'">
-              <ion-item v-for="choice in ['Oui', 'Non', 'Neutre']" v-bind:key="choice">
-                <ion-checkbox justify="start" label-placement="end" @ion-change="updateResult(result, choice)"
-                  :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
-                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)">{{ choice }}</ion-checkbox>
+      <div v-if="!present" class="notice">
+        <ion-icon :icon="alertCircleOutline" aria-hidden="true" />
+        <p>Vous n’êtes pas inscrit comme présent à ce rassemblement : vous ne pouvez pas voter.</p>
+      </div>
+
+      <template v-else>
+        <!-- Questions -->
+        <section v-for="(result, index) in editResult" :key="result.motion_id" class="motion"
+          :aria-labelledby="`motion-${result.motion_id}`">
+          <p class="motion-step">Question {{ index + 1 }} sur {{ editResult.length }}</p>
+          <h2 :id="`motion-${result.motion_id}`" class="motion-name">{{ motionOf(result).name }}</h2>
+
+          <!-- Réponse libre -->
+          <ion-list v-if="kindOf(result) === 'free'" class="app-inset-list">
+            <ion-item>
+              <ion-textarea v-model="result.vote" label="Votre réponse" label-placement="stacked" :auto-grow="true"
+                placeholder="Écrivez votre réponse" enterkeyhint="done" />
+            </ion-item>
+          </ion-list>
+
+          <!-- Un seul choix : boutons radio -->
+          <ion-list v-else-if="maxOf(result) <= 1" class="app-inset-list">
+            <ion-radio-group :value="firstVote(result)" :allow-empty-selection="true"
+              @ionChange="setSingle(result, $event.detail.value)">
+              <ion-item v-for="choice in choicesOf(result)" :key="choice">
+                <ion-radio :value="choice" justify="space-between">{{ choice }}</ion-radio>
               </ion-item>
-              <ion-item v-if="result.max_choices > 1">
-                <ion-label color="warning">
-                  Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
+            </ion-radio-group>
+          </ion-list>
+
+          <!-- Plusieurs choix : cases à cocher -->
+          <template v-else>
+            <p class="motion-hint">Jusqu’à {{ maxOf(result) }} choix</p>
+            <ion-list class="app-inset-list">
+              <ion-item v-for="choice in choicesOf(result)" :key="choice">
+                <ion-checkbox justify="space-between" :checked="isChecked(result, choice)"
+                  :disabled="isFull(result) && !isChecked(result, choice)" @ionChange="toggle(result, choice)">
+                  {{ choice }}
+                </ion-checkbox>
+              </ion-item>
+            </ion-list>
+          </template>
+        </section>
+
+        <!-- Bulletins -->
+        <section class="motion">
+          <h2 class="app-section-title ballots-title">Mes bulletins</h2>
+          <p class="motion-hint">Cochez les bulletins avec lesquels vous votez.</p>
+          <ion-list class="app-inset-list">
+            <template v-for="voter in editVoters" :key="`${voter.resource_type}-${voter.resource_id}`">
+              <ion-item v-if="!hasVoted(voter)">
+                <ion-checkbox v-model="voter.selected" justify="space-between">
+                  <span class="ballot-name">{{ voter.name }}</span>
+                  <span class="ballot-kind">{{ voter.is_consultative ? 'Vote consultatif' : 'Vote comptabilisé' }}</span>
+                </ion-checkbox>
+              </ion-item>
+              <ion-item v-else>
+                <ion-label class="ion-text-wrap">
+                  <span class="ballot-name">{{ voter.name }}</span>
+                  <p>A déjà voté</p>
                 </ion-label>
+                <ion-icon slot="end" :icon="checkmarkCircle" color="success" aria-hidden="true" />
               </ion-item>
-            </ion-list>
+            </template>
+          </ion-list>
+        </section>
 
-            <ion-list v-if="getMotionKind(result.motion_id) === 'binary'">
-              <ion-item v-for="choice in ['Oui', 'Non']" v-bind:key="choice">
-                <ion-checkbox color="light" justify="start" label-placement="end" @ion-change="updateResult(result, choice)"
-                  :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
-                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)">{{ choice }}</ion-checkbox>
-              </ion-item>
-
-              <ion-item v-if="result.max_choices > 1">
-                <ion-label color="warning">
-                  Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
-                </ion-label>
-              </ion-item>
-            </ion-list>
-
-            <div v-if="getMotionKind(result.motion_id) === 'free'">
-              <ion-item>
-                <ion-input v-model="result.vote" aria-label="Réponse libre" placeholder="Reponse libre"></ion-input>
-              </ion-item>
-            </div>
-
-            <ion-list v-if="getMotionKind(result.motion_id) === 'choices'">
-              <ion-item v-for="choice in result.choices.split(',')" v-bind:key="choice">
-                <ion-checkbox justify="start" label-placement="end" @ion-change="updateResult(result, choice)"
-                  :checked="Array.isArray(result.vote) && result.vote.includes(choice)"
-                  :disabled="Array.isArray(result.vote) && result.vote.length === result.max_choices && !result.vote.includes(choice)">{{ choice }}</ion-checkbox>
-              </ion-item>
-            </ion-list>
-
-            <p v-if="getMotionKind(result.motion_id) === 'choices' && result.max_choices > 1" style="margin-top: 15px">
-              Vous pouvez sélectionner jusqu'à {{ result.max_choices }} choix
-            </p>
-
-            <p v-if="['binary', 'neutral', 'choices'].includes(getMotionKind(result.motion_id))"
-              style="margin-top: 15px">
-              Pour changer de vote, décochez d'abord votre choix précédent
-            </p>
-          </div>
-        </form>
-
-      </ion-card-content>
-    </ion-card>
-    <ion-card>
-      <ion-card-header text-center>
-        <ion-card-title>Mes bulletins</ion-card-title>
-      </ion-card-header>
-      <ion-card-content v-if="this.present">
-        <div v-for="voter in this.editVoters" :key="voter.resource_id">
-          <ion-item v-if="voter.has_voted === null || voter.has_voted === 0">
-            <ion-checkbox justify="start" label-placement="end" v-model="voter.selected">
-              {{ voter.name }}
-              <small v-if="!voter.is_consultative">(Vote comptabilisé)</small>
-              <small v-if="voter.is_consultative">(Vote consultatif)</small>
-            </ion-checkbox>
-          </ion-item>
-          <ion-item v-else>
-            <ion-label color="warning">
-              <b>{{ voter.name }}</b> a déjà voté
-            </ion-label>
-          </ion-item>
+        <div class="app-action-bar">
+          <ion-button expand="block" :disabled="sending || availableVoters.length === 0" @click="confirmVote">
+            <ion-spinner v-if="sending" name="crescent" />
+            <span v-else>{{ availableVoters.length === 0 ? 'Vous avez déjà voté' : 'Valider mon vote' }}</span>
+          </ion-button>
         </div>
-      </ion-card-content>
-      <ion-card-content color="warning" v-else>
-        Vous n'êtes pas présent à ce rassemblement
-      </ion-card-content>
-    </ion-card>
-
-    <ion-button class="ion-margin" expand="block" @click="goVote()" color="primary">Valider</ion-button>
-
-  </ion-content>
+      </template>
+    </template>
+  </div>
 </template>
 
-
 <script>
-
-import { IonInput, IonItem, IonLabel, IonCheckbox, IonContent, IonCard, IonCardTitle, IonCardHeader, IonList, IonCardContent, IonButton } from '@ionic/vue';
+import {
+  IonList,
+  IonItem,
+  IonLabel,
+  IonCheckbox,
+  IonRadio,
+  IonRadioGroup,
+  IonTextarea,
+  IonButton,
+  IonIcon,
+  IonSpinner,
+  alertController,
+} from "@ionic/vue";
+import { alertCircleOutline, checkmarkCircle } from "ionicons/icons";
 import { mapGetters } from "vuex";
+import ScreenState from "../Common/ScreenState.vue";
+import ListSkeleton from "../Common/ListSkeleton.vue";
+import { success } from "@/utils/haptics";
+
+const NEUTRAL = ["Oui", "Non", "Neutre"];
+const BINARY = ["Oui", "Non"];
 
 export default {
   name: "VoteShow",
-  components: { IonInput, IonItem, IonLabel, IonCheckbox, IonContent, IonCard, IonCardTitle, IonCardHeader, IonList, IonCardContent, IonButton },
+  components: {
+    IonList,
+    IonItem,
+    IonLabel,
+    IonCheckbox,
+    IonRadio,
+    IonRadioGroup,
+    IonTextarea,
+    IonButton,
+    IonIcon,
+    IonSpinner,
+    ScreenState,
+    ListSkeleton,
+  },
+  data() {
+    return {
+      status: "loading",
+      sending: false,
+      editResult: [],
+      editVoters: [],
+    };
+  },
   computed: {
-    ...mapGetters('votesStore', {
-      campaign: 'getCampaign',
-      user: 'getUser',
-      motions: 'getMotions',
-      results: 'getResults',
-      voters: 'getVoters',
-      token: 'getToken',
-      meeting: 'getMeeting',
-      structure: 'getStructure',
-      present: 'getPresent',
+    ...mapGetters("votesStore", {
+      campaign: "getCampaign",
+      motions: "getMotions",
+      results: "getResults",
+      voters: "getVoters",
+      meeting: "getMeeting",
+      structure: "getStructure",
+      present: "getPresent",
     }),
-
+    availableVoters() {
+      return this.editVoters.filter((v) => !this.hasVoted(v));
+    },
   },
   methods: {
-    goBack: function () {
-      this.$router.go(-1);
+    async load() {
+      this.status = "loading";
+      try {
+        await this.$store.dispatch("votesStore/getCampaign", this.$route.params.campaign_id);
+        this.status = "ready";
+      } catch (e) {
+        this.status = "error";
+      }
     },
-    goVote: function () {
-      if (this.editVoters.some(voter => voter.selected === true) === false) {
-        this.$root.presentToast('Merci de sélectionner au moins un bulletin !', 'danger');
+    motionOf(result) {
+      return (Array.isArray(this.motions) && this.motions.find((m) => m.id === result.motion_id)) || {};
+    },
+    kindOf(result) {
+      return this.motionOf(result).kind;
+    },
+    maxOf(result) {
+      return result.max_choices || 1;
+    },
+    choicesOf(result) {
+      const kind = this.kindOf(result);
+      if (kind === "neutral") return NEUTRAL;
+      if (kind === "binary") return BINARY;
+      return (result.choices || "").split(",").map((c) => c.trim()).filter(Boolean);
+    },
+    hasVoted(voter) {
+      return !(voter.has_voted === null || voter.has_voted === 0 || voter.has_voted === undefined);
+    },
+    firstVote(result) {
+      return Array.isArray(result.vote) ? result.vote[0] : undefined;
+    },
+    isChecked(result, choice) {
+      return Array.isArray(result.vote) && result.vote.includes(choice);
+    },
+    isFull(result) {
+      return Array.isArray(result.vote) && result.vote.length >= this.maxOf(result);
+    },
+    // Le serveur attend un tableau de choix (ou un texte pour une réponse libre)
+    setSingle(result, value) {
+      result.vote = value ? [value] : null;
+    },
+    toggle(result, choice) {
+      const current = Array.isArray(result.vote) ? result.vote : [];
+      if (current.includes(choice)) {
+        result.vote = current.filter((c) => c !== choice);
+      } else if (current.length < this.maxOf(result)) {
+        result.vote = [...current, choice];
+      }
+    },
+    isAnswered(result) {
+      if (this.kindOf(result) === "free") return typeof result.vote === "string" && result.vote.trim() !== "";
+      return Array.isArray(result.vote) && result.vote.length > 0;
+    },
+    async confirmVote() {
+      const selected = this.editVoters.filter((v) => v.selected === true);
+      if (selected.length === 0) {
+        this.$root.presentToast("Cochez au moins un bulletin dans « Mes bulletins ».", "warning");
         return;
       }
+      const unanswered = this.editResult.filter((r) => !this.isAnswered(r)).length;
+      const ballots = selected.length > 1 ? `${selected.length} bulletins` : "1 bulletin";
+      let message = `Vous votez avec ${ballots}. Un vote enregistré ne peut plus être modifié.`;
+      if (unanswered > 0) {
+        message = `${unanswered > 1 ? `${unanswered} questions sont restées` : "Une question est restée"} sans réponse. ${message}`;
+      }
 
-      this.$store.dispatch('votesStore/vote', { campaign_id: this.$route.params.campaign_id, results: this.editResult, voters: this.editVoters })
-        .then(() => {
-          this.$root.presentToast('Votre vote a été pris en compte !');
-          this.$router.push({ name: 'VotesIndex' });
-        })
+      const alert = await alertController.create({
+        header: "Confirmer votre vote",
+        message,
+        buttons: [
+          { text: "Annuler", role: "cancel" },
+          { text: "Voter", role: "confirm" },
+        ],
+      });
+      await alert.present();
+      const { role } = await alert.onDidDismiss();
+      if (role === "confirm") this.sendVote();
     },
-    getMotionName: function (motion_id) {
-      return this.motions.find(motion => motion.id === motion_id).name;
-    },
-    getMotionKind: function (motion_id) {
-      return this.motions.find(motion => motion.id === motion_id).kind;
-    },
-    updateResult: function (result, value) {
-      // value should be in an array for result.vote
-      // check if result.vote is an array
-
-      if (Array.isArray(result.vote)) {
-        let nbr_vote = result.vote.length;
-        // check if value is already in result.vote
-        if (result.vote.includes(value)) {
-          // remove value from result.vote
-          result.vote = result.vote.filter(item => item !== value);
-          return false;
-        } else {
-          // add value to result.vote
-          // if result.max_choices is defined, check if result.vote.length < result.max_choices
-
-          if (nbr_vote === result.max_choices) {
-            result.vote.shift();
-          }
-          result.vote.push(value);
-          return true;
-        }
-      } else {
-        // if result.vote is not an array, create an array with value
-        result.vote = [value];
-        return true;
+    async sendVote() {
+      this.sending = true;
+      try {
+        await this.$store.dispatch("votesStore/vote", {
+          campaign_id: this.$route.params.campaign_id,
+          results: this.editResult,
+          voters: this.editVoters,
+        });
+        success();
+        this.$root.presentToast("Votre vote a été enregistré.", "success");
+        this.$router.push({ name: "VotesIndex" });
+      } catch (e) {
+        this.$root.presentToast("Votre vote n’a pas été enregistré. Vérifiez votre connexion et réessayez.", "danger");
+      } finally {
+        this.sending = false;
       }
     },
   },
   watch: {
     results: {
-      handler: function () {
-        this.editResult = [];
-        this.editResult = JSON.parse(JSON.stringify(this.results));
+      handler() {
+        this.editResult = JSON.parse(JSON.stringify(this.results || []));
       },
       deep: true,
+      immediate: true,
     },
     voters: {
-      handler: function () {
-        this.editVoters = [];
-        this.editVoters = JSON.parse(JSON.stringify(this.voters));
-        this.editVoters.forEach(voter => {
+      handler() {
+        const list = Array.isArray(this.voters) ? JSON.parse(JSON.stringify(this.voters)) : [];
+        list.forEach((voter) => {
           voter.selected = false;
         });
+        // Un seul bulletin possible : il est coché d'office
+        const open = list.filter((v) => !this.hasVoted(v));
+        if (open.length === 1) open[0].selected = true;
+        this.editVoters = list;
       },
       deep: true,
+      immediate: true,
     },
   },
-  data() {
-    return {
-      editResult: [],
-      editVoters: [],
-    };
+  setup() {
+    return { alertCircleOutline, checkmarkCircle };
   },
-  beforeCreate: function () {
-    this.$store.dispatch('sessionStore/fetchUser');
-
-    if (this.user === null) {
-      this.$router.push({ name: 'Login' });
+  created() {
+    if (null === localStorage.getItem("token")) {
+      this.$router.push({ name: "Login", replace: true });
+      return;
     }
-
-    this.$store.dispatch('votesStore/getCampaign', this.$route.params.campaign_id);
+    this.load();
   },
 };
 </script>
 
-<style>
-ion-radio-group {
+<style scoped>
+.vote-screen {
+  padding-bottom: 0;
+}
+
+.vote-description {
+  margin: 0 0 8px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--app-text);
+}
+
+.notice {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: var(--app-radius-card);
+  background: rgba(var(--ion-color-warning-rgb), 0.14);
+  color: var(--app-text);
 }
 
-ion-radio-group>ion-item {
-  flex: 1;
+.notice ion-icon {
+  flex: 0 0 auto;
+  font-size: 22px;
+  color: var(--ion-color-warning-shade);
 }
 
-ion-radio-group>ion-item.neutre {
-  flex: 1 1;
+.notice p {
+  margin: 0;
+  line-height: 1.45;
 }
-
-ion-checkbox {
-  --size: 32px;
-  --checkbox-background-checked: #015486;
-}
-
-ion-checkbox::part(container) {
-  border-radius: 6px;
-  border: 2px solid #015486;
-}
-
-
-@media (prefers-color-scheme: dark) {
-  ion-checkbox {
-    --checkbox-background-checked: #f5f5f5;
-  }
-
-  ion-checkbox::part(container) {
-    border: 2px solid #f5f5f5;
-  }
-}
-
-ion-item {
-  --border-color: transparent;
-}
-
 
 .motion {
-  margin-bottom: 20px;
-  border: solid 1px #015486;
-  border-radius: 15px
+  margin-top: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .motion {
-    border: solid 1px #f5f5f5;
-  }
+.motion-step {
+  margin: 0 4px 2px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--app-text-muted);
 }
 
-.motion>.label-stacked {
-  margin-bottom: 5px;
+.motion-name {
+  margin: 0 4px 10px;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.motion-hint {
+  margin: -4px 4px 10px;
+  font-size: 0.875rem;
+  color: var(--app-text-muted);
+}
+
+.ballots-title {
+  margin-top: 0;
+}
+
+.app-inset-list ion-item {
+  --min-height: 52px;
+}
+
+ion-radio,
+ion-checkbox {
+  width: 100%;
+  font-size: 1rem;
+}
+
+.ballot-name {
   display: block;
+  font-weight: 600;
+}
+
+.ballot-kind {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--app-text-muted);
+}
+
+ion-label p {
+  color: var(--app-text-muted);
+}
+
+.app-action-bar {
+  margin-top: 24px;
+}
+
+.app-action-bar ion-button {
+  --border-radius: var(--app-radius-control);
+  font-weight: 600;
 }
 </style>
