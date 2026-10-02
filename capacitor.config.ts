@@ -37,9 +37,9 @@ const config: CapacitorConfig = {
       showSpinner: false,
     },
   },
-  android: {
-    webContentsDebuggingEnabled: true
-  },
+  // webContentsDebuggingEnabled non défini : la WebView n'est inspectable (chrome://inspect)
+  // que dans les builds debug. Forcé à true, un build release exposait le jeton d'API
+  // (localStorage) à quiconque branche le téléphone en USB.
   ios: {
     appendUserAgent: 'MyAppUserAgent',
     overrideUserAgent: 'MyAppUserAgent'
